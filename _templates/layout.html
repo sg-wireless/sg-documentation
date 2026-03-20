@@ -1,0 +1,38 @@
+{# SG Wireless custom layout — matches docs.sgwireless.com visual style #}
+{% extends "!layout.html" %}
+
+{# Full-width header bar before the sidebar+content grid #}
+{% block extrabody %}
+<div id="sgw-topbar">
+  <div id="sgw-topbar-gradient"></div>
+  <div id="sgw-topbar-header">
+    <div id="sgw-topbar-inner">
+      <a href="{{ pathto(master_doc) }}" class="sgw-logo-link">
+        <img src="{{ pathto('_static/logo-white.svg', 1) }}" alt="SG Wireless" class="sgw-logo" />
+      </a>
+      <div class="sgw-search-wrapper">
+        <form action="{{ pathto('search') }}" method="get" class="sgw-search-form">
+          <svg class="sgw-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" width="14">
+            <path d="M8.37 7.578l3.337 3.336-.792.793L7.578 8.37a4.5 4.5 0 1 1 .793-.793zM4.5 7.875a3.375 3.375 0 1 0 0-6.75 3.375 3.375 0 0 0 0 6.75z" fill="#fb6362"/>
+          </svg>
+          <input type="text" name="q" placeholder="Search the docs..." aria-label="Search the docs" />
+        </form>
+      </div>
+      <a href="https://sgwireless.com" target="_blank" rel="noopener noreferrer" class="sgw-site-link">
+        sgwireless.com
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" fill="#fff">
+          <path d="M11.5 7.75v4.5a.75.75 0 0 1-.75.75h-9a.75.75 0 0 1-.75-.75v-9A.75.75 0 0 1 1.75 2.5h4.5v1.125H2.125v8.25h8.25V7.75H11.5zm-3.375-5.625V1h4.75v4.75h-1.125V2.923L6.836 7.836l-.797-.797 4.913-4.914H8.125z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{# Hide the default sidebar logo/search — we have the full-width header instead #}
+{% block sidebartitle %}{% endblock %}
+
+{% block footer %}
+  {{ super() }}
+  {% include "versioning.html" %}
+{% endblock %}

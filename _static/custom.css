@@ -1,0 +1,931 @@
+/* ==========================================================================
+   SG Wireless — docs.sgwireless.com visual style for sphinx_rtd_theme
+   ========================================================================== */
+
+/* ---------- Web-font declarations ---------------------------------------- */
+@font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    src: url('fonts/Inter-Regular.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Inter';
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    src: url('fonts/Inter-Medium.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Inter';
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+    src: url('fonts/Inter-SemiBold.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Inter';
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    src: url('fonts/Inter-Bold.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'DarkerGrotesque';
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+    src: url('fonts/DarkerGrotesque-SemiBold.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'DarkerGrotesque';
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    src: url('fonts/DarkerGrotesque-Bold.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'IBMPlexMono';
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    src: url('fonts/IBMPlexMono-Medium.woff2') format('woff2');
+}
+
+/* ---------- Design tokens ------------------------------------------------ */
+:root {
+    --sgw-coral:    #fb6362;
+    --sgw-teal:     #3faa9c;
+    --sgw-teal-bg:  #e2f2f0;
+    --sgw-black:    #000000;
+    --sgw-white:    #ffffff;
+    --sgw-border:   #e2e6ee;
+    --sgw-code-bg:  #f5f7f9;
+    --sgw-active-bg:#ffe8e7;
+    --sgw-blue-bg:  #e2e6ee;
+    --sgw-font-body:     'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --sgw-font-heading:  'DarkerGrotesque', 'Inter', sans-serif;
+    --sgw-font-mono:     'IBMPlexMono', 'Consolas', 'Monaco', monospace;
+    --sgw-header-height: 4.25rem;  /* gradient + header bar */
+}
+
+
+/* =========================================================================
+   FULL-WIDTH TOP BAR  (injected via extrabody block)
+   ========================================================================= */
+#sgw-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+}
+
+#sgw-topbar-gradient {
+    height: 0.5rem;
+    background-color: var(--sgw-teal);
+}
+
+#sgw-topbar-header {
+    background-color: var(--sgw-black);
+    padding: 0.875rem 0;
+}
+
+#sgw-topbar-inner {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.sgw-logo-link {
+    flex-shrink: 0;
+}
+
+.sgw-logo {
+    height: 1.5rem;
+    width: auto;
+    display: block;
+}
+
+/* Search bar in header */
+.sgw-search-wrapper {
+    flex: 1;
+    max-width: 32rem;
+}
+
+.sgw-search-form {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.sgw-search-icon {
+    position: absolute;
+    left: 1rem;
+    pointer-events: none;
+}
+
+.sgw-search-form input[type="text"] {
+    width: 100%;
+    padding: 0.625rem 1rem 0.625rem 2.75rem;
+    border-radius: 0.25rem;
+    border: 1px solid #cfd5e2;
+    background-color: rgba(255, 255, 255, 0.06);
+    color: var(--sgw-white);
+    font-family: var(--sgw-font-body);
+    font-size: 1rem;
+}
+
+.sgw-search-form input[type="text"]::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.sgw-search-form input[type="text"]:focus {
+    outline: none;
+    border-color: var(--sgw-coral);
+}
+
+/* sgwireless.com link */
+.sgw-site-link {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.25rem;
+    background-color: var(--sgw-coral);
+    color: var(--sgw-white) !important;
+    text-decoration: none !important;
+    font-family: var(--sgw-font-body);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.sgw-site-link:hover {
+    background-color: #e25554;
+    color: var(--sgw-white) !important;
+}
+
+
+/* =========================================================================
+   PUSH PAGE CONTENT BELOW FIXED HEADER
+   ========================================================================= */
+body.wy-body-for-nav {
+    padding-top: var(--sgw-header-height);
+}
+
+
+/* =========================================================================
+   HIDE DEFAULT RTD SIDEBAR HEADER  (logo + search replaced by top bar)
+   ========================================================================= */
+.wy-side-nav-search {
+    display: none !important;
+}
+
+
+/* =========================================================================
+   BASE TYPOGRAPHY
+   ========================================================================= */
+body {
+    font-family: var(--sgw-font-body) !important;
+    color: #1a1a1a;
+}
+
+h1, h2, h3, h4, h5, h6,
+.rst-content .toctree-wrapper p.caption {
+    font-family: var(--sgw-font-heading) !important;
+    font-weight: 700;
+    color: var(--sgw-black);
+}
+
+h1 { font-size: 2.25rem; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.35rem; }
+h4 { font-size: 1.15rem; }
+
+code, pre, .rst-content code, .rst-content tt,
+kbd, samp, .highlight pre {
+    font-family: var(--sgw-font-mono) !important;
+}
+
+
+/* =========================================================================
+   SIDEBAR
+   ========================================================================= */
+.wy-nav-side {
+    background: var(--sgw-white) !important;
+    border-right: 1px solid var(--sgw-border);
+    width: 300px;
+    top: var(--sgw-header-height) !important;
+    height: calc(100vh - var(--sgw-header-height)) !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.wy-side-scroll {
+    width: 300px;
+    padding-bottom: 2rem;
+    background: var(--sgw-white);
+}
+
+.wy-nav-content-wrap {
+    margin-left: 300px !important;
+    background: var(--sgw-white);
+}
+
+/* ---------- Menu items --------------------------------------------------- */
+.wy-menu-vertical {
+    padding-top: 1.5rem;
+    font-family: var(--sgw-font-body) !important;
+}
+
+/* Remove all default RTD background colours */
+.wy-menu-vertical a,
+.wy-menu-vertical li.current > a,
+.wy-menu-vertical li.toctree-l1.current > a,
+.wy-menu-vertical li.toctree-l2.current > a,
+.wy-menu-vertical li.toctree-l3.current > a,
+.wy-menu-vertical li.toctree-l2.current li.toctree-l3 > a,
+.wy-menu-vertical li ul,
+.wy-menu-vertical li ul li a,
+.wy-menu-vertical li.current,
+.wy-menu-vertical li.on a {
+    background: transparent !important;
+}
+
+/* Section caption headers (e.g. "Getting Started", "Product Information") */
+.wy-menu-vertical p.caption {
+    display: none;  /* hide captions — top-level items serve as section dividers */
+}
+
+/* All top-level items  */
+.wy-menu-vertical li.toctree-l1 {
+    border-bottom: 1px solid var(--sgw-border);
+    margin: 0;
+    padding: 0;
+}
+
+.wy-menu-vertical li.toctree-l1 > a {
+    padding: 1rem 1.5rem !important;
+    font-weight: 600 !important;
+    font-size: 1rem;
+    color: var(--sgw-black) !important;
+    font-family: var(--sgw-font-body) !important;
+    border-left: none;
+    line-height: 1.3;
+}
+
+/* Home item — house icon */
+.wy-menu-vertical li.toctree-l1:first-child > a::before {
+    content: "";
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+    margin-right: 0.4em;
+    vertical-align: -0.15em;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fb6362'%3E%3Cpath d='M12 3L4 9v12h5v-7h6v7h5V9z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.wy-menu-vertical li.toctree-l1 > a:hover {
+    background: transparent !important;
+    color: var(--sgw-black) !important;
+}
+
+/* Active top-level item – no special background, just font weight */
+.wy-menu-vertical li.toctree-l1.current > a {
+    font-weight: 600 !important;
+    color: var(--sgw-black) !important;
+    position: relative;
+}
+
+/* Sub-menu container */
+.wy-menu-vertical li.toctree-l1 > ul {
+    margin: 0 !important;
+    padding: 0 0 0.5rem 1.5rem !important;
+}
+
+/* Level 2 items */
+.wy-menu-vertical li.toctree-l2 {
+    border-left: 1px solid var(--sgw-border);
+    margin: 0;
+    transition: border-left-color 0.2s, background-color 0.2s;
+}
+
+.wy-menu-vertical li.toctree-l2 > a {
+    padding: 0.3rem 0.75rem !important;
+    font-weight: 400 !important;
+    font-size: 0.95rem;
+    color: #333 !important;
+    font-family: var(--sgw-font-body) !important;
+    line-height: 1.4;
+}
+
+.wy-menu-vertical li.toctree-l2 > a:hover {
+    background: transparent !important;
+}
+
+/* Active level 2: coral left border + pink background */
+.wy-menu-vertical li.toctree-l2.current {
+    border-left-color: var(--sgw-coral) !important;
+    background-color: var(--sgw-active-bg) !important;
+}
+
+.wy-menu-vertical li.toctree-l2.current > a {
+    font-weight: 600 !important;
+    color: var(--sgw-black) !important;
+    background-color: transparent !important;
+}
+
+/* Level 3 and deeper */
+.wy-menu-vertical li.toctree-l2 > ul {
+    padding-left: 0.5rem !important;
+}
+
+.wy-menu-vertical li.toctree-l3 > a {
+    padding: 0.25rem 0.75rem !important;
+    font-weight: 400 !important;
+    font-size: 0.9rem;
+    color: #333 !important;
+    font-family: var(--sgw-font-body) !important;
+}
+
+.wy-menu-vertical li.toctree-l3.current > a {
+    font-weight: 600 !important;
+    color: var(--sgw-black) !important;
+}
+
+.wy-menu-vertical li.toctree-l4 > a {
+    padding: 0.2rem 0.75rem 0.2rem 1.25rem !important;
+    font-weight: 400 !important;
+    font-size: 0.875rem;
+    color: #555 !important;
+    font-family: var(--sgw-font-body) !important;
+}
+
+.wy-menu-vertical li.toctree-l4 > a::before {
+    content: "- ";
+}
+
+/* Remove RTD arrows/carets */
+.wy-menu-vertical li span.toctree-expand,
+.wy-menu-vertical li button.toctree-expand {
+    display: none !important;
+}
+
+/* Ensure no bullets in the sidebar */
+.wy-menu-vertical ul {
+    list-style: none !important;
+    margin: 0;
+}
+
+
+/* =========================================================================
+   MOBILE NAV  (hamburger bar)
+   ========================================================================= */
+.wy-nav-top {
+    display: none !important;  /* hidden on desktop, will show on mobile */
+}
+
+
+/* =========================================================================
+   CONTENT AREA
+   ========================================================================= */
+.wy-nav-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 3rem;
+    background: var(--sgw-white);
+}
+
+.rst-content {
+    font-family: var(--sgw-font-body) !important;
+    line-height: 1.6;
+}
+
+/* Links */
+.rst-content a,
+.wy-body-info a {
+    color: var(--sgw-teal);
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.rst-content a:hover {
+    background-color: var(--sgw-teal-bg);
+    text-decoration: none;
+}
+
+/* Breadcrumbs */
+.wy-breadcrumbs {
+    font-family: var(--sgw-font-body) !important;
+}
+
+.wy-breadcrumbs a {
+    color: var(--sgw-teal) !important;
+}
+
+.wy-breadcrumbs li.wy-breadcrumbs-aside a {
+    color: #666 !important;
+    font-size: 0.875rem;
+}
+
+
+/* =========================================================================
+   CODE BLOCKS
+   ========================================================================= */
+.rst-content pre.literal-block,
+.rst-content div[class^="highlight"] pre,
+.highlight pre {
+    background-color: var(--sgw-code-bg) !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 1.25rem !important;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.rst-content div[class^="highlight"] {
+    border: none !important;
+    background: transparent !important;
+}
+
+/* Inline code */
+code.literal,
+.rst-content code.literal,
+.rst-content tt.literal {
+    background: var(--sgw-code-bg);
+    border: 1px solid var(--sgw-border);
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 0.875em;
+    color: #333;
+}
+
+/* Syntax highlighting */
+.highlight .k,
+.highlight .kn,
+.highlight .kd { color: #07a; }
+.highlight .nf,
+.highlight .nc { color: var(--sgw-teal); }
+.highlight .s,
+.highlight .s1,
+.highlight .s2 { color: #009cdd; }
+.highlight .mi,
+.highlight .mf,
+.highlight .mb,
+.highlight .mo,
+.highlight .mh { color: var(--sgw-coral); }
+.highlight .c,
+.highlight .c1,
+.highlight .cm { color: slategray; }
+.highlight .o { color: #9a6e3a; }
+
+
+/* =========================================================================
+   API SIGNATURES
+   ========================================================================= */
+dl.py dt,
+dl.function dt,
+dl.method dt,
+dl.class dt,
+dl.attribute dt {
+    background: var(--sgw-teal-bg) !important;
+    border-left: 3px solid var(--sgw-teal);
+    border-top: none !important;
+    padding: 8px 12px !important;
+    font-family: var(--sgw-font-mono) !important;
+    font-size: 0.9rem;
+}
+
+
+/* =========================================================================
+   ADMONITIONS
+   ========================================================================= */
+.rst-content .admonition {
+    border-radius: 0;
+    font-family: var(--sgw-font-body) !important;
+}
+
+.rst-content .admonition .admonition-title {
+    font-family: var(--sgw-font-body) !important;
+    font-weight: 600;
+}
+
+/* Note — teal */
+.rst-content .admonition.note {
+    background-color: var(--sgw-teal-bg) !important;
+    border-left: 3px solid var(--sgw-teal);
+}
+.rst-content .admonition.note .admonition-title {
+    background-color: rgba(63, 170, 156, 0.15) !important;
+}
+
+/* Warning — coral */
+.rst-content .admonition.warning,
+.rst-content .admonition.caution {
+    background-color: var(--sgw-active-bg) !important;
+    border-left: 3px solid var(--sgw-coral);
+}
+.rst-content .admonition.warning .admonition-title,
+.rst-content .admonition.caution .admonition-title {
+    background-color: rgba(251, 99, 98, 0.12) !important;
+}
+
+/* Tip / hint — blue */
+.rst-content .admonition.important,
+.rst-content .admonition.tip,
+.rst-content .admonition.hint {
+    background-color: var(--sgw-blue-bg) !important;
+    border-left: 3px solid #8e9bb5;
+}
+.rst-content .admonition.important .admonition-title,
+.rst-content .admonition.tip .admonition-title,
+.rst-content .admonition.hint .admonition-title {
+    background-color: rgba(142, 155, 181, 0.15) !important;
+}
+
+/* Danger */
+.rst-content .admonition.danger,
+.rst-content .admonition.error {
+    background-color: #fde8e8 !important;
+    border-left: 3px solid #d32f2f;
+}
+
+
+/* =========================================================================
+   TABLES
+   ========================================================================= */
+.rst-content table.docutils {
+    border-collapse: collapse;
+    border: 1px solid var(--sgw-border);
+}
+
+.rst-content table.docutils th {
+    background: var(--sgw-code-bg);
+    font-weight: 600;
+    border: 1px solid var(--sgw-border);
+    padding: 0.5rem 0.75rem;
+}
+
+.rst-content table.docutils td {
+    border: 1px solid var(--sgw-border);
+    padding: 0.5rem 0.75rem;
+}
+
+
+/* =========================================================================
+   FOOTER
+   ========================================================================= */
+footer {
+    font-family: var(--sgw-font-body) !important;
+    border-top: 1px solid var(--sgw-border);
+    padding-top: 1rem;
+}
+
+footer .rst-footer-buttons .btn {
+    background-color: var(--sgw-white) !important;
+    color: var(--sgw-coral) !important;
+    border: 1px solid var(--sgw-coral) !important;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+footer .rst-footer-buttons .btn:hover {
+    background-color: var(--sgw-coral) !important;
+    color: var(--sgw-white) !important;
+}
+
+
+/* =========================================================================
+   VERSION SELECTOR
+   ========================================================================= */
+.rst-versions {
+    background: #1a1a1a !important;
+    font-family: var(--sgw-font-body) !important;
+    border-top: 3px solid var(--sgw-teal);
+}
+
+.rst-versions .rst-current-version {
+    background: var(--sgw-black) !important;
+    color: var(--sgw-white) !important;
+}
+
+.rst-versions a {
+    color: var(--sgw-coral) !important;
+}
+
+
+/* =========================================================================
+   VERSION WARNING BANNER
+   ========================================================================= */
+.version-warning {
+    background-color: var(--sgw-active-bg);
+    border: 1px solid var(--sgw-coral);
+    border-left: 3px solid var(--sgw-coral);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border-radius: 0;
+    font-size: 0.95em;
+}
+
+
+/* =========================================================================
+   TOCTREE ITEMS
+   ========================================================================= */
+.rst-content .toctree-wrapper ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.rst-content .toctree-wrapper ul li {
+    margin-bottom: 0.25rem;
+}
+
+.rst-content .toctree-wrapper ul li a {
+    display: block;
+    padding: 0.35rem 0;
+}
+
+
+/* =========================================================================
+   SECTION ANCHORS
+   ========================================================================= */
+.rst-content h1 a.headerlink,
+.rst-content h2 a.headerlink,
+.rst-content h3 a.headerlink,
+.rst-content h4 a.headerlink {
+    color: var(--sgw-coral) !important;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.rst-content h1:hover a.headerlink,
+.rst-content h2:hover a.headerlink,
+.rst-content h3:hover a.headerlink,
+.rst-content h4:hover a.headerlink {
+    opacity: 1;
+}
+
+
+/* =========================================================================
+   SCROLLBAR
+   ========================================================================= */
+.wy-side-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.wy-side-scroll::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+.wy-side-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+/* =========================================================================
+   RESPONSIVE  (mobile)
+   ========================================================================= */
+@media screen and (max-width: 768px) {
+    #sgw-topbar {
+        position: relative;
+    }
+
+    body.wy-body-for-nav {
+        padding-top: 0;
+    }
+
+    #sgw-topbar-inner {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .sgw-search-wrapper {
+        order: 3;
+        max-width: 100%;
+        flex-basis: 100%;
+    }
+
+    .sgw-site-link {
+        font-size: 0.8rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .wy-nav-side {
+        top: 0 !important;
+        height: 100vh !important;
+    }
+
+    .wy-nav-top {
+        display: flex !important;
+        background-color: var(--sgw-black) !important;
+    }
+
+    .wy-nav-top a {
+        color: var(--sgw-white) !important;
+    }
+
+    .wy-nav-content-wrap {
+        margin-left: 0 !important;
+    }
+
+    .wy-nav-content {
+        padding: 1.5rem 1rem;
+    }
+}
+
+
+/* =========================================================================
+   HOMEPAGE CARD LAYOUT  (matches docs.sgwireless.com sign-posts)
+   ========================================================================= */
+.sgw-homepage {
+    max-width: 100%;
+}
+
+.sgw-welcome-heading {
+    font-family: var(--sgw-font-heading) !important;
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: var(--sgw-black);
+    margin-bottom: 2rem;
+}
+
+/* --- Shared card styles -------------------------------------------------- */
+.sgw-card {
+    border: 1px solid #d9dee8;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none !important;
+    color: inherit !important;
+    transition: box-shadow 0.2s;
+}
+
+a.sgw-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    color: inherit !important;
+}
+
+.sgw-card__details {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.sgw-card__details h2,
+.sgw-card__details h3,
+.sgw-card__details h4 {
+    margin: 0 !important;
+    padding: 0;
+    font-family: var(--sgw-font-heading) !important;
+    color: var(--sgw-black) !important;
+}
+
+.sgw-card__details h2 { font-size: 1.5rem; }
+.sgw-card__details h3 { font-size: 1.35rem; }
+.sgw-card__details h4 { font-size: 1.2rem; }
+
+.sgw-card__details p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #333;
+}
+
+.sgw-card__details ul {
+    margin: 0.25rem 0;
+    padding-left: 1.25rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #333;
+}
+
+.sgw-card__details ul li {
+    margin-bottom: 0.25rem;
+}
+
+.sgw-card__details a {
+    color: var(--sgw-teal) !important;
+    text-decoration: underline !important;
+}
+
+.sgw-card__image {
+    flex: 1;
+    min-height: 0;
+}
+
+.sgw-card__image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.sgw-card__arrow {
+    display: inline-block;
+    margin-top: 0.5rem;
+    fill: var(--sgw-black);
+}
+
+a.sgw-card:hover .sgw-card__arrow {
+    fill: var(--sgw-coral);
+}
+
+.sgw-card__icon {
+    margin-bottom: 0.25rem;
+}
+
+/* --- Featured card (size-1): side-by-side text+image -------------------- */
+.sgw-card--featured {
+    flex-direction: row;
+    margin-bottom: 1.5rem;
+}
+
+.sgw-card--featured .sgw-card__details {
+    width: 50%;
+    align-self: center;
+    padding: 2rem 2.5rem;
+}
+
+.sgw-card--featured .sgw-card__image {
+    width: 50%;
+}
+
+/* --- Card rows ---------------------------------------------------------- */
+.sgw-card-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* --- Half cards (size-2): text left, image right ------------------------ */
+.sgw-card--half {
+    flex: 1;
+    flex-direction: row;
+}
+
+.sgw-card--half .sgw-card__details {
+    width: 50%;
+    align-self: center;
+}
+
+.sgw-card--half .sgw-card__image {
+    width: 50%;
+    order: 2;
+}
+
+/* --- Third cards (size-3): text only, icon on top ----------------------- */
+.sgw-card-row--thirds {
+    gap: 1.5rem;
+}
+
+.sgw-card--third {
+    flex: 1;
+    padding: 1.25rem;
+}
+
+.sgw-card--third h4 {
+    margin: 0 !important;
+    font-family: var(--sgw-font-heading) !important;
+    font-size: 1.2rem;
+}
+
+.sgw-card--third p {
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: #555;
+}
+
+/* --- Responsive stacking ----------------------------------------------- */
+@media screen and (max-width: 900px) {
+    .sgw-card--featured {
+        flex-direction: column;
+    }
+    .sgw-card--featured .sgw-card__details,
+    .sgw-card--featured .sgw-card__image {
+        width: 100%;
+    }
+
+    .sgw-card-row {
+        flex-direction: column;
+    }
+    .sgw-card--half {
+        flex-direction: column;
+    }
+    .sgw-card--half .sgw-card__details,
+    .sgw-card--half .sgw-card__image {
+        width: 100%;
+    }
+}
