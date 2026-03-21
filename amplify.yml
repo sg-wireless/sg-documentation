@@ -6,7 +6,7 @@ frontend:
         - pip3 install -r requirements.txt
     build:
       commands:
-        - make html
+        - bash build_versions.sh
   artifacts:
     baseDirectory: _build/html
     files:

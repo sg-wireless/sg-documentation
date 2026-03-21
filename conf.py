@@ -26,12 +26,15 @@ extensions = [
     "sphinx_copybutton",
 ]
 
-# Try to load sphinx-multiversion for versioned builds (optional dependency)
-try:
-    import sphinx_multiversion
-    extensions.append("sphinx_multiversion")
-except ImportError:
-    pass
+# -- Multi-version support -----------------------------------------------------
+# The build script (build_versions.sh) sets SGW_CURRENT_VERSION when building
+# each version tag.  When unset we fall back to the release value (local builds).
+
+import json as _json
+
+_current_ver = os.environ.get("SGW_CURRENT_VERSION", f"v{release}")
+_all_versions_json = os.environ.get("SGW_ALL_VERSIONS", _json.dumps([_current_ver]))
+_all_versions = _json.loads(_all_versions_json)
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", ".venv", "Thumbs.db", ".DS_Store", "README.md"]
@@ -66,17 +69,13 @@ html_context = {
     "github_repo": "sg-documentation",
     "github_version": "main",
     "conf_py_path": "/",
+    # Version selector data (populated by build_versions.sh via env vars)
+    "current_version": _current_ver,
+    "versions": _all_versions,
+    "latest_version": _all_versions[0],  # first entry = latest
 }
 
-# -- Options for sphinx-multiversion -------------------------------------------
-# These settings control which git refs are built as separate doc versions.
-# Only active when sphinx-multiversion is installed.
-
-smv_tag_whitelist = r"^v\d+\.\d+\.\d+$"       # e.g. v1.3.0, v1.4.0
-smv_branch_whitelist = r"^$"                    # only build from tags
-smv_remote_whitelist = r"^origin$"
-smv_released_pattern = r"^refs/tags/v\d+\.\d+\.\d+$"
-smv_outputdir_format = "{ref.name}"
+# (sphinx-multiversion settings removed — see build_versions.sh)
 
 # -- Options for intersphinx ---------------------------------------------------
 # Link to upstream MicroPython docs so users can click through to standard

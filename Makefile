@@ -11,9 +11,9 @@ help:
 
 .PHONY: help Makefile
 
-# Build all tagged versions + main via sphinx-multiversion
+# Build all tagged versions via build_versions.sh
 multiver:
-	sphinx-multiversion "$(SOURCEDIR)" "$(BUILDDIR)/html" $(SPHINXOPTS) $(O)
+	bash build_versions.sh
 
 # Catch-all target: route all unknown targets to Sphinx using the builder name.
 %: Makefile
