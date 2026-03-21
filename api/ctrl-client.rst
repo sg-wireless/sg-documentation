@@ -1,76 +1,103 @@
-CTRL Client API
-===============
+CTRL API Documentation
+======================
 
-.. py:module:: ctrl
+Contents
+--------
 
-The ``ctrl`` module provides the interface for connecting to and exchanging data
-with the `CTRL cloud platform <https://app.sgwireless.com/>`_.
+- Sending Fields
+- Configuration
+- Connection
+- Miscellaneous
+- Examples
 
 Fields
 ------
 
-.. py:function:: ctrl.send_field(pin_number, value, [timestamp=0, device_token=None])
+.. _ctrlsend_fieldpin_number-value-timestamp0-device_tokennone:
 
-   Send a field value to CTRL.
+ctrl.send_field(pin_number, value, [timestamp=0, device_token=None])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   :param int pin_number: The pin/field number in CTRL, can be any integer value.
-   :param value: The value to send (int, float, string, etc.).
-   :param int timestamp: Optional. Unix timestamp in seconds. If ``0`` (default), the server uses the current time.
-   :param str device_token: Optional. Device token for sending data to a different device.
+Send a field value to CTRL. Arguments are:
 
-.. py:function:: ctrl.send_field_map(map, [timestamp=0, device_token=None])
+- ``pin_number``: The pin/field number in CTRL, can be any integer value
+- ``value``: The value you want to send, this can be any type (int, float,
+  string, etc.)
+- ``timestamp``: Optional. Unix timestamp in seconds. If set to 0 (default),
+  the server will use the current time
+- ``device_token``: Optional. Device token for sending data to a different
+  device
 
-   Send multiple field values to CTRL in a single message using a dictionary.
+.. _ctrlsend_field_mapmap-timestamp0-device_tokennone:
 
-   :param dict map: A dictionary where keys are pin/field numbers and values are the data to send.
-   :param int timestamp: Optional. Unix timestamp in seconds. If ``0`` (default), the server uses the current time.
-   :param str device_token: Optional. Device token for sending data to a different device.
+ctrl.send_field_map(map, [timestamp=0, device_token=None])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   .. code-block:: python
+Send multiple field values to CTRL in a single message using a dictionary/map.
+Arguments are:
 
-      ctrl.send_field_map({1: 25.5, 2: 60.3, 3: "online"})
+- ``map``: A dictionary where keys are pin/field numbers and values are the
+  data to send. Example: ``{1: 25.5, 2: 60.3, 3: "online"}``
+- ``timestamp``: Optional. Unix timestamp in seconds. If set to 0 (default),
+  the server will use the current time
+- ``device_token``: Optional. Device token for sending data to a different
+  device
 
-.. py:function:: ctrl.send_ping_message()
+.. _ctrlsend_ping_message:
 
-   Send a ping (is-alive) message to CTRL. The platform will answer with a
-   ``pong`` message if connected via WiFi or LTE-M.
+ctrl.send_ping_message()
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. py:function:: ctrl.send_info_message()
+Sends a ping (is-alive) message to CTRL. The platform will answer with a
+``pong`` message if connected via WiFi or LTE-M
 
-   Send an info message to CTRL containing the device type and firmware version.
+.. _ctrlsend_info_message:
 
-.. py:function:: ctrl.send_battery_level(battery_level)
+ctrl.send_info_message()
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-   Send the battery level to CTRL.
+Send an info message to CTRL containing the device type and firmware version.
 
-   :param int battery_level: The battery level value.
+.. _ctrlsend_battery_levelbattery_level:
 
-   .. code-block:: python
+ctrl.send_battery_level(battery_level)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-      def battery_level():
-          return 3.7
-      ctrl.send_battery_level(battery_level())
+Sends the battery level to `Ctrl <https://app.sgwireless.com/>`__. The argument
+``battery_level`` can be any integer.
+
+You can define ``battery_level`` with a function depending on your hardware.
+
+.. code:: python
+
+   def battery_level():
+       return 3.7
+   ctrl.send_battery_level(battery_level())
+
+--------------
 
 Configuration
 -------------
 
 If CTRL support is active in the current firmware (check
-``import ctrl_cfg; ctrl_cfg.ctrl_on_boot()``), it will load automatically.  It
-first looks for a file ``ctrl_config.json`` in the file system.
+``import ctrl_cfg; ctrl_cfg.ctrl_on_boot()``) it will load automatically. It
+will first look for a file ``ctrl_config.json`` in the file system.
 
-If the file is found and the configuration looks valid, CTRL will try to connect
-to the cloud platform based on the configured parameters.  The user can upload a
-file ``ctrl_project.json`` onto the local ``/`` to overwrite any of the
-parameters from ``ctrl_config.json``.  This allows for project-specific settings
-such as forcing SSL to be enabled or disabling automatically starting the CTRL
-client on boot.
+If the file is found and the configuration looks valid, CTRL will try to
+connect to the cloud platform based on the configured parameters. The user can
+upload a file ``ctrl_project.json`` onto the local ``/`` to overwrite any of
+the parameters from ``ctrl_config.json``. This allows for project specific
+settings to be configured such as forcing SSL to be enabled or to disable
+automatically starting the ctrl client on boot.
 
-If no valid configuration is found, CTRL will load with an empty configuration
-to allow the ``ctrl.activate()`` command to be executed.
+If no valid configuration is found, ctrl will load with an empty configuration
+to allow for the ``ctrl.activate()`` command to be executed. This will allow
+for the device to be activated via the python cli.
 
-To manually load the CTRL client from your own scripts:
+To manually load the CTRL client from your own scripts, the following code
+shows how it is loaded from the build-in frozen code.
 
-.. code-block:: python
+.. code:: python
 
    import ctrl_cfg
    if ctrl_cfg.ctrl_on_boot():
@@ -86,221 +113,308 @@ To manually load the CTRL client from your own scripts:
        if (not ctrl_config.get('ctrl_autostart', True)) and ctrl_config.get('cfg_msg') is not None:
            print(ctrl_config.get('cfg_msg'))
            print("Not starting CTRL as auto-start is disabled")
+
        else:
+           # Load CTRL if it is not already loaded
            if 'ctrl' not in globals().keys():
                ctrl = Ctrl(ctrl_config, ctrl_config.get('cfg_msg') is None, True)
 
-.. py:function:: ctrl.read_config([filename='/ctrl_config.json', reconnect=False])
+The CTRL API offers several helper functions to work with the configuration:
 
-   Load the CTRL configuration file.
+.. _ctrlread_configfilenamectrl_configjson-reconnectfalse:
 
-   :param str filename: Path to the configuration file. Default: ``/ctrl_config.json``.
-   :param bool reconnect: If ``True``, disconnect and re-connect using the new configuration.
+ctrl.read_config([filename='/ctrl_config.json', reconnect=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. py:function:: ctrl.get_config([key=None])
+Load the CTRL configuration file. By default, this is loaded from
+``/ctrl_config.json`` If reconnect=True, ctrl will disconnect and re-connect
+using the new configuration
 
-   Return the configuration. If *key* is specified, only the value for that key
-   is returned.
+.. _ctrlget_configkeynone:
 
-   :param str key: Optional configuration key to retrieve.
+ctrl.get_config([key=None])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. py:function:: ctrl.update_config(key, [value=None, permanent=True, silent=False, reconnect=False])
+Returns the configuration. If key is specified, only configuration for the
+given key is returned.
 
-   Update a *key* and *value* in the default configuration file.  This will
-   **update** the existing configuration setting to add the new values.
+.. _ctrlupdate_configkey-valuenone-permanenttrue-silentfalse-reconnectfalse:
 
-   :param str key: Configuration key.
-   :param value: New value.
-   :param bool permanent: If ``True``, calls ``ctrl.write_config()``.  If ``False``, the value is only used this session.
-   :param bool silent: If ``True``, suppress REPL output.
-   :param bool reconnect: If ``True``, calls ``ctrl.reconnect()``.
+ctrl.update_config(key, [value=None, permanent=True, silent=False, reconnect=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. py:function:: ctrl.set_config(key, [value=None, permanent=True, silent=False, reconnect=False])
+Update a ``key`` and ``value`` of the default configuration file. This will
+**update** the existing configuration setting to add the new values.
 
-   Set a *key* and *value* in the default configuration file.  This will
-   **overwrite** any existing settings for the specified key.
+**additional options:**
 
-   :param str key: Configuration key.
-   :param value: New value.
-   :param bool permanent: If ``True``, calls ``ctrl.write_config()``.  If ``False``, the value is only used this session.
-   :param bool silent: If ``True``, suppress REPL output.
-   :param bool reconnect: If ``True``, calls ``ctrl.reconnect()``.
+- ``permanent``: will call ``ctrl.write_config()``. If set ``False``, the new
+  value will not be stored in the configuration file and only used this
+  session.
+- ``silent``: set ``silent`` to ``True`` to not print a message to REPL.
+- ``reconnect``: calls ``ctrl.reconnect()``
 
-.. py:function:: ctrl.write_config([file='/ctrl_config.json', silent=False])
+.. _ctrlset_configkey-valuenone-permanenttrue-silentfalse-reconnectfalse:
 
-   Write the updated configuration to the default configuration file.
+ctrl.set_config(key, [value=None, permanent=True, silent=False, reconnect=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   :param str file: The file name and location.
-   :param bool silent: If ``True``, suppress REPL output.
+Set a ``key`` and ``value`` of the default configuration file. This will
+overwrite any existing settings for the specified key.
 
-.. py:function:: ctrl.print_config()
+**additional options:**
 
-   Print the configuration settings to the REPL in a human-readable format.
+- ``permanent``: will call ``ctrl.write_config()``. If set ``False``, the new
+  value will not be stored in the configuration file and only used this
+  session.
+- ``silent``: set ``silent`` to ``True`` to not print to REPL.
+- ``reconnect``: calls ``ctrl.reconnect()``
 
-.. py:function:: ctrl.activate(activation_string)
+.. _ctrlwrite_configfilectrl_configjson-silentfalse:
 
-   Activate CTRL with the configuration string pasted from the CTRL platform
-   (under device/provisioning).
+ctrl.write_config([file='/ctrl_config.json', silent=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   :param str activation_string: The activation configuration string.
+Writes the updated configuration to the default configuration file. The
+parameters:
+
+- ``file``: The file name and location
+- ``silent``: set ``silent`` to ``True`` to not print to REPL.
+
+.. _ctrlprint_config:
+
+ctrl.print_config()
+~~~~~~~~~~~~~~~~~~~
+
+Print the configuration settings to the REPL. This is easier to read for a
+human
+
+.. _ctrlactivateactivation_string:
+
+ctrl.activate(activation_string)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Activate ctrl with the configuration pasted from the CTRL platform (under device/provisioning)
+----------------------------------------------------------------------------------------------
 
 Connection
 ----------
 
-.. py:function:: ctrl.start([autoconnect=True])
+.. _ctrlstartautoconnecttrue:
 
-   Manually start the CTRL client.
+ctrl.start([autoconnect=True])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   :param bool autoconnect: If ``False``, the connection will not start immediately.
+This will manually start the ctrl client, with the option to set
+``autoconnect``. Setting ``autoconnect`` to ``False`` will not start the
+connection immediately.
 
-.. py:function:: ctrl.connect()
+.. _ctrlconnect:
 
-   Connect the device to CTRL following the loaded configuration file.  If you
-   are using WiFi or LTE-M and it is already available, CTRL will use the
-   existing connection.
+ctrl.connect()
+~~~~~~~~~~~~~~
 
-.. py:function:: ctrl.enable_lte(carrier, apn, [type='IP', cid=1, band=None, bands=None, mode=0, fallback=False])
+Connect the device to CTRL following the loaded configuration file. You will
+need to load a configuration file before calling this. If you are using the
+WiFi or LTE-M connection, and it is already available, CTRL will use the
+existing connection.
 
-   Enable connecting via LTE-M to CTRL.
+.. _ctrlenable_ltecarrie-apn-typeip-cid1-bandnone-bandsnone-mode0-fallbackfalse:
 
-   :param str carrier: Carrier name.
-   :param str apn: Access Point Name.
-   :param str type: PDP context type (default ``'IP'``).
-   :param int cid: Connection ID (default ``1``).
-   :param int band: Single frequency band.
-   :param list bands: List of frequency bands.
-   :param int mode: Operating mode.
-   :param bool fallback: If ``True``, add LTE-M as the last option in the network list.
+ctrl.enable_lte(carrie, apn, [type='IP', cid=1, band=None, bands=None, mode=0, fallback=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. py:function:: ctrl.enable_wifi(ssid, [password=None, fallback=False])
+Enable connecting via LTE-M connection to CTRL. Enter the paramters you would
+normally enter for an LTE connection. If fallback is True, will add LTE-M as
+the last option in the list of networks. Otherwise, it will be added as the
+first option and the device will connect via LTE-M after reset.
 
-   Enable connecting via WiFi to CTRL.
+.. _ctrlenable_wifissid-passwordnone-fallbackfalse:
 
-   :param str ssid: WiFi network SSID.
-   :param str password: WiFi password.
-   :param bool fallback: If ``True``, add WiFi as the last option in the network list.
+ctrl.enable_wifi(ssid, [password=None, fallback=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. py:function:: ctrl.connect_lte()
+Enable connecting via WiFi to CTRL. Enter the paramters you would normally
+enter for a WiFi connection. If fallback is True, will add WiFi as the last
+option in the list of networks. Otherwise, it will be added as the first option
+and the device will connect via WiFi after reset.
 
-   Manually connect to CTRL using LTE and the settings from the configuration file.
+.. _ctrlconnect_lte:
 
-.. py:function:: ctrl.connect_wifi([timeout=120])
+ctrl.connect_lte()
+~~~~~~~~~~~~~~~~~~
 
-   Manually connect to CTRL using WiFi and the settings from the configuration file.
+Manually connect to CTRL using LTE and the settings from the configuration
+file.
 
-   :param int timeout: Timeout in seconds (default ``120``).
+.. _ctrlconnect_wifitimeout120:
 
-.. py:function:: ctrl.connect_lora_otaa([timeout=120])
+ctrl.connect_wifi([timeout=120])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   Manually connect to CTRL using LoRa OTAA and the settings from the configuration file.
+Manually connect to CTRL using WiFi and the settings from the configuration
+file. The ``timeout`` option is in seconds.
 
-   :param int timeout: Timeout in seconds (default ``120``).
+.. _ctrlconnect_lora_otaatimeout120:
 
-.. py:function:: ctrl.disconnect()
+ctrl.connect_lora_otaa([timeout=120])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   Disconnect from CTRL gracefully.  Closes the MQTT connection and socket.
+Manually connect to CTRL using LoRa OTAA and the settings from the
+configuration file. The ``timeout`` option is in seconds.
 
-.. py:function:: ctrl.reconnect()
+.. _ctrldisconnect:
 
-   Calls ``ctrl.disconnect()`` followed by ``ctrl.connect()``.
+ctrl.disconnect()
+~~~~~~~~~~~~~~~~~
 
-.. py:function:: ctrl.isconnected()
+Disconnect from CTRL gracefully. Closes the MQTT connection and socket.
 
-   :returns: ``True`` if connected to CTRL, ``False`` otherwise.
+.. _ctrlreconnect:
 
-.. py:function:: ctrl.ifconfig()
+ctrl.reconnect()
+~~~~~~~~~~~~~~~~
 
-   :returns: A tuple with IP information when connected over WiFi or LTE-M.
+Calls ``ctrl.disconnect()`` followed by ``ctrl.connect()``
 
-.. py:function:: ctrl.enable_ssl()
+.. _ctrlisconnected:
 
-   Enable SSL on the CTRL connection.
+ctrl.isconnected()
+~~~~~~~~~~~~~~~~~~
 
-   .. note::
+Returns the connection status to CTRL, can be ``True`` or ``False``.
 
-      SSL might not be supported by your LTE connection.
+.. _ctrlifconfig:
 
-   .. warning::
+ctrl.ifconfig()
+~~~~~~~~~~~~~~~
 
-      SSL is not currently supported by the CTRL platform.
+Returns a tuple with IP information when connected over WiFi or LTE-M
 
-.. py:function:: ctrl.dump_ca([file='/cert/sgw-ca.pem'])
+.. _ctrlenable_ssl:
 
-   Write the CTRL ROOT CA certificate to file.  The certificate must be present
-   in the file system for the firmware to load it.
+ctrl.enable_ssl()
+~~~~~~~~~~~~~~~~~
 
-   :param str file: Path to write the certificate.
+Enable SSL on the CTRL connection
+
+   Note that SSL might not be supported by your LTE connection
+
+..
+
+   **Note that SSL is not currently supported by the CTRL platform**
+
+.. _ctrldump_cafilecertsgw-capem:
+
+ctrl.dump_ca([file='/cert/sgw-ca.pem'])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Write CTRL ROOT CA certificate to file. In order for the firmware to load the
+certificate, it needs to be present in the file system. While the firmware has
+this CA embedded, it needs to be written to the file system in order to be
+used.
+
+--------------
 
 Miscellaneous
 -------------
 
-.. py:function:: ctrl.deepsleep(ms)
+.. _ctrldeepsleepms:
 
-   Disconnect the current connection before going to deepsleep.  See
-   `machine.deepsleep() <https://docs.micropython.org/en/v1.26.1/library/machine.html#machine.deepsleep>`_
-   for more details.
+ctrl.deepsleep(ms)
+~~~~~~~~~~~~~~~~~~
 
-   :param int ms: Sleep duration in milliseconds.
+This will disconnect the current connection before going to deepsleep. See
+`machine.deepsleep() <https://docs.micropython.org/en/v1.26.1/library/machine.html#machine.deepsleep>`__
+for more details.
 
-.. py:function:: ctrl.print_cfg_msg()
+.. _ctrlprint_cfg_msg:
 
-   Print the configuration status message on the REPL.
+ctrl.print_cfg_msg()
+~~~~~~~~~~~~~~~~~~~~
 
-.. py:function:: ctrl.message_queue_len()
+This prints the configuration status message on the REPL.
 
-   :returns: The length of the message queue.
+.. _ctrlmessage_queue_len:
 
-.. py:function:: ctrl.get_network_type()
+ctrl.message_queue_len()
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-   :returns: The network type currently in use.
+Returns the length of the message queue
 
-.. py:function:: ctrl.debug(new_level, [update_nvs=True])
+.. _ctrlget_network_type:
 
-   Set the debug level.
+ctrl.get_network_type()
+~~~~~~~~~~~~~~~~~~~~~~~
 
-   :param int new_level: Debug level (0--65535).
-   :param bool update_nvs: If ``True``, preserve the setting after reset.
+Returns the network type currently in use
 
-.. py:function:: ctrl.ztp([new_status=None])
+.. _ctrldebugnew_level-update_nvstrue:
 
-   Get or set the Zero Touch Provisioning status.
+ctrl.debug(new_level, [update_nvs=True])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   :param bool new_status: ``True`` to enable ZTP on next boot, ``False`` to disable.
-   :returns: Current ZTP status when called without a parameter.
+Sets the debug level at new_level [0-65565] update_nvs will preserve the
+setting after reset
+
+.. _ctrlztpnew_statusnone:
+
+ctrl.ztp([new_status=None])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If no parameter is given, will return if ztp is currently enabled. If
+new_status is True, will enable ztp during next boot If new_status is False,
+will disable ztp during next boot and stop the current ztp activation process
+if running
+
+--------------
 
 Examples
 --------
 
-Send data continuously to the CTRL cloud:
+Example 1:
+~~~~~~~~~~
 
-.. code-block:: python
+Assuming your device has been activated with one of the provisioning tools
+available, the following code will send data regularly to the CTRL cloud:
 
+.. code:: python
+
+   # Import what is necessary to create a thread
    import time
    import math
 
+   # Send data continuously to CTRL
    while True:
-       for i in range(0, 20):
-           ctrl.send_field(1, math.sin(i / 10 * math.pi))
+       for i in range(0,20):
+           ctrl.send_field(1, math.sin(i/10*math.pi))
            print('sent field {}'.format(i))
            time.sleep(10)
 
-With an explicit timestamp:
+Optionally, you can send a timestamp:
 
-.. code-block:: python
+.. code:: python
 
+   # Import what is necessary to create a thread
    import time
    import math
 
+   # Send data continuously to CTRL
    while True:
-       for i in range(0, 20):
-           ctrl.send_field(1, math.sin(i / 10 * math.pi), time.time())
+       for i in range(0,20):
+           ctrl.send_field(1, math.sin(i/10*math.pi), time.time())
            print('sent signal {}'.format(i))
            time.sleep(10)
+
+--------------
 
 Deprecated API
 --------------
 
-.. py:function:: ctrl.send_signal(signal_number, value)
+.. _ctrlsend_signalsignal_number-value:
 
-   .. deprecated::
-      ``send_signal`` has been removed.  Use :py:func:`ctrl.send_field` instead.
+ctrl.send_signal(signal_number, value)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   **Deprecated: ``send_signal`` has been removed. Use ``send_field``
+   instead.**

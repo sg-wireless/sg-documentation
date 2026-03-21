@@ -1,90 +1,247 @@
-:mod:`ioexp` --- IO Expander (PCAL6408A)
-========================================
+IO Expander Interface (PCAL6408A)
+=================================
 
-.. module:: ioexp
-   :synopsis: 8-bit I2C GPIO expander interface
+Contents
+--------
 
-The ``ioexp`` module provides access to the PCAL6408A 8-bit I2C GPIO expander
-available on SGW3501-F1-StarterKit boards.  The device communicates via I2C
-at address ``0x20``.
+- Introduction
+- PCAL6408A Features
+- MicroPython Interface
+- Complete Example
+- C/C++ Interface
+- Hardware Connection
+- Troubleshooting
+- Register Map
 
+Introduction
+------------
+
+The IO Expander interface provides access to the PCAL6408A 8-bit I2C GPIO
+expander available on SGW3501-F1-StarterKit boards. This component extends the
+available GPIO pins and provides interrupt-capable I/O expansion.
+
+I2C Bridge Architecture
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The IO expander implementation uses MicroPython I2C Bridge architecture for
+ESP-IDF v5.4+ compatibility:
+
+- **Driver**: PCAL6408A 8-bit I2C GPIO expander
+- **Bridge**: ``mp_i2c_bridge`` component provides C interface to MicroPython
+  I2C
+- **Benefits**: Unified I2C management, modern ESP-IDF compatibility,
+  future-proof
+
+Implementation Details
+~~~~~~~~~~~~~~~~~~~~~~
+
+- **Device Address**: 0x20 (7-bit I2C address)
+- **I2C Pins**: SCL=20, SDA=21 (configurable)
+- **Frequency**: 100kHz I2C bus frequency
+- **Integration**: Uses ``ioexp_mp.c`` with I2C bridge for MicroPython builds
+
+PCAL6408A Features
+------------------
+
+- 8-bit I2C-bus GPIO with interrupt and weak pull-up
+- 5V tolerant inputs
+- Polarity inversion register
+- Low current consumption
+- Interrupt output for pin change detection
+- Compatible with standard GPIO operations
+
+MicroPython Interface
+---------------------
 
 Initialization
---------------
+~~~~~~~~~~~~~~
 
-.. function:: ioexp.init()
+.. code:: python
 
-   Initialize the IO expander.
+   import ioexp
 
+   # Initialize the IO expander
+   ioexp.init()
 
 Pin Configuration
------------------
+~~~~~~~~~~~~~~~~~
 
-.. function:: ioexp.set_direction(pin_number, direction)
+.. code:: python
 
-   Set pin direction.
+   # Set pin direction (1 = input, 0 = output)
+   ioexp.set_direction(pin_number, direction)
 
-   :param int pin_number: Pin number (0--7).
-   :param int direction: ``1`` = input, ``0`` = output.
+   # Example: Set pin 0 as output, pin 1 as input
+   ioexp.set_direction(0, 0)  # Output
+   ioexp.set_direction(1, 1)  # Input
 
-   .. code-block:: python
+Digital I/O Operations
+~~~~~~~~~~~~~~~~~~~~~~
 
-      ioexp.set_direction(0, 0)  # output
-      ioexp.set_direction(1, 1)  # input
+.. code:: python
 
+   # Write to output pin
+   ioexp.write_pin(pin_number, value)
 
-Digital I/O
------------
+   # Example: Set pin 0 high
+   ioexp.write_pin(0, 1)
 
-.. function:: ioexp.write_pin(pin_number, value)
+   # Read from input pin
+   value = ioexp.read_pin(pin_number)
 
-   Write to an output pin.
-
-   :param int pin_number: Pin number (0--7).
-   :param int value: ``0`` or ``1``.
-
-.. function:: ioexp.read_pin(pin_number)
-
-   Read an input pin.
-
-   :param int pin_number: Pin number (0--7).
-   :returns: Pin state (``0`` or ``1``).
-
+   # Example: Read pin 1 state
+   state = ioexp.read_pin(1)
+   print(f"Pin 1 state: {state}")
 
 Port Operations
+~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   # Write entire 8-bit port at once
+   ioexp.write_port(0b10101010)  # Set pins 1,3,5,7 high
+
+   # Read entire port
+   port_state = ioexp.read_port()
+   print(f"Port state: 0x{port_state:02X}")
+
+Pull-up Configuration
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   # Enable/disable weak pull-up resistors
+   ioexp.set_pullup(pin_number, enable)
+
+   # Example: Enable pull-up on pin 2
+   ioexp.set_pullup(2, 1)
+
+Polarity Inversion
+~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   # Configure polarity inversion
+   ioexp.set_polarity(pin_number, inverted)
+
+   # Example: Invert polarity on pin 3
+   ioexp.set_polarity(3, 1)
+
+Complete Example
+----------------
+
+.. code:: python
+
+   import ioexp
+   import time
+
+   # Initialize the IO expander
+   ioexp.init()
+
+   # Configure pins: 0-3 as outputs, 4-7 as inputs with pull-ups
+   for pin in range(4):
+       ioexp.set_direction(pin, 0)  # Output
+       
+   for pin in range(4, 8):
+       ioexp.set_direction(pin, 1)  # Input
+       ioexp.set_pullup(pin, 1)     # Enable pull-up
+
+   # Blink LEDs on output pins
+   while True:
+       # Set outputs high
+       for pin in range(4):
+           ioexp.write_pin(pin, 1)
+       
+       # Read and display input states
+       for pin in range(4, 8):
+           state = ioexp.read_pin(pin)
+           print(f"Input pin {pin}: {state}")
+       
+       time.sleep(0.5)
+       
+       # Set outputs low
+       for pin in range(4):
+           ioexp.write_pin(pin, 0)
+       
+       time.sleep(0.5)
+
+C/C++ Interface
 ---------------
 
-.. function:: ioexp.write_port(value)
+For native C/C++ applications, the same functionality is available through the
+header interface:
 
-   Write the entire 8-bit port at once.
+.. code:: c
 
-   :param int value: 8-bit value (e.g. ``0b10101010``).
+   #include "ioexp.h"
 
-.. function:: ioexp.read_port()
+   // Initialize
+   esp_err_t err = ioexp_init();
 
-   Read the entire port.
+   // Configure pin direction
+   ioexp_set_direction(0, IOEXP_OUTPUT);
+   ioexp_set_direction(4, IOEXP_INPUT);
 
-   :returns: 8-bit port state.
+   // Digital operations
+   ioexp_write_pin(0, 1);  // Set pin 0 high
+   int state = ioexp_read_pin(4);  // Read pin 4
 
-
-Pull-up & Polarity
+Hardware Connection
 -------------------
 
-.. function:: ioexp.set_pullup(pin_number, enable)
+The PCAL6408A is typically connected as follows on SGW3501-F1-StarterKit:
 
-   Enable or disable the internal weak pull-up resistor.
+- **VCC**: 3.3V power supply
+- **GND**: Ground
+- **SCL**: I2C clock line (GPIO 20)
+- **SDA**: I2C data line (GPIO 21)
+- **INT**: Interrupt output (optional, board-dependent)
+- **ADDR**: Address select pin (determines I2C address)
 
-.. function:: ioexp.set_polarity(pin_number, inverted)
+Troubleshooting
+---------------
 
-   Configure input polarity inversion.
+Common Issues
+~~~~~~~~~~~~~
 
+1. **I2C Communication Errors**
+
+   - Verify I2C connections (SCL, SDA, power, ground)
+   - Check I2C address (0x20 default)
+   - Ensure proper pull-up resistors on I2C lines
+
+2. **Pin State Issues**
+
+   - Verify pin direction configuration
+   - Check for polarity inversion settings
+   - Ensure proper voltage levels (5V tolerance)
+
+3. **Initialization Failures**
+
+   - Confirm device presence with I2C scan
+   - Verify power supply stability
+   - Check for I2C bus conflicts
+
+Debug Commands
+~~~~~~~~~~~~~~
+
+.. code:: python
+
+   # Test I2C communication
+   import machine
+   i2c = machine.I2C(0, scl=20, sda=21)
+   devices = i2c.scan()
+   print(f"I2C devices found: {[hex(d) for d in devices]}")
+
+   # Expected output should include 0x20 for PCAL6408A
 
 Register Map
 ------------
 
+For advanced users, the PCAL6408A register map:
+
 .. list-table::
    :header-rows: 1
-   :widths: 30 15 55
 
    * - Register
      - Address
@@ -101,10 +258,16 @@ Register Map
    * - Configuration
      - 0x03
      - Set pin direction
-   * - Pull-up Enable
+   * - Output Drive Strength
+     - 0x40
+     - Configure drive strength
+   * - Input Latch
+     - 0x42
+     - Input latch control
+   * - Pull-up/Pull-down Enable
      - 0x43
      - Pull resistor enable
-   * - Pull-up Select
+   * - Pull-up/Pull-down Select
      - 0x44
      - Pull resistor direction
    * - Interrupt Mask
@@ -113,28 +276,6 @@ Register Map
    * - Interrupt Status
      - 0x46
      - Interrupt status
-
-
-Example
--------
-
-.. code-block:: python
-
-   import ioexp, time
-
-   ioexp.init()
-
-   # pins 0-3 output, 4-7 input with pull-ups
-   for pin in range(4):
-       ioexp.set_direction(pin, 0)
-   for pin in range(4, 8):
-       ioexp.set_direction(pin, 1)
-       ioexp.set_pullup(pin, 1)
-
-   while True:
-       for pin in range(4):
-           ioexp.write_pin(pin, 1)
-       time.sleep(0.5)
-       for pin in range(4):
-           ioexp.write_pin(pin, 0)
-       time.sleep(0.5)
+   * - Output Port Configuration
+     - 0x4F
+     - Output port configuration

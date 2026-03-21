@@ -1,78 +1,176 @@
-:mod:`can` --- CAN Bus Interface
-================================
+CAN API Documentation
+=====================
 
-.. module:: can
-   :synopsis: CAN bus send/receive interface
+Contents
+--------
 
-The ``can`` module provides a CAN bus interface for sending and receiving
-CAN frames.
+- Functions
+- Example
 
+This document describes the CAN API functions
 
 Functions
 ---------
 
-.. function:: can.init([RxPin=1, TxPin=2, Baud=250000, Mode=0])
+.. _caninit:
 
-   Initialize the CAN interface.
+``can.init``
+~~~~~~~~~~~~
 
-   :param int RxPin: Receive pin number.
-   :param int TxPin: Transmit pin number.
-   :param int Baud: Baud rate.  Supported values: 25000, 50000, 100000,
-       125000, 250000, 500000, 800000, 1000000.
-   :param int Mode: CAN mode --- 0 = NORMAL, 1 = NO ACK, 2 = LISTEN_ONLY.
+Initializes the CAN interface with the specified parameters.
 
-.. function:: can.deinit()
+- **Parameters**:
 
-   Deinitialize the CAN interface.
+  - ``RxPin`` (default: 1): Receive pin number.
+  - ``TxPin`` (default: 2): Transmit pin number.
+  - ``Baud`` (default: 250000): Baud
+    rate.(25000,50000,100000,125000,250000,500000,800000,1000000).
+  - ``Mode`` (default: 0): CAN mode (e.g., 0-NORMAL, 1-NO ACK，2-LISTEN_ONLY).
 
-.. function:: can.send(flags, id, dat)
+- **Usage**: python can.init(RxPin, TxPin, Baud, Mode)
 
-   Send a CAN message.
+.. _candeinit:
 
-   :param int flags: Message flags bitfield:
+``can.deinit``
+~~~~~~~~~~~~~~
 
-      - Bit 0: Extended frame (1) / Standard frame (0)
-      - Bit 1: Remote frame (1) / Data frame (0)
-      - Bit 2: Single send (1) / Error resend (0)
-      - Bit 3: Self-receive (1) / Ignore own messages (0)
-      - Bit 4: DLC > 8 non-standard (1) / ISO 11898-1 (0)
+Deinitializes the CAN interface.
 
-   :param int id: Message identifier.
-   :param dat: Data to send (string or bytes).
+- **Usage**: python can.deinit()
 
-.. function:: can.filter(dat, single_filter)
+.. _cansend:
 
-   Set a CAN acceptance filter.
+``can.send``
+~~~~~~~~~~~~
 
-   :param dat: Filter data (8 bytes: 4-byte acceptance code + 4-byte mask).
-   :param bool single_filter: Use single filter mode.
+Sends a CAN message.
 
-.. function:: can.any()
+- **Parameters**:
 
-   Return non-zero if CAN messages are available.
+  - ``flags``: Message flags.
+  - ``id``: Message identifier.
+  - ``dat``: Data to send (string or bytes).
 
-.. function:: can.recv()
+- **Usage**: python can.send(flags, id, dat)
 
-   Receive a CAN message.
+.. _canfilter:
 
-   :returns: Bytes containing the received message.
+``can.filter``
+~~~~~~~~~~~~~~
 
+Sets a CAN filter.
+
+- **Parameters**:
+
+  - ``dat``: Filter data (string or bytes).
+  - ``single_filter``: Boolean indicating if a single filter is used.
+
+- **Usage**: python can.filter(dat, single_filter)
+
+.. _canany:
+
+``can.any``
+~~~~~~~~~~~
+
+Checks if any CAN messages are available.
+
+- **Returns**: Integer indicating the presence of messages.
+
+- **Usage**: python can.any()
+
+.. _canrecv:
+
+``can.recv``
+~~~~~~~~~~~~
+
+Receives a CAN message.
+
+- **Returns**: Bytes representing the received message.
+
+- **Usage**: python can.recv()
 
 Example
 -------
 
-.. code-block:: python
+.. code:: python
 
-   import can, time
+   from machine import Pin,UART,Timer,I2C,WDT
+   from micropython import const
+   import machine
+   import time
+   import can
+   import binascii
+   import struct
 
-   can.init(RxPin=39, TxPin=38, Baud=100000, Mode=0)
+   RxPin=39
+   TxPin=38
+   Baud=100000
+   Mode=0
 
-   # Set acceptance filter (accept all)
-   dat = (0).to_bytes(4, 'little') + (0xFFFFFFFF).to_bytes(4, 'little')
-   can.filter(dat, True)
+   SendDelay=0
+   CanSendFlags=0#Extended frame
+   CanSendId=0
+   CanSendBuf=''
+   CanRecBytes=bytes()
+   CanSendBytes=bytes()
+   T1S=0
 
-   while True:
-       if can.any():
-           data = can.recv()
-           print(data.hex(' '))
-       time.sleep(0.01)
+   def SetCanFlags(extd,rtr,ss,self_rev,dlc_non_comp):
+       global CanSendFlags
+       CanSendFlags=0
+       if extd:#0-standard frame; 1- Extended frame
+           CanSendFlags |= 0x01
+       if rtr:#0- data frame,1-Remote Frame
+           CanSendFlags |= 0x02
+       if ss:#0-Error resend; 1-Single send
+           CanSendFlags |= 0x04
+       if self_rev:#0- Do not receive messages sent by oneself, 1- Receive messages sent by oneself
+           CanSendFlags |= 0x08
+       if dlc_non_comp:#0-Data length not exceeding 8 (ISO 11898-1); 1- Data length greater than 8 (non-standard)
+           CanSendFlags |= 0x10
+       
+   def time0_irq(time0):
+       global CanSendFlags,CanSendId,SendDelay,T1S,CanRecBuf
+       if T1S<1000:
+         T1S+=1
+       else:
+         T1S=0
+       if SendDelay:
+           SendDelay-=1
+           if SendDelay==0:
+               CanSendFlags = int.from_bytes(CanRecBytes[0:4], 'little')
+               CanSendId= int.from_bytes(CanRecBytes[4:8], 'little')
+               len = CanRecBytes[8]
+               #CanSendBuf = CanRecBytes[9:9+len].decode('utf-8')
+               CanSendBytes = CanRecBytes[9:9+len]
+               #print(CanSendBuf)
+               #can.send(CanSendId,CanSendBuf)
+               can.send(CanSendFlags,CanSendId,CanSendBytes)
+               #can.send(0x123,'12345678')
+   def CanFilter(acceptance_code,acceptance_mask,single_filter):
+       dat = acceptance_code.to_bytes(4,'little')
+       dat += acceptance_mask.to_bytes(4,'little')
+       can.filter(dat,single_filter)
+
+   def setup():
+       CanFilter(0,0xffffffff,True)
+       #CanFilter(0xe00001,0x1ffffe,True)
+       #CanFilter(0xe00000,0x1fffff,False)
+       #CanFilter(0xe0,0x1f,False)
+       can.init(RxPin,TxPin,Baud,Mode)
+       time0=Timer(0)
+       time0.init(period=1,mode=Timer.PERIODIC,callback=time0_irq)
+
+   def loop():
+       global SendDelay,CanRecBuf,CanRecBytes
+       print('loop')
+       while(1):
+           if can.any():
+               CanRecBytes = can.recv();
+               print(CanRecBytes.hex(' '))
+               SendDelay=200
+
+   if __name__=="__main__":
+       setup()
+       machine.lightsleep(10)
+       loop()

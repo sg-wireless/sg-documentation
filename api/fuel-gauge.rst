@@ -1,50 +1,83 @@
-:mod:`fuel_gauge` --- Fuel Gauge (BQ27421)
-==========================================
+.. _fuel-gauge--bq27421-:
 
-.. module:: fuel_gauge
-   :synopsis: Battery fuel gauge interface
+Fuel-Gauge ( BQ27421 )
+======================
 
-The ``fuel_gauge`` module provides access to the BQ27421 fuel gauge IC
-available on boards with battery support.  It uses the MicroPython I2C Bridge
-architecture (device address ``0x55``).
+Contents
+--------
 
+- Introduction
+- Fuel-Gauge Functions
+- Battery Info Fields
+- Example
 
-Functions
----------
+Introduction
+------------
 
-.. function:: fuel_gauge.init([designCapacity_mAh=1200, minSysVoltage_mV=0, taperCurrent_mA=0])
+The Fuel-Gauge feature is supported for board shields that have the BQ27421
+fuel gauge IC on board. If present, the fuel-gauge firmware interface component
+will be activated and built with the final firmware image.
 
-   Initialize the fuel gauge with battery parameters.
+This interface component utilizes the open-source driver for this fuel gauge
+which can be found at this git repository
+https://github.com/svcguy/lib-BQ27421/tree/master
 
-   :param int designCapacity_mAh: Battery design capacity in mAh.
-   :param int minSysVoltage_mV: Minimum system operating voltage in mV.
-   :param int taperCurrent_mA: Charger taper current threshold in mA.
-   :raises OSError: If the fuel gauge cannot be initialized (e.g. no battery).
+I2C Bridge Architecture
+~~~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: fuel_gauge.deinit()
+The fuel gauge implementation uses the MicroPython I2C Bridge architecture for
+ESP-IDF v5.4+ compatibility:
 
-   Deinitialize the module.
+- **Driver**: BQ27421 fuel gauge IC communicates via I2C
+- **Device Address**: 0x55 (7-bit I2C address)
+- **Bridge**: ``mp_i2c_bridge`` component provides a C interface to MicroPython
+  I2C
+- **I2C Pins**: SCL and SDA are configurable (defaults in
+  ``fuel_gauge.config``)
+- **Frequency**: 100 kHz I2C bus frequency
 
-.. function:: fuel_gauge.info()
+Fuel-Gauge Functions
+--------------------
 
-   Read current battery information.
+- ``fuel_gauge.init()`` initializes the module with given battery parameters.
+  It accepts the following optional keyword arguments:
 
-   :returns: Named tuple with all battery parameters (see table below).
-   :raises OSError: If the module is not initialized or battery is absent.
+  .. code:: BNF
 
-.. function:: fuel_gauge.print()
+     fuel_gauge.init( designCapacity_mAh=<int>,
+                      minSysVoltage_mV=<int>,
+                      taperCurrent_mA=<int> )
 
-   Print all fuel gauge information in a human-readable format.
+  - ``designCapacity_mAh`` (int, default: 1200) - the design capacity of the
+    battery in mAh.
+  - ``minSysVoltage_mV`` (int, default: 0) - an optional system minimum
+    operating voltage in mV. Pass 0 if not specified.
+  - ``taperCurrent_mA`` (int, default: 0) - an optional taper current detection
+    threshold of the charger (including charger tolerances). The charger will
+    stop charging below this value. Pass 0 if not specified.
 
+  Raises ``OSError`` if the fuel gauge cannot be initialized (e.g. no battery
+  connected).
+
+- ``fuel_gauge.deinit()`` deinitializes the module. Before using the module
+  again it has to be re-initialized using ``fuel_gauge.init()``.
+
+- ``fuel_gauge.info()`` reads current information from the fuel gauge IC and
+  returns a named tuple with all battery parameters. See Battery Info Fields
+  for the complete list of returned fields. Raises ``OSError`` if the module is
+  not initialized or the battery is not present.
+
+- ``fuel_gauge.print()`` reads and prints all fuel gauge information in a
+  human-readable format to the console output.
 
 Battery Info Fields
 -------------------
 
-The named tuple returned by :func:`fuel_gauge.info`:
+The named tuple returned by ``fuel_gauge.info()`` contains the following
+fields:
 
 .. list-table::
    :header-rows: 1
-   :widths: 30 10 10 50
 
    * - Field
      - Type
@@ -77,49 +110,86 @@ The named tuple returned by :func:`fuel_gauge.info`:
    * - ``remainingCapacity_mAh``
      - int
      - mAh
-     - Usable capacity remaining
+     - Current usable capacity remaining
    * - ``fullChargeCapacity_mAh``
      - int
      - mAh
      - Current full charge capacity
    * - ``isCritical``
      - bool
-     - ---
+     - —
      - Battery voltage critically low
    * - ``isLow``
      - bool
-     - ---
+     - —
      - Battery voltage low
    * - ``isFull``
      - bool
-     - ---
+     - —
      - Battery fully charged
    * - ``isCharging``
      - bool
-     - ---
-     - Currently charging
+     - —
+     - Battery is currently charging
    * - ``isDischarging``
      - bool
-     - ---
-     - Currently discharging
-
+     - —
+     - Battery is currently discharging
 
 Example
 -------
 
-.. code-block:: python
+.. code:: python
 
    import fuel_gauge
 
+   # initialize with a 1500 mAh battery
    fuel_gauge.init(designCapacity_mAh=1500)
+
+   # print formatted battery status to the console
    fuel_gauge.print()
 
+Example output of ``fuel_gauge.print()``:
+
+::
+
+   Voltage               4200 mV
+   Current               62 mA
+   Temprature            30.10 degC
+   Charge State          100 %
+   Health State          91 %
+   Design Capacity       1200 mAh
+   Remaining Capacity    497 mAh
+   Full Charge Capacity  497 mAh
+   is critical           no
+   is low                no
+   is full               no
+   is charging           yes
+   is discharging        no
+
+Using ``fuel_gauge.info()`` for scripting:
+
+.. code:: python
+
+   import fuel_gauge
+
+   fuel_gauge.init()
+
    info = fuel_gauge.info()
-   print(f"Voltage: {info.voltage_mV} mV")
-   print(f"Charge:  {info.charge_percent} %")
-   print(f"Health:  {info.health_percent} %")
+
+   print(f"Battery voltage : {info.voltage_mV} mV")
+   print(f"Charge          : {info.charge_percent} %")
+   print(f"Health          : {info.health_percent} %")
+   print(f"Temperature     : {info.temp_degC} degC")
+   print(f"Remaining       : {info.remainingCapacity_mAh} mAh")
+
+   if info.isCharging:
+       print("Battery is charging")
+   elif info.isDischarging:
+       print("Battery is discharging")
 
    if info.isCritical:
        print("WARNING: Battery critically low!")
 
+   # cleanup
    fuel_gauge.deinit()

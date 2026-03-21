@@ -1,316 +1,560 @@
-:mod:`lora` --- LoRa WAN API
-============================
+LoRa WAN API Documentation
+==========================
 
-.. module:: lora
-   :noindex:
-
-This page documents the LoRa WAN mode APIs.  Switch to WAN mode with
-``lora.mode(lora._mode.WAN)`` before using these functions.
-
-.. seealso:: :doc:`lora` for initialization, :doc:`lora-raw` for RAW mode,
-   :doc:`lora-callbacks` for the event system.
-
-API Summary
------------
+Available LoRa WAN APIs Summary
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. list-table::
    :header-rows: 1
-   :widths: 40 60
 
    * - API Call
-     - Description
-   * - :func:`lora.stats`
-     - Display current LoRa WAN stats
-   * - :func:`lora.wan_params`
-     - Set regional WAN parameters
-   * - :func:`lora.commission`
-     - Set commissioning parameters
-   * - :func:`lora.join`
-     - Start the join procedure
-   * - :func:`lora.send`
-     - Transmit a LoRa WAN packet
-   * - :func:`lora.port_open`
-     - Open a LoRa WAN port
-   * - :func:`lora.port_close`
-     - Close a LoRa WAN port
-   * - :func:`lora.callback`
-     - Set a user-level callback
-   * - :func:`lora.duty_set`
-     - Set the duty-cycle timer
-   * - :func:`lora.duty_get`
-     - Get the current duty-cycle
-   * - :func:`lora.duty_start`
-     - Start duty-cycle operation
-   * - :func:`lora.duty_stop`
-     - Stop duty-cycle operation
-   * - :func:`lora.enable_rx_listening`
-     - Enable RX listening
-   * - :func:`lora.disable_rx_listening`
-     - Disable RX listening
-   * - :func:`lora.tx_airtime`
-     - Get last TX time-on-air (ms)
-   * - :func:`lora.last_rx_at`
-     - Get timestamp of last network reception
+     - Brief description
+   * - ``lora.stats()``
+     - displays the current stats of lora WAN
+   * - ``lora.wan_params()``
+     - set the lora WAN regional parameters
+   * - ``lora.commission()``
+     - set the LoRa-WAN commissioning parameters
+   * - ``lora.join()``
+     - start performing join procedure
+   * - ``lora.send()``
+     - transmit a LoRa-WAN packet
+   * - ``lora.recv()``
+     - receive a LoRa-WAN packet
+   * - ``lora.port_open()``
+     - open a lora-wan port to be able to tx/rx over it
+   * - ``lora.port_close()``
+     - close a lora-wan port, tx/rx on it will be discarded
+   * - ``lora.callback()``
+     - set a user level callback to listen to specifc events
+   * - ``lora.duty_get()``
+     - get the current duty-cycle in milliseconds
+   * - ``lora.duty_set()``
+     - set the the duty-cycle to a specific value
+   * - ``lora.duty_start()``
+     - start duty-cycle operation
+   * - ``lora.duty_stop()``
+     - stop duty-cycle operation
+   * - ``lora.enable_rx_listening()``
+     - perform class-a cycle to fetch pending DL msg
+   * - ``lora.disable_rx_listening()``
+     - if no pending UL msg, discard class-a cycle
+   * - ``lora.mode(adr=)``
+     - enable or disable Adaptive Data Rate (ADR)
+   * - ``lora.tx_airtime()``
+     - get last TX time-on-air in milliseconds
+   * - ``lora.last_rx_at()``
+     - get timestamp (ms since boot) of last network reception
+   * - ``lora.nvm_flush()``
+     - immediately flush cached NVM data to flash
+   * - ``lora.nvm_flush_interval()``
+     - get or set periodic NVM flush interval (0 = write-through)
 
+LoRa WAN Stats
+~~~~~~~~~~~~~~
 
-Stats
------
+Displays useful information about the current lora-WAN settings such as:
+enabled ``region``, current working ``class``, Device EUI ``DevEUI``, Join EUI,
+current assigned ``DevAddr`` after the joined procedure, lora-wan operating
+``version`` and the type of ``activation`` whether ``NONE``, ``OTAA``, or
+``ABP``
 
-.. function:: lora.stats()
+Example:
 
-   Display current LoRa WAN settings: region, class, DevEUI, JoinEUI,
-   DevAddr, LoRaWAN version, and activation type.
+::
 
-   .. code-block:: python
+   lora.stats()
+       # outputs
+       # - region               : EU-868
+       # - class                : class-A
+       # - dev eui              : 39 2C 39 D1 5D 3E 12 10
+       # - join eui             : EA 68 DE 1C 4B E0 20 F4
+       # - dev addr             : 01 88 DB B8
+       # - lorawan version      : val: 16778240 ( 1.0.4.0 )
+       # - activation           : OTAA
 
-      >>> lora.stats()
-          # - region               : EU-868
-          # - class                : class-A
-          # - dev eui              : 39 2C 39 D1 5D 3E 12 10
-          # - join eui             : EA 68 DE 1C 4B E0 20 F4
-          # - dev addr             : 01 88 DB B8
-          # - lorawan version      : val: 16778240 ( 1.0.4.0 )
-          # - activation           : OTAA
+Setting LoraWAN parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+To change the current operating ``region`` and forces the device to be in
+``class`` ``A``, ``B`` or ``C``
 
-WAN Parameters
---------------
+Example:
 
-.. function:: lora.wan_params(region=, lwclass=)
+.. code:: python
 
-   Change the operating region and/or force a device class.
+   lora.wan_params(region = lora._region.REGION_EU868, lwclass = lora._class.CLASS_A)
+       # sets the lora region to EU868
+       # sets the default working class to class A which is the default
 
-   :param region: One of ``lora._region.REGION_EU868``, ``REGION_US915``, etc.
-   :param lwclass: One of ``lora._class.CLASS_A``, ``CLASS_B``, ``CLASS_C``.
+Device commissioning
+~~~~~~~~~~~~~~~~~~~~
 
-   .. code-block:: python
+Commissioning a device means preparing a new lora-wan end-device, hence if the
+LoRa-Stack is prepared with previous end-device credentials, it will be cleared
+and will be configured with the new credentials as if it is a completely new
+end-device. In other words, the LoRa MAC layer state will start clean for a new
+end-device session and previous session will be cleared.
 
-      lora.wan_params(
-          region=lora._region.REGION_EU868,
-          lwclass=lora._class.CLASS_A
-      )
+If the provided credentials are same as previousely commissioned parameters,
+the commissioning will be ignored.
 
+the end-device commissioning credentials are as follows:
 
-Commissioning
--------------
+- ``version=<version>`` to specify the end-device LoRa standard. It takes one
+  of the following:
 
-.. function:: lora.commission(type=, version=, ...)
+  - ``version=lora._version.VERSION_1_0_x`` LoRa version 1.0.x
+  - ``version=lora._version.VERSION_1_1_x`` LoRa version 1.1.x
 
-   Prepare a new LoRa WAN end-device with the given credentials.  If the
-   device was previously joined, it will need to rejoin with the new
-   parameters.
+- ``type=lora._commission.OTAA`` Device will be commissioned using OTAA
+  procedure and the device shall perform the Join procedure before tx/rx with
+  the network in this activation method, the following keys shall be provided
+  along with:
 
-   **Common parameters:**
+  - ``DevEUI`` The device EUI
+  - ``JoinEUI`` The Join EUI
+  - ``AppKey`` The AppKey
+  - ``NwkKey`` The NwkKey if version 1.1.x
 
-   :param type: ``lora._commission.OTAA`` or ``lora._commission.ABP``.
-   :param version: ``lora._version.VERSION_1_0_X`` or ``VERSION_1_1_X``.
-   :param bytes DevEUI: Device EUI (8 bytes).
+- ``type=lora._commission.ABP`` The device will not perform the join procedure
+  and it will send directly an UL message. The following parameters shall be
+  provided:
 
-   **OTAA additional parameters:**
+  - ``DevEUI`` The device EUI
+  - ``DevAddr`` The device network address
+  - ``AppSKey`` The application security key
+  - ``NwkSKey`` The network security key
 
-   :param bytes JoinEUI: Join EUI (8 bytes).
-   :param bytes AppKey: Application Key (16 bytes).
-   :param bytes NwkKey: Network Key (16 bytes, v1.1.x only).
+- ``verify=True`` To check the provided parameters are same as the current
+  commissioned parameters or not without doing any commissioning processing.
 
-   **ABP additional parameters:**
+.. note::
 
-   :param int DevAddr: Device network address.
-   :param bytes AppSKey: Application session key (16 bytes).
-   :param bytes NwkSKey: Network session key (16 bytes).
+   If the device is already joined the network, after this commissioning operation the device will not be considered joined and need to rejoin again using the new provided commissioning parameters.
 
-   **Verification:**
+Example
 
-   :param bool verify: If ``True``, check whether the current commissioning
-       matches the given parameters without modifying anything.  Returns
-       ``True``/``False``.
+.. code:: python
 
-   .. code-block:: python
+   import lora
+   import ubinascii
 
-      import lora, ubinascii
+   # verify the existing commissioning
+   if lora.commission(
+       verify  = True,
+       type    = lora._commission.OTAA,
+       version = lora._version.VERSION_1_0_X,
+       DevEUI  = ubinascii.unhexlify('0000000000000000'),
+       JoinEUI = ubinascii.unhexlify('0000000000000000'),
+       AppKey  = ubinascii.unhexlify('00000000000000000000000000000000')
+       ) == True:
+       print('end-device is already commissioned')
+   else:
+       print('end-device is not commissioned')
 
-      # OTAA v1.0.x
-      lora.commission(
-          type    = lora._commission.OTAA,
-          version = lora._version.VERSION_1_0_X,
-          DevEUI  = ubinascii.unhexlify('0000000000000000'),
-          JoinEUI = ubinascii.unhexlify('0000000000000000'),
-          AppKey  = ubinascii.unhexlify('00000000000000000000000000000000')
-      )
+   # OTAA Version 1.0.x Example
+   lora.commission(
+       type    = lora._commission.OTAA,
+       version = lora._version.VERSION_1_0_X,
+       DevEUI  = ubinascii.unhexlify('0000000000000000'),
+       JoinEUI = ubinascii.unhexlify('0000000000000000'),
+       AppKey  = ubinascii.unhexlify('00000000000000000000000000000000')
+       )
 
-      # OTAA v1.1.x
-      lora.commission(
-          type    = lora._commission.OTAA,
-          version = lora._version.VERSION_1_1_X,
-          DevEUI  = ubinascii.unhexlify('0000000000000000'),
-          JoinEUI = ubinascii.unhexlify('0000000000000000'),
-          AppKey  = ubinascii.unhexlify('00000000000000000000000000000000'),
-          NwkKey  = ubinascii.unhexlify('00000000000000000000000000000000')
-      )
+   # OTAA Version 1.1.x Example
+   lora.commission(
+       type    = lora._commission.OTAA,
+       version = lora._version.VERSION_1_1_X,
+       DevEUI  = ubinascii.unhexlify('0000000000000000'),
+       JoinEUI = ubinascii.unhexlify('0000000000000000'),
+       AppKey  = ubinascii.unhexlify('00000000000000000000000000000000'),
+       NwkKey  = ubinascii.unhexlify('00000000000000000000000000000000')
+       )
 
-      # ABP v1.0.x
-      lora.commission(
-          type    = lora._commission.ABP,
-          version = lora._version.VERSION_1_0_X,
-          DevAddr = 0x00000000,
-          DevEUI  = ubinascii.unhexlify('0000000000000000'),
-          AppSKey = ubinascii.unhexlify('00000000000000000000000000000000'),
-          NwkSKey = ubinascii.unhexlify('00000000000000000000000000000000')
-      )
+   # ABP Version 1.0.x Example
+   lora.commission(
+       type    = lora._commission.ABP,
+       version = lora._version.VERSION_1_0_X,
+       DevAddr = 0x00000000,
+       DevEUI  = ubinascii.unhexlify('0000000000000000'),
+       AppSKey = ubinascii.unhexlify('00000000000000000000000000000000'),
+       NwkSKey = ubinascii.unhexlify('00000000000000000000000000000000')
+       )
 
+   # ABP Version 1.1.x Example
+   lora.commission(
+       type    = lora._commission.ABP,
+       version = lora._version.VERSION_1_1_X,
+       DevAddr = 0x00000000,
+       DevEUI  = ubinascii.unhexlify('0000000000000000'),
+       AppSKey = ubinascii.unhexlify('00000000000000000000000000000000'),
+       NwkSKey = ubinascii.unhexlify('00000000000000000000000000000000')
+       )
 
 Join
-----
+~~~~
 
-.. function:: lora.join()
+Mandatory operation to let the device join the network and be able to TX/RX
+with the lora-WAN server. In case of ABP activation, the end-device is
+considered joined after commissioning and join here will not have any effect.
 
-   Start the LoRa WAN join procedure.  For ABP activation the device is
-   considered joined after commissioning and this call has no effect.
+Example:
 
-.. function:: lora.is_joined()
+.. code:: python
 
-   Return ``True`` if the device has joined the network.
+   import lora
+   import time
 
-   .. code-block:: python
+   # start join procedure
+   lora.join()
 
-      import lora, time
+   # wait until join
+   while lora.is_joined() == False:
+       time.sleep(2)
+       pass
 
-      lora.join()
-      while not lora.is_joined():
-          time.sleep(2)
+Sending data
+~~~~~~~~~~~~
 
+The successfully joined device is capable to tx/rx with the LoRaWAN server. To
+start tx/rx operation, the user shall open a port first using the
+``lora.port_open()`` first, otherwise, no tx/rx operation will be performed.
 
-Sending & Receiving Data
-------------------------
+To plan an UL message. It takes the following parameters:
 
-.. function:: lora.send(message, [confirm=False, port=1, retries=0, timeout=0, sync=False, id=0])
+- ``message`` the message buffer to be sent, can be a normal string or byte
+  array
+- optional arguments:
 
-   Plan an uplink message for transmission.
+.. list-table::
+   :header-rows: 1
 
-   :param message: Data buffer (string or bytes).
-   :param bool confirm: Request ACK from the network server.
-   :param int port: LoRa WAN port (1--223).
-   :param int retries: Number of retry attempts.
-   :param int timeout: Deadline in milliseconds (0 = no timeout).
-   :param bool sync: Block until success/failure/timeout.
-   :param int id: User-defined message ID returned in the callback.
+   * - parameter-name
+     - value-type
+     - default-value
+     - desc
+   * - ``confirm``
+     - bool
+     - False
+     - To receive an ack from network server upon its reception
+   * - ``port``
+     - int
+     - 1
+     - on which lora-wan port to send this message
+   * - ``retries``
+     - int
+     - 0
+     - number of retried until the UL tx succeeded
+   * - ``timeout``
+     - int
+     - ``no-timeout``
+     - time-out in ms to perform the full UL operation
+   * - ``sync``
+     - int
+     - False
+     - block until timeout or operation success/failure
+   * - ``id``
+     - int
+     - 0
+     - user defined message id to be returned in the callback
 
-   .. code-block:: python
+Example:
 
-      lora.send('hello')
-      lora.send('hello', timeout=20000, retries=2, confirm=True, sync=True)
+.. code:: python
 
+   # send an asynchronous UL message, with id=0, and without confirmation, no
+   # retries upon tx failure, and no specified timeout which means the message will
+   # be scheduled for UL in its turn within the pending UL messages until the
+   # duty-cycle tx operation fetches it and send it.
+   lora.send('ul tx message')
+
+   # send a message like before message, but if timeout of 3 seconds passed,
+   # drop the message and don't send it
+   lora.send('ul tx message', timeout=3000)
+
+   # repeat the transmission for upto 2 times, the full operation timeout including
+   # the retries attempts is 20 seconds
+   lora.send('ul tx message', timeout=20000, retries=2)
+
+   # same as before message but wait for confirmation as well from the network
+   # server
+   lora.send('ul tx message', timeout=20000, retries=2, confirm=True)
+
+   # same as the previous message, but the caller will be blocked until timeout,
+   # or message is successfully sent and acked
+   lora.send('ul tx message', timeout=20000, retries=2, confirm=True, sync=True)
+
+Receiving Data
+~~~~~~~~~~~~~~
+
+The received data will come in the callback only
 
 LoRa Ports
-----------
+~~~~~~~~~~
 
-.. function:: lora.port_open(port)
+LoRa WAN sends/receives data over what is called ``ports``, valid application
+ports are from ``1`` to ``223``.
 
-   Open a LoRa WAN port.  Valid application ports are 1--223.
-   A port must be opened before sending or receiving data on it.
+   A port must be opened first before sending and receiving data.
 
-.. function:: lora.port_close(port)
+Example:
 
-   Close a previously opened port.
+.. code:: python
 
-   .. code-block:: python
+   # opening port 1
+   lora.port_open(1)   # data can be tx/rx over port 1
 
-      lora.port_open(1)
-      lora.send('data', port=1)
-      lora.port_close(1)
+   lora.send('data', port=5)    # ignored because port 5 is not opened
+   lora.send('data', port=1)    # will be planned successfully for UL
 
+   # opening port 1
+   lora.port_open(5)   # data can be tx/rx over port 5
+   lora.send('data', port=5)    # now it will be planned successfully
 
-Callbacks
----------
+   lora.port_close(1)  # no tx/rx more over this port
+   lora.port_close(5)  # no tx/rx more over this port
 
-.. function:: lora.callback(handler=, [trigger=, port=])
+.. _callbacks-loracallback:
 
-   Register a callback for LoRa WAN events.
+Callbacks ``lora.callback()``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   See :doc:`lora-callbacks` for full documentation and examples.
+It can set a user lever callback and it takes the following parameters:
 
+- 'handler' a callbeack function to be called.
+- 'trigger' an OR combination of the required events that can trigger to this
+  callback.
+- 'port' a special port of the incoming messages events (default ``any``)
 
-Duty Cycle
-----------
+Example:
 
-.. function:: lora.duty_set(ms)
+.. code:: python
 
-   Set the duty-cycle timer in milliseconds.
+   def lora_callback(context):
+       def get_class_const_name(__class, __const):
+           for k,v in __class.__dict__.items():
+               if v == __const:
+                   return k
+           return 'unknown'
+       print('lora event: {} with-context: {}'.format(
+           get_class_const_name(lora._event, context['event']), context))
+       pass
 
-.. function:: lora.duty_get()
+   lora.callback( handler = lora_callback )
 
-   Return the current duty-cycle timer value.
+..
 
-.. function:: lora.duty_start()
+   **NOTE**: Refer to the comprehensive documentation on the LoRa-Callback
+   system for more details `here <lora-callback.md>`__.
 
-   Start duty-cycle operation.
+Duty cycle operations
+~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: lora.duty_stop()
+The device is normally working in class-A and the device shall follow a
+duty-cycle to perform an UL/DL operation. This duty cycle should be regulated
+to respect the time-on-air for this device.
 
-   Stop duty-cycle operation.
+The available operation are ``duty_set()``, ``duty_get()``, ``duty_start()``,
+``duty_stop()``
 
-   .. code-block:: python
+Example
 
-      lora.duty_set(15000)   # every 15 seconds
-      lora.duty_start()
+.. code:: python
 
+   lora.duty_set(15000)    # sets the duty cycle timer to 15 seconds
+                           # which means that every 15 seconds the device will check
+                           # if TX pending and send it, and listen in the RX window
+                           # to any scheduled DL message for this device
 
-RX Listening
-------------
+   lora.duty_get()         # retrieve the current duty cycle time
 
-.. function:: lora.enable_rx_listening()
+   lora.duty_start()       # start duty cycle operation
 
-   Enable RX listening.  The device sends a dummy uplink when no pending
-   TX exists so the server can schedule a downlink.
+   lora.duty_stop()        # stop duty cycle operation
 
-.. function:: lora.disable_rx_listening()
+RX listening
+~~~~~~~~~~~~
 
-   Disable RX listening (default).
+RX listening means that the device will send a dummy UL message in case no
+pending TX message is pending, so that the server will plan an RX window for
+this device and hence the device can receive any pending DL message.
 
+the default behaviour is that the RX listening is **disabled**
+
+Example
+
+.. code:: python
+
+   lora.enable_rx_listening()      # enable listening
+
+   lora.disable_rx_listening()     # disable listening
+                                   # the device will listen only when there is a
+                                   # real planned UL TX message.
 
 Adaptive Data Rate (ADR)
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-ADR allows the network server to optimise data rate and TX power.
-It is **enabled by default** when switching to WAN mode.
+Adaptive Data Rate allows the LoRaWAN network server to optimise each device's
+data rate and transmission power based on the observed link quality. ADR is
+**enabled by default** when switching to WAN mode.
 
-.. code-block:: python
+Disable ADR when the device is mobile or the RF environment is expected to vary
+frequently, so the network server does not lock the device to a data rate that
+may become unsuitable.
 
-   lora.mode(lora._mode.WAN, adr=False)   # disable ADR
-   lora.mode(lora._mode.WAN, adr=True)    # re-enable
+The ``adr`` keyword argument is accepted by ``lora.mode()`` when switching to
+WAN mode, and can also be changed at any time while the stack is running.
 
+Example:
 
-TX Airtime
-----------
+.. code:: python
 
-.. function:: lora.tx_airtime()
+   import lora
 
-   Return the time-on-air in milliseconds of the most recently transmitted
-   packet.  Returns ``0`` until the first packet has been sent.
+   # switch to WAN mode with ADR disabled from the start
+   lora.mode(lora._mode.WAN, adr=False)
 
-   .. code-block:: python
+   # re-enable ADR later (e.g. once the device is stationary)
+   lora.mode(lora._mode.WAN, adr=True)
 
-      lora.send('hello')
-      airtime_ms = lora.tx_airtime()
-      min_off = airtime_ms * 99       # 1% duty-cycle guard
-      time.sleep_ms(min_off)
+.. _tx-airtime--loratx_airtime:
 
+TX Airtime — ``lora.tx_airtime()``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Last RX Timestamp
------------------
+Returns the time-on-air (in milliseconds) of the most recently transmitted
+LoRaWAN packet. The value is updated immediately after each successful
+transmission, before the RX windows open.
 
-.. function:: lora.last_rx_at()
+The returned value is ``0`` until the first packet has been sent in the current
+session.
 
-   Return the monotonic millisecond timestamp (``utime.ticks_ms()``
-   compatible) of the most recent downlink frame.  Returns ``0`` until
-   the first downlink has been received.
+This is useful for duty-cycle management: by knowing the exact airtime of the
+last frame you can compute the minimum off-time required by regional
+regulations before the next transmission.
 
-   Updated on application downlinks, MAC-only downlinks, and uplink ACKs.
+Example:
 
-   .. code-block:: python
+.. code:: python
 
-      import utime
-      TIMEOUT = 10 * 60 * 1000  # 10 minutes
+   import lora
+   import time
 
-      last = lora.last_rx_at()
-      if last and utime.ticks_diff(utime.ticks_ms(), last) > TIMEOUT:
-          print('no network contact — triggering rejoin')
+   lora.send('hello')
+
+   # after the send callback fires:
+   airtime_ms = lora.tx_airtime()
+   print('last TX airtime: {} ms'.format(airtime_ms))
+
+   # simple 1%-duty-cycle guard (EU868 default sub-band)
+   min_off_time_ms = airtime_ms * 99
+   time.sleep_ms(min_off_time_ms)
+
+.. _last-network-rx-timestamp--loralast_rx_at:
+
+Last Network RX Timestamp — ``lora.last_rx_at()``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Returns the value of the monotonic millisecond timer (``utime.ticks_ms()``
+compatible) at the moment the most recent downlink frame was received from the
+network.
+
+The timestamp is updated on:
+
+- Any application-layer downlink (port 1–223)
+- Any MAC-only downlink (port 0 / network commands)
+- An uplink ACK (``AckReceived``) returned by the network server in response to
+  a confirmed uplink
+
+The returned value is ``0`` until the first downlink (or ACK) has been received
+in the current session.
+
+This is useful for implementing a network-connectivity watchdog: if
+``utime.ticks_diff(utime.ticks_ms(), lora.last_rx_at())`` exceeds a threshold,
+the device can decide to re-join or perform a reset.
+
+Example:
+
+.. code:: python
+
+   import lora
+   import utime
+
+   WATCHDOG_TIMEOUT_MS = 10 * 60 * 1000   # 10 minutes without any network contact
+
+   def check_network_health():
+       last_rx = lora.last_rx_at()
+       if last_rx == 0:
+           print('no downlink received yet')
+           return False
+       elapsed = utime.ticks_diff(utime.ticks_ms(), last_rx)
+       if elapsed > WATCHDOG_TIMEOUT_MS:
+           print('no network contact for {} ms — triggering rejoin'.format(elapsed))
+           return False
+       return True
+
+NVM Cache Management
+~~~~~~~~~~~~~~~~~~~~
+
+The LoRa stack maintains an in-memory write-back cache of the LoRaWAN MAC state
+(session keys, frame counters, region parameters, etc.). By default the cache
+is flushed to flash every **60 seconds** via a periodic timer. This
+dramatically reduces flash wear compared to writing on every MAC state change
+while still ensuring reasonable persistence.
+
+Both ``machine.deepsleep()`` and ``machine.lightsleep()`` automatically flush
+the cache before the CPU halts, so no data is lost on sleep transitions.
+
+.. _loranvm_flush:
+
+``lora.nvm_flush()``
+^^^^^^^^^^^^^^^^^^^^
+
+Immediately writes any dirty (modified) NVM data to flash storage, regardless
+of the periodic timer. Call this before any operation where you want to
+guarantee that the latest MAC state has been persisted — for example before a
+controlled reboot.
+
+.. _loranvm_flush_interval:
+
+``lora.nvm_flush_interval()``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Getter / setter for the periodic flush interval, in **seconds**.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Call
+     - Effect
+   * - ``lora.nvm_flush_interval()``
+     - Returns the current interval (default ``60``)
+   * - ``lora.nvm_flush_interval(n)``
+     - Sets interval to ``n`` seconds and restarts the timer
+   * - ``lora.nvm_flush_interval(0)``
+     - Disables the cache: every MAC state change is written to flash
+       immediately (write-through mode)
+
+Setting the interval to ``0`` is useful during development or one-off
+commissioning scripts where flash lifetime is not a concern and you want
+immediate persistence. For production use a value of **30–120 seconds** is
+recommended.
+
+Example:
+
+.. code:: python
+
+   import lora
+
+   # query and print the current interval
+   print('flush interval: {} s'.format(lora.nvm_flush_interval()))
+
+   # increase to 2 minutes to reduce flash wear
+   lora.nvm_flush_interval(120)
+
+   # force an immediate flush before a controlled reboot
+   lora.nvm_flush()
+
+   # disable caching entirely (write-through mode)
+   lora.nvm_flush_interval(0)
