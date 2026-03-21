@@ -62,7 +62,7 @@ html_css_files = ["custom.css"]
 html_context = {
     "display_github": True,
     "github_user": "sg-wireless",
-    "github_repo": "sg-docs",
+    "github_repo": "sg-documentation",
     "github_version": "main",
     "conf_py_path": "/",
 }

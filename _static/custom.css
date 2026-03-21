@@ -177,6 +177,10 @@
 /* =========================================================================
    PUSH PAGE CONTENT BELOW FIXED HEADER
    ========================================================================= */
+html {
+    scroll-padding-top: calc(var(--sgw-header-height) + 1rem);
+}
+
 body.wy-body-for-nav {
     padding-top: var(--sgw-header-height);
 }
