@@ -51,11 +51,12 @@ for TAG in "${TAGS[@]}"; do
     # Export the full tree at that tag into a temp directory
     git -C "$SRCDIR" archive "$TAG" | tar -x -C "$WORKDIR"
 
-    # Copy templates and static that live on the current branch
-    # (so the version flyout is always up-to-date)
+    # Copy templates, static, config, and homepage from the current branch
+    # (so the version flyout and homepage are always up-to-date)
     cp -r "$SRCDIR/_templates" "$WORKDIR/_templates"
     cp -r "$SRCDIR/_static" "$WORKDIR/_static"
     cp "$SRCDIR/conf.py" "$WORKDIR/conf.py"
+    cp "$SRCDIR/index.rst" "$WORKDIR/index.rst"
 
     SGW_CURRENT_VERSION="$TAG" \
     SGW_ALL_VERSIONS="$ALL_JSON" \
