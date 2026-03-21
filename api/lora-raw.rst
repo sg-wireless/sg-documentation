@@ -1,203 +1,349 @@
-:mod:`lora` --- LoRa RAW API
-============================
-
-.. module:: lora
-   :noindex:
-
-This page documents the LoRa RAW mode APIs.  Switch to RAW mode with
-``lora.mode(lora._mode.RAW)`` before using these functions.
-
-.. seealso:: :doc:`lora` for initialization, :doc:`lora-wan` for WAN mode,
-   :doc:`lora-callbacks` for the event system.
-
-API Summary
------------
-
-.. list-table::
-   :header-rows: 1
-   :widths: 40 60
-
-   * - API Call
-     - Description
-   * - :func:`lora.stats`
-     - Display current RAW radio settings
-   * - :func:`lora.radio_params`
-     - Set one or more radio parameters
-   * - :func:`lora.callback`
-     - Set a user-level callback
-   * - :func:`lora.send`
-     - Transmit data over LoRa
-   * - :func:`lora.recv`
-     - Open a timed RX window
-   * - :func:`lora.recv_cont_start`
-     - Enter continuous RX mode
-   * - :func:`lora.recv_cont_stop`
-     - Exit continuous RX mode
-   * - :func:`lora.tx_continuous_wave_start`
-     - Start TX continuous wave test
-   * - :func:`lora.tx_continuous_wave_stop`
-     - Stop TX continuous wave test
-
-
-RAW Settings
-------------
-
-.. function:: lora.stats()
-
-   Display full radio settings: region, frequency, modulation (SF, BW,
-   coding rate), packet parameters, transceiver info, and TX/RX params.
-
-   .. code-block:: text
-
-      >>> lora.stats()
-          regional params
-              region         : EU868
-              frequency      : 868000000 Hz
-          modulation params
-              sf             : 12
-              bandwidth      : 125 KHz
-              coding_rate    : 4_7
-          tx params
-              tx_power       : +10 dBm
-              antenna_gain   : +1.00 dBi
-              tx_power_eff   : +9 dBm
-          rx params
-              rx_timeout     : 6000 msec
-
-
-Radio Parameters
-----------------
-
-.. function:: lora.radio_params(**kwargs)
-
-   Modify one or more radio parameters.
-
-   :param region: Region value (e.g. ``lora._region.REGION_EU868``).
-   :param int frequency: Frequency in Hz.
-   :param float freq_khz: Frequency in kHz.
-   :param float freq_mhz: Frequency in MHz.
-   :param int tx_power: Desired TX power in dBm.
-   :param float antenna_gain: Antenna gain in dBi.
-   :param int sf: Spreading factor (7--12).
-   :param bandwidth: Bandwidth (``lora._bw.BW_125KHZ``, ``BW_250KHZ``, ``BW_500KHZ``).
-   :param coding_rate: Coding rate (``lora._cr.CODING_4_5`` through ``CODING_4_8``).
-   :param int preamble: Preamble length.
-   :param bool tx_iq: Inverted IQ polarity.
-   :param bool reset_all: Reset all parameters to region defaults.
-
-   .. note::
-
-      Changing the region resets all radio parameters to the new region's
-      defaults.  If multiple frequency parameters are given, ``frequency``
-      has the highest priority, ``freq_mhz`` the lowest.
-
-   .. code-block:: python
-
-      # Change region
-      lora.radio_params(region=lora._region.REGION_EU433)
-
-      # Set frequency and modulation
-      lora.radio_params(freq_mhz=433.3, sf=8,
-                        bandwidth=lora._bw.BW_250KHZ,
-                        coding_rate=lora._cr.CODING_4_6)
-
-      # Reset to defaults
-      lora.radio_params(reset_all=True)
-
-   **Class constants:**
-
-   .. code-block:: python
-
-      lora._bw.BW_125KHZ / BW_250KHZ / BW_500KHZ
-      lora._cr.CODING_4_5 / CODING_4_6 / CODING_4_7 / CODING_4_8
-      lora._region.REGION_EU868 / REGION_US915 / ...
-
-
-Callback
---------
-
-.. function:: lora.callback(handler=, [trigger=])
-   :no-index:
-
-   Register a callback for RAW mode events.
-
-   See :doc:`lora-callbacks` for full documentation.
-
-   .. code-block:: python
-
-      def lora_callback(context):
-          print('event:', context)
-
-      lora.callback(handler=lora_callback)
-
-
-Sending Data
-------------
-
-.. function:: lora.send(message, [timeout=, sync=False])
-
-   Transmit data.
-
-   :param message: Data buffer (string or bytes).
-   :param int timeout: TX operation deadline in ms (default: radio
-       ``tx_timeout``).
-   :param bool sync: If ``True``, block until TX completes or times out.
-
-   .. code-block:: python
-
-      lora.send("test message")
-      lora.send("test message", timeout=1000, sync=True)
-
-
-Receiving Data
---------------
-
-.. function:: lora.recv([timeout=, sync=True])
-
-   Open a receive window.
-
-   :param int timeout: RX window time in ms (default: radio ``rx_timeout``).
-   :param bool sync: If ``True`` (default), block and return the received
-       message.  If ``False``, deliver via callback.
-
-   .. code-block:: python
-
-      msg = lora.recv()                 # blocking
-      lora.recv(timeout=3000, sync=False)  # async — result in callback
-
-
-Continuous RX Mode
-------------------
-
-.. function:: lora.recv_cont_start()
-
-   Enter continuous reception mode.  Received data is delivered via
-   the registered callback.
-
-.. function:: lora.recv_cont_stop()
-
-   Exit continuous reception mode.
-
-
-Continuous TX Wave
-------------------
-
-.. function:: lora.tx_continuous_wave_start(tx_power=, [frequency=868000000, timeout=10000])
-
-   Start TX continuous wave mode for testing.
-
-   :param int tx_power: TX power in dBm.
-   :param int frequency: Test frequency in Hz.
-   :param int timeout: Timeout in ms (default 10 seconds).
-
-   .. warning:: Any in-progress send/receive operation will be cancelled.
-
-.. function:: lora.tx_continuous_wave_stop()
-
-   Stop TX continuous wave mode.
-
-   .. code-block:: python
-
-      lora.tx_continuous_wave_start(tx_power=20, frequency=433000000, timeout=20000)
-      # ... after testing:
-      lora.tx_continuous_wave_stop()
+LoRa RAW API Documentation
+==========================
+
+Available LoRa RAW APIs Summary
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
++---------------------------------+-----------------------------------------------------------+
+| API Call                        | Brief description                                         |
++=================================+===========================================================+
+| lora.stats()                    | displays the current stats of lora RAW                    |
++---------------------------------+-----------------------------------------------------------+
+| lora.radio_params()             | set one or more radio parameter                           |
++---------------------------------+-----------------------------------------------------------+
+| lora.callback()                 | set a user level callback                                 |
++---------------------------------+-----------------------------------------------------------+
+| lora.send()                     | transmit a given data over LoRa                           |
++---------------------------------+-----------------------------------------------------------+
+| lora.recv()                     | open a timed-out rx window to listen to any incoming data |
++---------------------------------+-----------------------------------------------------------+
+| lora.recv_cont_start()          | switch to continuous rx mode                              |
++---------------------------------+-----------------------------------------------------------+
+| lora.recv_cont_stop()           | close the continuous rx mode                              |
++---------------------------------+-----------------------------------------------------------+
+| lora.tx_continuous_wave_start() | start tx continuous wave operation                        |
++---------------------------------+-----------------------------------------------------------+
+| lora.tx_continuous_wave_stop()  | stops tx continuous wave operation                        |
++---------------------------------+-----------------------------------------------------------+
+
+LoRa Raw Settings
+~~~~~~~~~~~~~~~~~
+
+To display the current settings of the lora RAW, use lora.stats(), Then you will experience something like this:
+
+.. code-block:: python
+
+   >>> lora.stats()
+       regional params
+           region         : EU-868
+           frequency      : 868000000 Hz
+           freq_khz       : 868000.000 KHz
+           freq_mhz       : 868.000 MHz
+       modulation params
+           sf             : 12
+           bandwidth      : 125 KHz
+           coding_rate    : 4_7
+       packet params
+           preamble       : 8
+           payload        : 51
+           crc_on         : False
+       lora tranceiver
+           chip           : SX1262
+           max tx_power   : +22 dBm
+       tx params
+           tx_power       : +10 dBm
+           antenna_gain   : +1.00 dBi
+           tx_power_eff   : +9 dBm
+           tx_timeout     : 6000 msec
+           tx_iq          : False
+       rx params
+           rx_timeout     : 6000 msec
+           rx_iq          : False
+
+Here is the meaning of each displayed parameter:
+
+regional params: The parameters corresponding to the current region
+
+region: The region in which the device will operate. frequency, freq_khz or freq_mhz: The required frequency in Hz, KHz or MHz respectively.
+
+modulation params: The current modulation parameters which are; spreading-factor sf, bandwidth and coding_rate
+
+packet params: parameters related to the packet data constraints such as preamble length, current maximum payload size, and if the crc_on is applied to the payload or not
+
+lora tranceiver: shows the current info about the current used tranceiver such as the chip used and the maximum tx_power it can produce.
+
+tx params: the current tx settings;
+
+the current desired tx_power including the antenna gain the antenna_gain; should be set according to the current HW prescribed antenna gain to be taken into consideration while determining the chip output tx power the tx_power_eff which is the actual effective chip output power after subtracting the antenna gain from the desired tx_power tx_timeout the time-out of sending a message; it should be sufficient enough according to the time on air required for the current modulation parameters. tx_iq indicates whether inverted IQ polarity feature is enabled or not
+
+rx params: the current rx settings;
+
+rx_timeout the rx window time in non continuous reception rx_iq indicates whether inverted IQ polarity feature is enabled or not
+
+To reset all parameters to the region defaults, provide reset_all flag like:
+
+.. code-block:: python
+
+   lora.radio_params(reset_all=True)
+
+Modifying Radio Parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To change any radio parameter, use lora.radio_params() which takes its parameters as in the following BNF formatted description:
+
+.. code-block:: text
+
+    ::=
+           "lora.radio_params("    ")"
+   
+    ::=
+           "," 
+           | 
+           | ""
+   
+    ::=
+       reset_all   "="             ; reset to factory settings
+       | region      "="           ; change the region
+       | frequency   "="       ; desired freq in Hz
+       | freq_khz    "="      ; desired freq in KHz
+       | freq_mhz    "="      ; desired freq in MHz
+       | tx_power    "="       ; desired tx power
+       | sf          "="               ; spreading factor
+       | coding_rate "="               ; coding rate
+       | preamble    "="          ; preamble length
+       | bandwidth   "="               ; band-width
+       | tx_iq       "="             ; inverted IQ feature
+   
+    ::= "True" | "False"
+   
+    ::= "lora._region." 
+    ::= 
+       "REGION_AS923" | "REGION_AU915" | "REGION_EU868" | "REGION_IN865" | "REGION_KR920"
+       | "REGION_RU864" | "REGION_US915"
+   
+    ::= 
+    ::= 
+    ::= 
+   
+    ::= "7" | "8" | "9" | "10" | "11" | "12"
+   
+    ::= "lora._bw." 
+    ::= "BW_125KHZ" | "BW_250KHZ" | "BW_500KHZ"
+   
+    ::= "lora._cr." 
+    ::= "CODING_4_5" | "CODING_4_6" | "CODING_4_7" | "CODING_4_8"
+
+Examples:
+
+.. code-block:: python
+
+   # set the tx power to 5 dBm
+   lora.radio_params(tx_power=5)
+   lora.stats()
+       #    tx_power       : +5 dBm        --> desired tx-power
+       #    antenna_gain   : +2.15 dBi     --> current set antenna-gain
+       #    tx_power_eff   : +2 dBm        --> actual effective lora chip output power
+   lora.radio_params(antenna_gain=1)       # the effective power will change accordingly
+   lora.stats()
+       #    tx_power       : +5 dBm        --> desired tx-power
+       #    antenna_gain   : +1.00 dBi     --> current set antenna-gain
+       #    tx_power_eff   : +4 dBm        --> actual effective lora chip output power
+   
+   # setting out of region valid tx power will be regicted for saftey
+   lora.radio_params(tx_power=45)
+       # error: invalid chip power +45 dBm -- chip SX1262 tx power range ( -8 ~ +23 ) dBm considering antenna gain 1.00 dBi
+       # error: invalid tx-power 45 
+   
+   # setting spreading factor to 8 and BW to 250 and coding rate to 4/6
+   lora.radio_params(sf = 8, bandwidth = lora._bw.BW_250KHZ, coding_rate = lora._cr.CODING_4_6)
+       # modulation params
+       #     sf             : 8
+       #     bandwidth      : 250
+       #     coding_rate    : 4_6
+   
+   # setting wrong values will be regected and the whole parameters will be ignored
+   lora.radio_params(bandwidth=9, tx_power=44, sf=90) # gived the following reported errors
+   error: invalid chip power +44 dBm -- chip SX1262 tx power range ( -7 ~ +24 ) dBm considering antenna gain 2.15 dBi
+   error: invalid argument value 'tx_power'
+   error: invalid argument value 'sf'
+   error: invalid argument value 'bandwidth'
+
+.. note::
+
+   Changing the region, will reset the entire radio parameters to the defaults of this new region
+
+.. note::
+
+   The lora interface provides some class constants for some radio parameters:
+
+lora._bw: contains all supported band width values
+
+lora._cr: contains all supported coding rate values
+
+lora._region: contains all supported regions values
+
+.. code-block:: python
+
+   # Example
+   # you can see the allowed values constans, by pressing the class names
+   # followed by double 
+   
+   >>> lora._bw.       # press   to see the following list
+   BW_125KHZ       BW_250KHZ       BW_500KHZ
+   
+   >>> lora._cr.       # press   to see the following list
+   CODING_4_5      CODING_4_6      CODING_4_7      CODING_4_8
+   
+   >>> lora._region.   # press   to see the following list
+   REGION_AS923    REGION_AU915    REGION_EU868    REGION_IN865    REGION_KR920
+   REGION_RU864    REGION_US915
+
+.. note::
+
+   To change the frequency value, it can be done through one of these parameters (frequency, freq_khz or freq_mhz), however it is possible to specify one or more of those parameters. Hence in that case, the specified parameters will be considered in a priority fashion. frequency parameter has highest consideration priority and freq_mhz has lowest consideration priority.
+
+.. code-block:: python
+
+   # consider the current radio frequency parameter is 868.000 MHz
+   
+   >>> lora.radio_params(frequency=868000000, freq_mhz=868.3)
+   # the specified `frequency` parameter will be considered first, but because
+   # it has the same value of the current frequency, it will be bypassed,
+   # then the next specified `freq_mhz` parameter will be considered, and
+   # the radio frequency will be changed accordingly.
+   # --> hence the current radio frequency parameter becomes 868.300 MHz
+   
+   >>> lora.radio_params(freq_mhz=868.3, frequency=868000000)
+   # the highest priority parameter `frequency` will be considered first.
+   # and because it holds newer value than the current radio frequency, the 
+   # radio frequency will be modified accordingly.
+   # --> hence the current radio frequency parameter becomes 868.000 MHz
+   # --> and the next specified `freq_mhz` parameter is neglicted
+
+Setting LoRa RAW user Callback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To set a user level callback to listen the RX events, see the following example to know the available events that can come in the callback
+
+Example:
+
+.. code-block:: python
+
+   def get_event_str(event, bytes):
+       if event == lora._event.EVENT_TX_CONFIRM:
+           return 'EVENT_TX_CONFIRM'
+       elif event == lora._event.EVENT_TX_DONE:
+           return 'EVENT_TX_DONE'
+       elif event == lora._event.EVENT_TX_TIMEOUT:
+           return 'EVENT_TX_TIMEOUT'
+       elif event == lora._event.EVENT_TX_FAILED:
+           return 'EVENT_TX_FAILED'
+       elif event == lora._event.EVENT_TX_CONFIRM:
+           return 'EVENT_TX_CONFIRM'
+       elif event == lora._event.EVENT_RX_DONE:
+           return 'EVENT_RX_DONE'
+       elif event == lora._event.EVENT_RX_TIMEOUT:
+           return 'EVENT_RX_TIMEOUT'
+       elif event == lora._event.EVENT_RX_FAIL:
+           return 'EVENT_RX_FAIL'
+       else:
+           return 'UNKNOWN'
+       pass
+   
+   def lora_callback(event, evt_data):
+       print('lora event [ {} ] --> data: {}'
+           .format(get_event_str(event), evt_data))
+   
+   lora.callback( handler = lora_callback )
+
+Send (TX) Data
+~~~~~~~~~~~~~~
+
+To send a specific data message, it takes the following parameters:
+
+message: it is the normal data buffer, it could be a normal string or byte array
+
+timeout: it is an optional argument to specify the tx operation deadline the default timeout will be the radio tx_timeout parameter
+
+sync: it is an optional argument to perform this operation synchronously or asynchronously (default: sync=False)
+
+Examples:
+
+lora.send(“test message”) # sends a message asynchronously and with tx_timeout
+
+# as a full tx operation timeout
+
+# send a message asynchronously and the full tx operation shall canceled after 1 second
+
+lora.send(“test message”, timeout=1000)
+
+# send a message synchronously and the full tx operation shall canceled after 1 second
+
+# in this case, the caller will be blocked until tx succeeded or timeout is over
+
+lora.send(“test message”, timeout=1000, sync=True)
+
+Receive (RX) Data
+~~~~~~~~~~~~~~~~~
+
+To receive a data and it takes the following parameters:
+
+timeout: it is an optional argument to specify the tx operation deadline the default timeout will be the radio rx_timeout parameter
+
+sync: it is an optional argument to perform this operation synchronously or asynchronously (default: sync=True)
+
+sync the function will return the received message async the received message will be returned in the RX event in the callback
+
+Example:
+
+.. code-block:: python
+
+   lora.recv()   # waits for `rx_timeout` radio parameter or until a data is received
+   
+   # wait for maximum 2 second or until a data is received
+   lora.recv(timeout=2000)
+   
+   # place a receive request and return immediately
+   #   - if a data is received before 3 second timeout, it will be returned in the callback
+   #   - if timeout happened, the rx operation will be canceled and a timeout event will be
+   #     fed back in the callback
+   lora.recv(timeout=3000, sync=True)
+
+RX Continuous Mode
+~~~~~~~~~~~~~~~~~~
+
+LoRa RAW can operate in continuous reception mode and any received data will be thrown in the registered user callback
+
+Example:
+
+.. code-block:: python
+
+   lora.recv_cont_start()    # starting the RX continuous mode
+   
+   lora.recv_cont_stop()     # exiting the RX continuous mode
+
+Continuous TX Wave mode
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Sets the radio tranciver to continuous transmission mode for testing.
+
+The tx continuous wave mode does not use the normal parameters set by the lora.radio_params() method, but instead it uses the following parameters
+
+tx_power the required tx power during the test
+
+frequency the required test frequency in Hz (default: 868 MHz)
+
+timeout an optional timeout in milliseconds (default: 10 seconds)
+
+Remark: if the system is in sending or receiving operation, the operation will be cancelled and the system will start serving the tx continuous wave test command. After timeout is over, the system will go to its IDLE state.
+
+Example:
+
+.. code-block:: python
+
+   lora.tx_continuous_wave_start(      # starting the TX continuous wave mode
+       tx_power = 20,                  # use tx_power = 20dBm
+       frequency = 868000000,          # test frequency 868 MHz
+       timeout = 20000)                # timeout for the tx continuous wave 20 sec
+   
+   lora.tx_continuous_wave_stop()    # exiting the TX continuous wave mode

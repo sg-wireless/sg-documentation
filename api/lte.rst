@@ -1,287 +1,187 @@
-:mod:`lte` --- LTE Module (C Implementation)
-=============================================
+LTE
+===
 
-.. module:: lte
-   :synopsis: LTE modem control (C-based driver)
+Constructors
+------------
 
-The ``lte`` module provides MicroPython bindings for LTE modem functionality
-using a C implementation built on top of the ESP modem library.  This is the
-recommended driver, replacing the legacy Python-based :doc:`lte-legacy` module.
+class LTE.LTE(…)
+~~~~~~~~~~~~~~~~
 
-Quick Start
------------
+Create and configure a LTE object. See __init__ for params of configuration.
 
 .. code-block:: python
 
-   import lte
+   from LTE import LTE
+   lte = LTE()
 
-   lte.init(carrier='standard')
-   lte.attach(apn='iot.1nce.net')
+Methods
+-------
 
-   import time
-   for _ in range(180):
-       if lte.isconnected():
-           break
-       if lte.isattached() and not lte.isconnected():
-           lte.connect()
-       time.sleep(1)
+lte.__init__([carrier=’standard’, cid=1, mode=None, baudrate=115200, debug=None])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   print(lte.ifconfig())
+This method is used to set up the LTE subsystem. Optionally specify
 
-   lte.disconnect()
-   lte.deinit()
+carrier name. The currently available options are:
 
+'att' 'verizon' 'standard' 'docomo' 'kddi' 'telstra' 'tmo' 'verizon-no-roaming' '3gpp-conformance'
 
-Initialization
---------------
+cid is the connection id. Most operators use cid=1 except Verizon which uses cid=3 when using a Verizon issued SIM card
 
-.. function:: lte.init([carrier='standard'])
+mode is LTE.CATM1 or LTE.NBIOT. If not specified, modem will use current setting
 
-   Initialize the LTE modem subsystem.  Idempotent --- safe to call multiple
-   times.
+baudrate is the speed with which the modem is operating. Default is 115200bps
 
-   The modem handles three possible power states automatically:
+debug. True or False, display additional debugging output
 
-   1. **Powered off** --- powers on and initializes from scratch
-   2. **Normal AT mode** (crash recovery) --- resumes from existing state
-   3. **CMUX mode** (soft reset) --- cleans up and reinitializes
+lte.deinit([reset=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   :param str carrier: Carrier conformance mode.  Options: ``'standard'``
-       (default), ``'verizon'``, ``'att'``, ``'docomo'``, ``'kddi'``,
-       ``'telstra'``, ``'tmo'``, ``'verizon-no-roaming'``,
-       ``'3gpp-conformance'``, or ``None`` (keep current mode).
+Disables LTE modem completely. This reduces the power consumption to the minimum. Call this before entering deepsleep. Optional parameter reset was added for compatibility with legacy code and is not used
 
-   .. note::
+lte.attach([apn=None, type=’IP’, cid=None, band=None, bands=None])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-      Changing the conformance mode triggers a modem reset.  The driver
-      handles this automatically.
+Enable radio functionality and attach to the LTE network authorised by the inserted SIM card. Optionally specify:
 
-.. function:: lte.deinit([detach=True, power_off=True])
+band : to scan for networks. If no band (or None) is specified, the currently configured bands will be scanned (this is persistent through resetting the modem). The possible values for the band are: 1,2,3,4,5,8,12,13,17,18,19,20,25,26,28,66 or 71.
 
-   Deinitialize the modem.
+bands : a tuple of mutiple band entries (see band above)
 
-   :param bool detach: Detach from cellular network.
-   :param bool power_off: Power off the modem hardware.
+apn : Specify the APN (Access point Name).
 
-   **Use cases:**
+cid : connection ID, see LTE.\_\_init()\_\_ and LTE.connect(). when the ID is set here it will be remembered when doing connect so no need to specify again
 
-   - ``lte.deinit()`` --- full shutdown (default)
-   - ``lte.deinit(power_off=False)`` --- quick restart
-   - ``lte.deinit(detach=False, power_off=False)`` --- low power with PSM/eDRX
+type : PDP context type either IP or IPV4V6. These are options to specify PDP type ‘Packet Data protocol’ either IP [Internet Protocol] or IPV4V6 [Internet Protocol version 4 and version 6] , that depend on what the Network supports.
 
-.. function:: lte.reset()
+lte.isattached()
+~~~~~~~~~~~~~~~~
 
-   Hardware reset the modem (``AT^RESET``).  Takes up to 10 seconds.
+Returns True if the cellular mode is attached to the network. False otherwise.
 
+lte.is_attached()
+~~~~~~~~~~~~~~~~~
 
-Network Attachment
-------------------
+Returns True if the cellular mode is attached to the network. False otherwise. Same as lte.isattached() and provided for compatibility with legacy scripts
 
-.. function:: lte.attach([apn=None, type='IP', cid=None, band=None, bands=None])
+lte.detach()
+~~~~~~~~~~~~
 
-   Enable radio and attach to the cellular network.  **Non-blocking** ---
-   poll with :func:`isattached`.
+Gracefully detach the modem from the LTE-M network and disable the radio functionality.
 
-   :param str apn: Access Point Name (e.g. ``'iot.1nce.net'``).
-   :param str type: PDP context type: ``'IP'``, ``'IPV6'``, or ``'IPV4V6'``.
-   :param int cid: Context identifier (default 1; Verizon uses 3).
-   :param int band: Single frequency band (0 = auto).
-   :param list bands: List of bands (e.g. ``[2, 4, 12]``).
+lte.connect([cid=None])
+~~~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: lte.isattached()
+Start a data session and obtain and IP address. Optionally specify a CID (Connection ID) for the data session. The arguments are:
 
-   Return ``True`` if registered on the network (home or roaming).
+cid: connection ID, see LTE.__init()__ and LTE.attach().
 
-.. function:: lte.is_attached()
+lte.isconnected()
+~~~~~~~~~~~~~~~~~
 
-   Alias for :func:`isattached`.
+Returns True if there is an active LTE data session and IP address has been obtained. False otherwise.
 
-.. function:: lte.detach()
+lte.is_connected()
+~~~~~~~~~~~~~~~~~~
 
-   Detach from the cellular network and disable radio.
+Returns True if there is an active LTE data session and IP address has been obtained. False otherwise.
 
+lte.disconnect()
+~~~~~~~~~~~~~~~~
 
-Data Session
-------------
+End the data session with the network.
 
-.. function:: lte.connect([cid=None])
+lte.send_at_cmd(cmd, [timeout=-1, wait_ok_error=False, check_error=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   Start a data session using CMUX + PPP.  **Non-blocking** --- poll with
-   :func:`isconnected`.
+Send an AT command directly to the modem. Returns the raw response from the modem as a string object. You can find the possible AT commands here.
 
-.. function:: lte.isconnected()
+If a data session is active (i.e. the modem is connected), you will need to lte.pppsuspend() and lte.pppresume around the AT command.
 
-   Return ``True`` if PPP is active and an IP address has been obtained.
+Example:
 
-.. function:: lte.is_connected()
+.. code-block:: python
 
-   Alias for :func:`isconnected`.
+   lte.send_at_cmd('AT+CEREG?')    # check for network registration manually (sames as lte.isattached())
 
-.. function:: lte.disconnect()
+Optionally the response can be parsed for pretty printing:
 
-   End the data session (keeps network attachment).
+timeout : specify the timeout milliseconds the esp32 chip will wait after the AT command to receive the response. -1 means wait forever
 
-.. function:: lte.ifconfig()
+wait_ok_error : wait for the modem to respond with OK or ERROR after sending the command. Not all commands return OK or ERROR which means the command might be waiting forever. Some commands such as AT+SQNINS run longer than the maximum timeout, and setting wait_ok_error=True is required to get the results
 
-   Return ``(ip, netmask, gateway, dns)`` or ``None`` if not connected.
+check_error : Will check if an error occured and raise an exception. Helpful in scripts that should abort if an error occurs.
 
+lte.reset()
+~~~~~~~~~~~
 
-AT Commands
------------
+Perform a hardware reset on the cellular modem. This function can take up to 5 seconds to return as it waits for the modem to shutdown and reboot.
 
-.. function:: lte.send_at_cmd(cmd='AT', [timeout=-1, wait_ok_error=False, check_error=False, buffer_size=4096])
+lte.pause_ppp()
+~~~~~~~~~~~~~~~
 
-   Send a raw AT command and return the response.
+Suspend PPP session with LTE modem. this function can be used when needing to send AT commands which is not supported in PPP mode.
 
-   :param str cmd: AT command (without ``\r\n``).
-   :param int timeout: Timeout in ms (``-1`` = default 5000 ms).
-   :param bool wait_ok_error: Wait for OK/ERROR response.
-   :param bool check_error: Raise exception on ERROR.
-   :param int buffer_size: Response buffer (1024--32768).
+lte.resume_ppp()
+~~~~~~~~~~~~~~~~
 
-   .. important:: CMUX allows simultaneous AT commands and data sessions.
+Resumes PPP session with LTE modem.
 
-   .. code-block:: python
+lte.mode([new_mode=None])
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-      lte.send_at_cmd('AT+CEREG?')
-      lte.send_at_cmd('AT+CSQ')
+If no parameter is specified, return the current operating mode (0 for LTE.CATM1 and 1 for LTE.NBIOT) If new_mode is specified, switches the modem into the specified operating mode. Use LTE.CATM1 or LTE.NBIOT Example: lte.mode(new_mode=LTE.CATM1)
 
+The modem will reset and switch to the new operating mode
 
-Mode & Identity
----------------
+lte.power_on([wait_ok=True])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: lte.mode([new_mode=None])
+Turn the LTE modem power on. Will optionally wait until the modem answers with OK.
 
-   Get or set the operating mode.
+lte.power_off([force=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   :param new_mode: ``lte.CATM1`` (0) or ``lte.NBIOT`` (1).
+Turn off power to the LTE modem. Will gracefully shut down the LTE connection unless force=True is used.
 
-   .. note:: Setting a new mode causes a modem reset.
+lte.check_sim_present()
+~~~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: lte.imei()
+Check if a SIM card is present and readable
 
-   Return the 15-digit IMEI string.
+lte.check_power()
+~~~~~~~~~~~~~~~~~
 
-.. function:: lte.iccid()
+Returns True if the lte module is powered on, otherwise false
 
-   Return the SIM card ICCID string.
+lte.print_pretty_response(rsp, [flush=False, prefix=None])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   :raises OSError: If SIM card is not present or not ready.
+Removes unnecessary line feed and OK/ERROR output from a modem response before printing the response on the REPL
 
+lte.return_pretty_response(resp)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Status & Signal
----------------
+Removes unnecessary line feed and OK/ERROR output from a modem response before returning the resp
 
-.. function:: lte.get_signal_strength()
+lte.read_rsp([size=None, timeout=-1, wait_ok_error=False, check_error=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   Return ``(rssi, rssi_dbm, ber)``.
+This function allows reading unsolicited responses from the modem. These are responses sent by the modem without being requested using lte.send_at_cmd(). The response can be formatted with lte.return_pretty_response and lte.print_pretty_response if desired.
 
-   - *rssi*: Raw value (0--31, 99=unknown)
-   - *rssi_dbm*: dBm (-113 to -51, -999=unknown)
-   - *ber*: Bit Error Rate (0--7, 99=unknown)
+lte.check_ppp()
+~~~~~~~~~~~~~~~
 
-.. function:: lte.get_status()
+Function will raise an exception if the modem is in active ppp mode.
 
-   Return a dict with comprehensive modem status:
+lte.ifconfig()
+~~~~~~~~~~~~~~
 
-   .. code-block:: python
-
-      {
-          'powered': True,
-          'sim_ready': True,
-          'network_attached': True,
-          'ppp_connected': True,
-          'cmux_active': True,
-          'baudrate': 921600,
-          'rssi': 20,
-          'ber': 99
-      }
-
-
-Power Management
-----------------
-
-.. function:: lte.power_on([wait_ok=True])
-
-   Power on the modem hardware.
-
-.. function:: lte.power_off([force=False])
-
-   Power off the modem.  *force=True* skips graceful shutdown.
-
-.. function:: lte.is_powered()
-
-   Return ``True`` if the modem is powered.
-
-.. function:: lte.check_sim_present()
-
-   Return ``True`` if a SIM card is present and ready.
-
-
-Event Handler
--------------
-
-.. function:: lte.set_event_handler(handler, [event_mask=EVENT_ALL, lock=False])
-
-   Register a callback for LTE modem events.
-
-   :param handler: Event handler function or ``None`` to unregister.
-   :param int event_mask: Bitmask of events to subscribe to.
-   :param bool lock: Lock the handler to prevent overrides until
-       ``lte.deinit()``.
-
-   **Event types:**
-
-   .. list-table::
-      :header-rows: 1
-      :widths: 35 65
-
-      * - Constant
-        - Description
-      * - ``lte.EVENT_REGISTRATION_STATUS``
-        - Network registration changes
-      * - ``lte.EVENT_PPP_CONNECTED``
-        - PPP connection established
-      * - ``lte.EVENT_PPP_DISCONNECTED``
-        - PPP connection lost
-      * - ``lte.EVENT_MODEM_CRASH``
-        - Modem crash detected
-      * - ``lte.EVENT_MODEM_RESET``
-        - Modem was reset
-      * - ``lte.EVENT_SIGNAL_QUALITY``
-        - Signal strength update
-      * - ``lte.EVENT_URC``
-        - Raw unsolicited response
-      * - ``lte.EVENT_ERROR``
-        - Error occurred
-      * - ``lte.EVENT_ALL``
-        - Subscribe to all events
-
-   **Example:**
-
-   .. code-block:: python
-
-      def lte_handler(event):
-          if event['type'] == lte.EVENT_REGISTRATION_STATUS:
-              if event['stat'] == 1:
-                  print('Registered (home)')
-          elif event['type'] == lte.EVENT_PPP_CONNECTED:
-              print('IP:', event['ip'])
-
-      lte.set_event_handler(lte_handler, lte.EVENT_ALL)
-
+Function will return a tuple of IP address information from the PPP stack
 
 Constants
 ---------
 
-- ``lte.CATM1`` (0) --- CAT-M1 mode
-- ``lte.NBIOT`` (1) --- NB-IoT mode
-- ``lte.EVENT_REGISTRATION_STATUS`` (0x0001)
-- ``lte.EVENT_PPP_CONNECTED`` (0x0002)
-- ``lte.EVENT_PPP_DISCONNECTED`` (0x0004)
-- ``lte.EVENT_MODEM_CRASH`` (0x0008)
-- ``lte.EVENT_MODEM_RESET`` (0x0010)
-- ``lte.EVENT_SIGNAL_QUALITY`` (0x0020)
-- ``lte.EVENT_URC`` (0x0040)
-- ``lte.EVENT_ERROR`` (0x0080)
-- ``lte.EVENT_ALL`` (0xFFFF)
+LTE.CATM1 : For use in CATM1 mode
+
+LTE.NBIOT : For use in NBIOT mode

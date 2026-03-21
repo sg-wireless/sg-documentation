@@ -1,9 +1,22 @@
-SG Firmware API Reference
-=========================
+Firmware & API Reference
+========================
 
-This section documents the MicroPython modules available on the SG Wireless F1
-platform.  Each module is implemented as a built-in C extension and can be
-imported directly from the MicroPython REPL or from user scripts.
+This chapter describes modules (function and class libraries) that are built
+into MicroPython. For standard modules implemented in MicroPython, refer to the
+`MicroPython documentation <https://docs.micropython.org/en/latest/>`_.
+
+SG Modules
+----------
+
+These modules are specific to the SG devices and may have slightly different
+implementations to other variations of MicroPython.
+
+.. note::
+
+   This documentation in general aspires to describe all modules and
+   functions/classes which are implemented in MicroPython. However, MicroPython
+   is continuously evolving and some functions, classes or modules may not be
+   available on the SG Wireless F1 module yet.
 
 .. toctree::
    :maxdepth: 1
@@ -20,19 +33,9 @@ imported directly from the MicroPython REPL or from user scripts.
    lora-raw
    lora-callbacks
    lte
-   lte-legacy
 
 .. toctree::
    :maxdepth: 1
-   :caption: Peripherals & System
+   :caption: Peripherals
 
    rgbled
-   nvs
-   sysinfo
-   ioexp
-   fuel-gauge
-   can
-   efuse
-   fuota
-   safeboot
-   sys-inspect

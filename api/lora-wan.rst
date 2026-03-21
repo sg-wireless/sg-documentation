@@ -1,316 +1,324 @@
-:mod:`lora` --- LoRa WAN API
-============================
-
-.. module:: lora
-   :noindex:
-
-This page documents the LoRa WAN mode APIs.  Switch to WAN mode with
-``lora.mode(lora._mode.WAN)`` before using these functions.
-
-.. seealso:: :doc:`lora` for initialization, :doc:`lora-raw` for RAW mode,
-   :doc:`lora-callbacks` for the event system.
-
-API Summary
------------
-
-.. list-table::
-   :header-rows: 1
-   :widths: 40 60
-
-   * - API Call
-     - Description
-   * - :func:`lora.stats`
-     - Display current LoRa WAN stats
-   * - :func:`lora.wan_params`
-     - Set regional WAN parameters
-   * - :func:`lora.commission`
-     - Set commissioning parameters
-   * - :func:`lora.join`
-     - Start the join procedure
-   * - :func:`lora.send`
-     - Transmit a LoRa WAN packet
-   * - :func:`lora.port_open`
-     - Open a LoRa WAN port
-   * - :func:`lora.port_close`
-     - Close a LoRa WAN port
-   * - :func:`lora.callback`
-     - Set a user-level callback
-   * - :func:`lora.duty_set`
-     - Set the duty-cycle timer
-   * - :func:`lora.duty_get`
-     - Get the current duty-cycle
-   * - :func:`lora.duty_start`
-     - Start duty-cycle operation
-   * - :func:`lora.duty_stop`
-     - Stop duty-cycle operation
-   * - :func:`lora.enable_rx_listening`
-     - Enable RX listening
-   * - :func:`lora.disable_rx_listening`
-     - Disable RX listening
-   * - :func:`lora.tx_airtime`
-     - Get last TX time-on-air (ms)
-   * - :func:`lora.last_rx_at`
-     - Get timestamp of last network reception
-
-
-Stats
------
-
-.. function:: lora.stats()
-
-   Display current LoRa WAN settings: region, class, DevEUI, JoinEUI,
-   DevAddr, LoRaWAN version, and activation type.
-
-   .. code-block:: python
-
-      >>> lora.stats()
-          # - region               : EU-868
-          # - class                : class-A
-          # - dev eui              : 39 2C 39 D1 5D 3E 12 10
-          # - join eui             : EA 68 DE 1C 4B E0 20 F4
-          # - dev addr             : 01 88 DB B8
-          # - lorawan version      : val: 16778240 ( 1.0.4.0 )
-          # - activation           : OTAA
-
-
-WAN Parameters
---------------
-
-.. function:: lora.wan_params(region=, lwclass=)
-
-   Change the operating region and/or force a device class.
-
-   :param region: One of ``lora._region.REGION_EU868``, ``REGION_US915``, etc.
-   :param lwclass: One of ``lora._class.CLASS_A``, ``CLASS_B``, ``CLASS_C``.
-
-   .. code-block:: python
-
-      lora.wan_params(
-          region=lora._region.REGION_EU868,
-          lwclass=lora._class.CLASS_A
-      )
-
-
-Commissioning
--------------
-
-.. function:: lora.commission(type=, version=, ...)
-
-   Prepare a new LoRa WAN end-device with the given credentials.  If the
-   device was previously joined, it will need to rejoin with the new
-   parameters.
-
-   **Common parameters:**
-
-   :param type: ``lora._commission.OTAA`` or ``lora._commission.ABP``.
-   :param version: ``lora._version.VERSION_1_0_X`` or ``VERSION_1_1_X``.
-   :param bytes DevEUI: Device EUI (8 bytes).
-
-   **OTAA additional parameters:**
-
-   :param bytes JoinEUI: Join EUI (8 bytes).
-   :param bytes AppKey: Application Key (16 bytes).
-   :param bytes NwkKey: Network Key (16 bytes, v1.1.x only).
-
-   **ABP additional parameters:**
-
-   :param int DevAddr: Device network address.
-   :param bytes AppSKey: Application session key (16 bytes).
-   :param bytes NwkSKey: Network session key (16 bytes).
-
-   **Verification:**
-
-   :param bool verify: If ``True``, check whether the current commissioning
-       matches the given parameters without modifying anything.  Returns
-       ``True``/``False``.
-
-   .. code-block:: python
-
-      import lora, ubinascii
-
-      # OTAA v1.0.x
-      lora.commission(
-          type    = lora._commission.OTAA,
-          version = lora._version.VERSION_1_0_X,
-          DevEUI  = ubinascii.unhexlify('0000000000000000'),
-          JoinEUI = ubinascii.unhexlify('0000000000000000'),
-          AppKey  = ubinascii.unhexlify('00000000000000000000000000000000')
-      )
-
-      # OTAA v1.1.x
-      lora.commission(
-          type    = lora._commission.OTAA,
-          version = lora._version.VERSION_1_1_X,
-          DevEUI  = ubinascii.unhexlify('0000000000000000'),
-          JoinEUI = ubinascii.unhexlify('0000000000000000'),
-          AppKey  = ubinascii.unhexlify('00000000000000000000000000000000'),
-          NwkKey  = ubinascii.unhexlify('00000000000000000000000000000000')
-      )
-
-      # ABP v1.0.x
-      lora.commission(
-          type    = lora._commission.ABP,
-          version = lora._version.VERSION_1_0_X,
-          DevAddr = 0x00000000,
-          DevEUI  = ubinascii.unhexlify('0000000000000000'),
-          AppSKey = ubinascii.unhexlify('00000000000000000000000000000000'),
-          NwkSKey = ubinascii.unhexlify('00000000000000000000000000000000')
-      )
-
-
-Join
-----
-
-.. function:: lora.join()
-
-   Start the LoRa WAN join procedure.  For ABP activation the device is
-   considered joined after commissioning and this call has no effect.
-
-.. function:: lora.is_joined()
-
-   Return ``True`` if the device has joined the network.
-
-   .. code-block:: python
-
-      import lora, time
-
-      lora.join()
-      while not lora.is_joined():
-          time.sleep(2)
-
-
-Sending & Receiving Data
-------------------------
-
-.. function:: lora.send(message, [confirm=False, port=1, retries=0, timeout=0, sync=False, id=0])
-
-   Plan an uplink message for transmission.
-
-   :param message: Data buffer (string or bytes).
-   :param bool confirm: Request ACK from the network server.
-   :param int port: LoRa WAN port (1--223).
-   :param int retries: Number of retry attempts.
-   :param int timeout: Deadline in milliseconds (0 = no timeout).
-   :param bool sync: Block until success/failure/timeout.
-   :param int id: User-defined message ID returned in the callback.
-
-   .. code-block:: python
-
-      lora.send('hello')
-      lora.send('hello', timeout=20000, retries=2, confirm=True, sync=True)
-
-
-LoRa Ports
-----------
-
-.. function:: lora.port_open(port)
-
-   Open a LoRa WAN port.  Valid application ports are 1--223.
-   A port must be opened before sending or receiving data on it.
-
-.. function:: lora.port_close(port)
-
-   Close a previously opened port.
-
-   .. code-block:: python
-
-      lora.port_open(1)
-      lora.send('data', port=1)
-      lora.port_close(1)
-
-
-Callbacks
----------
-
-.. function:: lora.callback(handler=, [trigger=, port=])
-
-   Register a callback for LoRa WAN events.
-
-   See :doc:`lora-callbacks` for full documentation and examples.
-
-
-Duty Cycle
-----------
-
-.. function:: lora.duty_set(ms)
-
-   Set the duty-cycle timer in milliseconds.
-
-.. function:: lora.duty_get()
-
-   Return the current duty-cycle timer value.
-
-.. function:: lora.duty_start()
-
-   Start duty-cycle operation.
-
-.. function:: lora.duty_stop()
-
-   Stop duty-cycle operation.
-
-   .. code-block:: python
-
-      lora.duty_set(15000)   # every 15 seconds
-      lora.duty_start()
-
-
-RX Listening
-------------
-
-.. function:: lora.enable_rx_listening()
-
-   Enable RX listening.  The device sends a dummy uplink when no pending
-   TX exists so the server can schedule a downlink.
-
-.. function:: lora.disable_rx_listening()
-
-   Disable RX listening (default).
-
-
-Adaptive Data Rate (ADR)
-------------------------
-
-ADR allows the network server to optimise data rate and TX power.
-It is **enabled by default** when switching to WAN mode.
+LoRa WAN API Documentation
+==========================
+
+Available LoRa WAN APIs Summary
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
++-----------------------------+-------------------------------------------------------+
+| API Call                    | Brief description                                     |
++=============================+=======================================================+
+| lora.stats()                | displays the current stats of lora WAN                |
++-----------------------------+-------------------------------------------------------+
+| lora.wan_params()           | set the lora WAN regional parameters                  |
++-----------------------------+-------------------------------------------------------+
+| lora.commission()           | set the LoRa-WAN commissioning parameters             |
++-----------------------------+-------------------------------------------------------+
+| lora.join()                 | start performing join procedure                       |
++-----------------------------+-------------------------------------------------------+
+| lora.send()                 | transmit a LoRa-WAN packet                            |
++-----------------------------+-------------------------------------------------------+
+| lora.recv()                 | receive a LoRa-WAN packet                             |
++-----------------------------+-------------------------------------------------------+
+| lora.port_open()            | open a lora-wan port to be able to tx/rx over it      |
++-----------------------------+-------------------------------------------------------+
+| lora.port_close()           | close a lora-wan port, tx/rx on it will be discarded  |
++-----------------------------+-------------------------------------------------------+
+| lora.callback()             | set a user level callback to listen to specifc events |
++-----------------------------+-------------------------------------------------------+
+| lora.duty_get()             | get the current duty-cycle in milliseconds            |
++-----------------------------+-------------------------------------------------------+
+| lora.duty_set()             | set the the duty-cycle to a specific value            |
++-----------------------------+-------------------------------------------------------+
+| lora.duty_start()           | start duty-cycle operation                            |
++-----------------------------+-------------------------------------------------------+
+| lora.duty_stop()            | stop duty-cycle operation                             |
++-----------------------------+-------------------------------------------------------+
+| lora.enable_rx_listening()  | perform class-a cycle to fetch pending DL msg         |
++-----------------------------+-------------------------------------------------------+
+| lora.disable_rx_listening() | if no pending UL msg, discard class-a cycle           |
++-----------------------------+-------------------------------------------------------+
+
+LoRa WAN Stats
+~~~~~~~~~~~~~~
+
+Displays useful information about the current lora-WAN settings such as: enabled region, current working class, Device EUI DevEUI, Join EUI, current assigned DevAddr after the joined procedure, lora-wan operating version and the type of activation whether NONE, OTAA, or ABP
+
+Example:
 
 .. code-block:: python
 
-   lora.mode(lora._mode.WAN, adr=False)   # disable ADR
-   lora.mode(lora._mode.WAN, adr=True)    # re-enable
+   lora.stats()
+       # outputs
+       # - region               : EU-868
+       # - class                : class-A
+       # - dev eui              : 39 2C 39 D1 5D 3E 12 10
+       # - join eui             : EA 68 DE 1C 4B E0 20 F4
+       # - dev addr             : 01 88 DB B8
+       # - lorawan version      : val: 16778240 ( 1.0.4.0 )
+       # - activation           : OTAA
 
+Setting LoraWAN parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TX Airtime
-----------
+To change the current operating region and forces the device to be in class A, B or C
 
-.. function:: lora.tx_airtime()
+Example:
 
-   Return the time-on-air in milliseconds of the most recently transmitted
-   packet.  Returns ``0`` until the first packet has been sent.
+.. code-block:: python
 
-   .. code-block:: python
+   lora.wan_params(region = lora._region.REGION_EU868, lwclass = lora._class.CLASS_A)
+       # sets the lora region to EU868
+       # sets the default working class to class A which is the default
 
-      lora.send('hello')
-      airtime_ms = lora.tx_airtime()
-      min_off = airtime_ms * 99       # 1% duty-cycle guard
-      time.sleep_ms(min_off)
+Device commissioning
+~~~~~~~~~~~~~~~~~~~~
 
+To give the device its credentials, it takes the following arguments:
 
-Last RX Timestamp
------------------
+version=<version> to specify the end-device LoRa standard. It takes one of the following:
 
-.. function:: lora.last_rx_at()
+version=lora._version.VERSION_1_0_x LoRa version 1.0.x version=lora._version.VERSION_1_1_x LoRa version 1.1.x
 
-   Return the monotonic millisecond timestamp (``utime.ticks_ms()``
-   compatible) of the most recent downlink frame.  Returns ``0`` until
-   the first downlink has been received.
+type=lora._commission.OTAA Device will be commissioned using OTAA procedure and the device shall perform the Join procedure before tx/rx with the network in this activation method, the following keys shall be provided along with:
 
-   Updated on application downlinks, MAC-only downlinks, and uplink ACKs.
+DevEUI The device EUI JoinEUI The Join EUI AppKey The AppKey NwkKey The NwkKey
 
-   .. code-block:: python
+type=lora._commission.ABP The device will not perform the join procedure and it will send directly an UL message. The following parameters shall be provided:
 
-      import utime
-      TIMEOUT = 10 * 60 * 1000  # 10 minutes
+DevEUI The device EUI DevAddr The device network address AppSKey The application security key NwkSKey The network security key
 
-      last = lora.last_rx_at()
-      if last and utime.ticks_diff(utime.ticks_ms(), last) > TIMEOUT:
-          print('no network contact — triggering rejoin')
+REMARK If the device is already joined the network, after this commissioning operation the device will not be considered joined and need to rejoin again using the new provided commissioning parameters
+
+Example:
+
+.. code-block:: python
+
+   import lora
+   import ubinascii
+   
+   # OTAA Version 1.0.x Example
+   lora.commission(
+       type    = lora._commission.OTAA,
+       version = lora._version.VERSION_1_0_X,
+       DevEUI  = ubinascii.unhexlify('0000000000000000'),
+       JoinEUI = ubinascii.unhexlify('0000000000000000'),
+       AppKey  = ubinascii.unhexlify('00000000000000000000000000000000')
+       )
+   
+   # OTAA Version 1.1.x Example
+   lora.commission(
+       type    = lora._commission.OTAA,
+       version = lora._version.VERSION_1_1_X,
+       DevEUI  = ubinascii.unhexlify('0000000000000000'),
+       JoinEUI = ubinascii.unhexlify('0000000000000000'),
+       AppKey  = ubinascii.unhexlify('00000000000000000000000000000000'),
+       NwkKey  = ubinascii.unhexlify('00000000000000000000000000000000')
+       )
+   
+   # ABP Version 1.0.x Example
+   lora.commission(
+       type    = lora._commission.ABP,
+       version = lora._version.VERSION_1_0_X,
+       DevAddr = 0x00000000,
+       DevEUI  = ubinascii.unhexlify('0000000000000000'),
+       AppSKey = ubinascii.unhexlify('00000000000000000000000000000000'),
+       NwkSKey = ubinascii.unhexlify('00000000000000000000000000000000')
+       )
+   
+   # ABP Version 1.1.x Example
+   lora.commission(
+       type    = lora._commission.ABP,
+       version = lora._version.VERSION_1_1_X,
+       DevAddr = 0x00000000,
+       DevEUI  = ubinascii.unhexlify('0000000000000000'),
+       AppSKey = ubinascii.unhexlify('00000000000000000000000000000000'),
+       NwkSKey = ubinascii.unhexlify('00000000000000000000000000000000')
+       )
+
+Join
+~~~~
+
+Mandator operation to let the device join the network and be able to TX/RX with the lora-WAN server
+
+Example:
+
+.. code-block:: python
+
+   import lora
+   import time
+   
+   # start join procedure
+   lora.join()
+   
+   # wait until join
+   while lora.is_joined() == False:
+       time.sleep(2)
+       pass
+
+Sending data
+~~~~~~~~~~~~
+
+To plan an UL message. It takes the following parameters:
+
+message the message buffer to be sent, can be a normal string or byte array
+
+optional arguments:
+
++----------------+------------+---------------+----------------------------------------------------------+
+| parameter-name | value-type | default-value | desc                                                     |
++================+============+===============+==========================================================+
+| config         | bool       | False         | To receive an ack from network server upon its reception |
++----------------+------------+---------------+----------------------------------------------------------+
+| port           | int        | 1             | on which lora-wan port to send this message              |
++----------------+------------+---------------+----------------------------------------------------------+
+| retries        | int        | 0             | number of retried until the UL tx succeeded              |
++----------------+------------+---------------+----------------------------------------------------------+
+| timeout        | int        | no-timeout    | time-out in ms to perform the full UL operation          |
++----------------+------------+---------------+----------------------------------------------------------+
+| sync           | int        | False         | block until timeout or operation success/failure         |
++----------------+------------+---------------+----------------------------------------------------------+
+| id             | int        | 0             | user defined message id to be returned in the callback   |
++----------------+------------+---------------+----------------------------------------------------------+
+
+Example:
+
+.. code-block:: python
+
+   # send an asynchronous UL message, with id=0, and without confirmation, no retries
+   # upon tx failure, and no specified timeout which means the message will be
+   # scheduled for UL in its turn within the pending UL messages until the duty-cycle
+   # tx operation fetches it and send it
+   lora.send('ul tx message')
+   
+   # send a message like before message, but if timeout of 3 seconds passed,
+   # drop the message and don't send it
+   lora.send('ul tx message', timeout=3000)
+   
+   # repeat the transmission for upto 2 times, the full operation timeout including
+   # the retries attempts is 20 seconds
+   lora.send('ul tx message', timeout=20000, retries=2)
+   
+   # same as before message but wait for confirmation as well from the network server
+   lora.send('ul tx message', timeout=20000, retries=2, confirm=True)
+   
+   # same as the previous message, but the caller will be blocked until timeout,
+   # or message is successfully sent and acked
+   lora.send('ul tx message', timeout=20000, retries=2, confirm=True, sync=True)
+
+Receiving Data
+~~~~~~~~~~~~~~
+
+The received data will come in the callback only
+
+LoRa Ports
+~~~~~~~~~~
+
+LoRa WAN sends/receives data over what is called ports, valid application ports are from 1 to 223.
+
+A port must be opened first before sending and receiving data over it
+
+Example:
+
+.. code-block:: python
+
+   # opening port 1
+   lora.port_open(1)   # data can be tx/rx over port 1
+   
+   lora.send('any', port=5)    # ignored because port 5 is not opened
+   lora.send('any', port=1)    # will be planned successfully for UL
+   
+   # opening port 1
+   lora.port_open(5)   # data can be tx/rx over port 5
+   lora.send('any', port=5)    # now it will be planned successfully
+   
+   lora.port_close(1)  # no tx/rx more over this port
+   lora.port_close(5)  # no tx/rx more over this port
+
+Callbacks lora.callback()
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It can set a user lever callback and it takes the following parameters:
+
+‘handler’ a callbeack function to be called (default any)
+
+‘trigger’ an OR combination of the required events that can trigger to this callback
+
+‘port’ a special port of the incoming messages events (default any)
+
+Example:
+
+.. code-block:: python
+
+   def get_evt_str(evt):
+       if evt != None:
+           if evt == lora._event.EVENT_TX_DONE:
+               return 'EVENT_TX_DONE'
+           elif evt == lora._event.EVENT_TX_TIMEOUT:
+               return 'EVENT_TX_TIMEOUT'
+           elif evt == lora._event.EVENT_TX_FAILED:
+               return 'EVENT_TX_FAILED'
+           elif evt == lora._event.EVENT_TX_CONFIRM:
+               return 'EVENT_TX_CONFIRM'
+           elif evt == lora._event.EVENT_RX_DONE:
+               return 'EVENT_RX_DONE'
+           elif evt == lora._event.EVENT_RX_TIMEOUT:
+               return 'EVENT_RX_TIMEOUT'
+           elif evt == lora._event.EVENT_RX_FAIL:
+               return 'EVENT_RX_FAIL'
+       return '--UNKNOWN-EVENT--'
+   
+   def cb_on_any(event, evt_data):
+       print('(  cb_on_any   )--> event: ' + get_evt_str(event))
+       if evt_data != None:
+           print(evt_data)
+       pass
+   
+   def cb_on_port_1(event, evt_data):
+       print('( cb_on_port_1 )--> event: ' + get_evt_str(event))
+       if evt_data != None:
+           print(evt_data)
+       pass
+   
+   port_1_triggers = lora._event.EVENT_RX_DONE | lora._event.EVENT_TX_DONE
+   lora_unittest.test_callback_set(handler=cb_on_port_1, trigger=port_1_triggers, port=1)
+   lora_unittest.test_callback_set(handler=cb_on_any)
+   lora_unittest.test_gen_all_callbacks()
+
+Duty cycle operations
+~~~~~~~~~~~~~~~~~~~~~
+
+The device is normally working in class-A and the device shall follow a duty-cycle to do UL/DL operation. This duty cycle should be regulated to respect the time-on-air for this device.
+
+The available operation are duty_set(), duty_get(), duty_start(), duty_stop()
+
+Example:
+
+.. code-block:: python
+
+   lora.duty_set(15000)    # sets the duty cycle timer to 15 seconds
+                           # which means that every 15 seconds the device will check
+                           # if TX pending and send it, and listen in the RX window
+                           # to any scheduled DL message for this device
+   
+   lora.duty_get()         # retrieve the current duty cycle time
+   
+   lora.duty_start()       # start duty cycle operation
+   
+   lora.duty_stop()        # stop duty cycle operation
+
+RX listening
+~~~~~~~~~~~~
+
+RX listening means that the device will send a dummy UL message in case no pending TX message is pending, so that the server will plan an RX window for this device and hence the device can receive any pending DL message
+
+the default behaviour is that the RX listening is disabled
+
+Example:
+
+.. code-block:: python
+
+   lora.enable_rx_listening()      # enable listening
+   
+   lora.disable_rx_listening()     # disable listening
+                                   # the device will listen only when there is a real
+                                   # planned UL TX message

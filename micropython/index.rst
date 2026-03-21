@@ -67,15 +67,6 @@ The following modules are **SG Wireless specific** and are documented in the
 - :doc:`/api/lora` --- LoRa WAN and RAW radio
 - :doc:`/api/lte` --- LTE Cat-M1 / NB-IoT
 - :doc:`/api/ctrl-client` --- Ctrl Cloud client
-- :doc:`/api/nvs` --- Non-volatile storage
-- :doc:`/api/sysinfo` --- Board and firmware info
-- :doc:`/api/ioexp` --- GPIO expander
-- :doc:`/api/fuel-gauge` --- Battery fuel gauge
-- :doc:`/api/can` --- CAN bus
-- :doc:`/api/efuse` --- eFuse identity data
-- :doc:`/api/fuota` --- Firmware OTA updates
-- :doc:`/api/safeboot` --- SafeBoot feature
-- :doc:`/api/sys-inspect` --- Memory and peripheral inspection
 - :doc:`/api/rgbled` --- RGB LED
 
 
