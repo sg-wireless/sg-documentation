@@ -73,7 +73,7 @@ html_context = {
 # Only active when sphinx-multiversion is installed.
 
 smv_tag_whitelist = r"^v\d+\.\d+\.\d+$"       # e.g. v1.3.0, v1.4.0
-smv_branch_whitelist = r"^main$"                # also build the main branch
+smv_branch_whitelist = r"^$"                    # only build from tags
 smv_remote_whitelist = r"^origin$"
 smv_released_pattern = r"^refs/tags/v\d+\.\d+\.\d+$"
 smv_outputdir_format = "{ref.name}"
