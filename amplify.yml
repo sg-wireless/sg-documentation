@@ -3,6 +3,8 @@ frontend:
   phases:
     preBuild:
       commands:
+        - git fetch --unshallow || true
+        - git fetch --tags --force
         - pip3 install -r requirements.txt
     build:
       commands:
