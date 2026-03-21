@@ -9,5 +9,3 @@ Basic Tutorials
    print
    rgbled
    gpio
-
-.. TODO:: Migrate content from https://docs.sgwireless.com/tutorials-examples/basic/
