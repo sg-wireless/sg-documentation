@@ -15,6 +15,8 @@ Begin your IoT journey in three simple steps:
 .. toctree::
    :hidden:
 
+   unboxing
+   setup-computer
    ztp
    manual-provisioning
    first-sensor-data
