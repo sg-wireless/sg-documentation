@@ -17,6 +17,7 @@ This page discusses the usage of the LTE modem in more detail:
 - `LTE Connectivity check`_
 - `LTE Mode check and LTE Mode switching`_
 - `Custom APN setting`_
+- `Event-driven connection`_
 
 General remarks
 ---------------
@@ -25,8 +26,9 @@ To check the current modem firmware, you can use the following commands:
 
 .. code-block:: python
 
-   from LTE import LTE
-   lte = LTE()
+   import lte
+
+   lte.init()
    print(lte.send_at_cmd('ATI1'))
 
 To check whether the LTE connection has been established, you can use the
@@ -34,8 +36,9 @@ following command:
 
 .. code-block:: python
 
-   from LTE import LTE
-   lte = LTE()
+   import lte
+
+   lte.init()
    print(lte.isconnected())  # if True is returned, LTE connection is established
 
 .. note::
@@ -62,9 +65,23 @@ following command:
 
 .. code-block:: python
 
-   from LTE import LTE
-   lte = LTE()
+   import lte
+
+   lte.init()
    print(lte.isconnected())  # if True is returned, LTE connection is established
+
+You can also get comprehensive status information:
+
+.. code-block:: python
+
+   import lte
+
+   lte.init()
+   status = lte.get_status()
+   print('Powered:', status['powered'])
+   print('Network:', status['network_attached'])
+   print('PPP:', status['ppp_connected'])
+   print('Signal:', status['rssi'])
 
 LTE Mode check and LTE Mode switching
 --------------------------------------
@@ -78,17 +95,18 @@ commands:
 
 .. code-block:: python
 
-   from LTE import LTE
-   lte = LTE()
-   lte_mode = lte.mode()  # Return current mode
-   if lte_mode == LTE.CATM1:
+   import lte
+
+   lte.init()
+   current = lte.mode()  # Return current mode
+   if current == lte.CATM1:
        print('Modem is in CAT-M1 mode!')
-   if lte_mode == LTE.NBIOT:
+   if current == lte.NBIOT:
        print('Modem is in NB-IoT mode!')
 
-   # The below will automatically reset the modem
-   lte.mode(LTE.CATM1)  # switch to CAT-M1
-   lte.mode(LTE.NBIOT)  # switch to NB-IoT
+   # Setting a new mode causes the modem to reset
+   lte.mode(lte.CATM1)  # switch to CAT-M1
+   lte.mode(lte.NBIOT)  # switch to NB-IoT
 
 .. note::
 
@@ -106,13 +124,59 @@ Below you will find the command for setting a custom APN:
 
 .. code-block:: python
 
-   from LTE import LTE
+   import lte
    import time
-   lte = LTE()
+
+   lte.init()
    lte.attach(apn='iot.1nce.net')  # use 'iot.1nce.net' for SG SIM card,
                                     # change to your ISP's APN if using your own SIM
-   while not lte.isattached():
+   for i in range(180):  # 3 minute timeout
+       if lte.isattached():
+           print('Attached!')
+           break
        time.sleep(1)
+
    lte.connect()
-   while not lte.isconnected():
+   for i in range(60):
+       if lte.isconnected():
+           print('Connected!')
+           print(lte.ifconfig())
+           break
        time.sleep(1)
+
+Event-driven connection
+-----------------------
+
+The C implementation supports event-driven LTE management. Instead of polling,
+you can register an event handler to receive connection status changes in
+real-time:
+
+.. code-block:: python
+
+   import lte
+
+   def lte_event_handler(event):
+       event_type = event['type']
+
+       if event_type == lte.EVENT_REGISTRATION_STATUS:
+           stat = event['stat']
+           if stat == 1:
+               print('Registered (home network)')
+           elif stat == 5:
+               print('Registered (roaming)')
+           elif stat == 2:
+               print('Searching...')
+
+       elif event_type == lte.EVENT_PPP_CONNECTED:
+           print('Connected! IP: {}'.format(event['ip']))
+
+       elif event_type == lte.EVENT_PPP_DISCONNECTED:
+           print('Disconnected')
+
+       elif event_type == lte.EVENT_SIGNAL_QUALITY:
+           print('Signal: {} dBm'.format(event['rssi_dbm']))
+
+   lte.init()
+   lte.set_event_handler(lte_event_handler, lte.EVENT_ALL)
+   lte.attach(apn='iot.1nce.net')
+   lte.connect()
