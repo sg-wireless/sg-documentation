@@ -16,7 +16,7 @@ OUTDIR="$SRCDIR/_build/html"
 # -------------------------------------------------------------------
 # Ensure tags are available (CI environments often use shallow clones)
 # -------------------------------------------------------------------
-git -C "$SRCDIR" fetch --tags --force 2>/dev/null || true
+git -C "$SRCDIR" fetch --tags 2>/dev/null || true
 
 # -------------------------------------------------------------------
 # Collect version tags (sorted descending so index 0 = latest)
