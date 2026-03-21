@@ -5,6 +5,8 @@
 
 :orphan:
 
+.. title:: Home
+
 .. raw:: html
 
    <div class="sgw-homepage">
