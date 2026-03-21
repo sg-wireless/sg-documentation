@@ -23,6 +23,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
     "sphinx_rtd_theme",
+    "sphinx_copybutton",
 ]
 
 # Try to load sphinx-multiversion for versioned builds (optional dependency)
