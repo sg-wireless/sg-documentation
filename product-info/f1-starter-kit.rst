@@ -230,6 +230,8 @@ Analog and touch inputs should only be used on analog pins.
 The mechanical arrangement of the pinout is compatible with standard Arduino UNO
 shields.
 
+:download:`Starter Kit Pinout Diagram – PDF </_static/downloads/F1-Starter-Kit-Pin-out-Diagram-V1.0-compressed.pdf>`
+
 .. figure:: /_static/images/f1-starter-kit-pinout.*
    :alt: F1 Starter Kit Pinout Diagram
    :align: center
