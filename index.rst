@@ -1,7 +1,7 @@
 .. Copyright (c) 2023-2026 SG Wireless - All Rights Reserved
 
 .. meta::
-   :description: SG Wireless Document Hub — F1 Smart Module & Ctrl. Cloud Platform documentation
+   :description: NEW SG Wireless Document Hub — F1 Smart Module & Ctrl. Cloud Platform documentation
 
 :orphan:
 
