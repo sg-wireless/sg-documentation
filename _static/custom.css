@@ -67,7 +67,7 @@
     --sgw-font-body:     'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --sgw-font-heading:  'DarkerGrotesque', 'Inter', sans-serif;
     --sgw-font-mono:     'IBMPlexMono', 'Consolas', 'Monaco', monospace;
-    --sgw-header-height: 4.25rem;  /* gradient + header bar */
+    --sgw-header-height: 5.5rem;  /* gradient + header bar */
 }
 
 
@@ -89,7 +89,7 @@
 
 #sgw-topbar-header {
     background-color: var(--sgw-black);
-    padding: 0.875rem 0;
+    padding: 1.25rem 0;
 }
 
 #sgw-topbar-inner {
@@ -107,7 +107,7 @@
 }
 
 .sgw-logo {
-    height: 1.5rem;
+    height: 2.25rem;
     width: auto;
     display: block;
 }
