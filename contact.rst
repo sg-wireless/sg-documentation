@@ -16,4 +16,4 @@ without further notice. Products may have information consisting of
 characteristics, datasheets, application notes, and other resources that are
 subject to change without notice.
 
-© 2025 SG Wireless Limited. All rights reserved.
+© 2026 SG Wireless Limited. All rights reserved.

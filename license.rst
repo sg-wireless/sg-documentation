@@ -1,7 +1,7 @@
 License
 =======
 
-| Copyright © 2023-2025 SG Wireless — All Rights Reserved
+| Copyright © 2023-2026 SG Wireless — All Rights Reserved
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
