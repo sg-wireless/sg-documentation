@@ -99,11 +99,11 @@ Where:
 
 Here is the expected result:
 
-.. image:: /_static/images/tutorials/basic/rgb-animated-pattern.gif
+.. image:: /_static/images/tutorials/basic/rgb-animated-pattern.*
    :width: 80%
    :alt: RGB LED animated pattern
 
-.. image:: /_static/images/tutorials/basic/rgb-animated-final.gif
+.. image:: /_static/images/tutorials/basic/rgb-animated-final.*
    :width: 80%
    :alt: RGB LED animated sequence
 

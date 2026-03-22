@@ -88,6 +88,8 @@ intersphinx_mapping = {
 
 # -- Options for LaTeX / PDF output -------------------------------------------
 
+latex_engine = "xelatex"
+
 latex_documents = [
     (
         master_doc,
