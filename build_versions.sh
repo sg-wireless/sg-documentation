@@ -14,9 +14,50 @@ SRCDIR="$(cd "$(dirname "$0")" && pwd)"
 OUTDIR="$SRCDIR/_build/html"
 
 # -------------------------------------------------------------------
+# Branch detection: on non-main branches, build only the current
+# working tree as a preview (no tag checkout, no multi-version).
+# This lets Amplify preview deployments show uncommitted / untagged
+# changes from feature branches.
+# -------------------------------------------------------------------
+CURRENT_BRANCH="${AWS_BRANCH:-$(git -C "$SRCDIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo main)}"
+
+if [[ "$CURRENT_BRANCH" != "main" ]]; then
+    PREVIEW_TAG="preview"
+    echo "=== Preview build for branch '$CURRENT_BRANCH' (single version) ==="
+
+    rm -rf "$OUTDIR"
+    mkdir -p "$OUTDIR"
+
+    ALL_JSON="[\"$PREVIEW_TAG\"]"
+
+    SGW_CURRENT_VERSION="$PREVIEW_TAG" \
+    SGW_ALL_VERSIONS="$ALL_JSON" \
+    sphinx-build -b html -j auto "$SRCDIR" "$OUTDIR/$PREVIEW_TAG"
+
+    # Root redirect → preview
+    cat > "$OUTDIR/index.html" << EOF
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0; url=./${PREVIEW_TAG}/index.html">
+  <title>Redirecting…</title>
+</head>
+<body>
+  <p>Redirecting to <a href="./${PREVIEW_TAG}/index.html">${PREVIEW_TAG}</a>…</p>
+</body>
+</html>
+EOF
+
+    echo ""
+    echo "=== Done — preview build in $OUTDIR/$PREVIEW_TAG ==="
+    exit 0
+fi
+
+# -------------------------------------------------------------------
 # Ensure tags are available (CI environments often use shallow clones)
 # -------------------------------------------------------------------
-git -C "$SRCDIR" fetch --tags --force 2>/dev/null || true
+git -C "$SRCDIR" fetch --tags 2>/dev/null || true
 
 # -------------------------------------------------------------------
 # Collect version tags (sorted descending so index 0 = latest)
