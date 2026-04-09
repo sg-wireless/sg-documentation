@@ -13,5 +13,5 @@ of device, add your devices to Ctrl through one of the following steps:
 Next Steps
 ----------
 
-- :doc:`Visualize your signal data <visualize-data>`
+- :doc:`Dashboards & Widgets <visualize-data>`
 - :doc:`Link sensors to your device <sensors>`
