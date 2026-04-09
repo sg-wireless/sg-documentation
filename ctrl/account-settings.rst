@@ -14,7 +14,7 @@ Update Personal Profile
 
 1. Click on the user icon at the top-right corner, and choose ``My Profile``.
 
-   .. image:: /_static/images/ctrl/account-settings/Home_1.5.jpg
+   .. image:: /_static/images/ctrl/account-settings/Home_1.5.png
       :width: 80%
       :alt: Click My Profile
 
