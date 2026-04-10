@@ -140,6 +140,6 @@ sensor.
 5. Confirm the action by clicking on the ``Confirm`` button in the confirmation
    dialog.
 
-   .. image:: /_static/images/ctrl/sensors/unlink_prompt.png
+   .. image:: /_static/images/ctrl/sensors/unlink_device_popup_1.5.png
       :width: 80%
       :alt: Confirm unlink sensor
