@@ -12,7 +12,6 @@ In a nutshell, Ctrl is an environment designed to optimize your IoT experience
 when using F1 smart modules.
 
 .. toctree::
-   :hidden:
    :maxdepth: 2
 
    managing-projects
