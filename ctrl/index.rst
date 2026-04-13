@@ -11,10 +11,8 @@ devices to give you full Ctrl. over your IoT networks.
 In a nutshell, Ctrl is an environment designed to optimize your IoT experience
 when using F1 smart modules.
 
-Let's get started!
-------------------
-
 .. toctree::
+   :hidden:
    :maxdepth: 2
 
    managing-projects
