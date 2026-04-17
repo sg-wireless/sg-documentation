@@ -99,10 +99,10 @@
    :hidden:
 
    Home <self>
-   Hardware <product-info/index>
+   Hardware <hardware/index>
    Getting Started <getting-started/index>
-   Software <ctrl/index>
-   Programming References <api/index>
+   Software <software/index>
+   Programming References <programming-references/index>
    Contact <contact>
    License <license>
    Custom Projects <custom-projects/index>
