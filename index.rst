@@ -99,11 +99,11 @@
    :hidden:
 
    Home <self>
-   Product Information <product-info/index>
+   Hardware <product-info/index>
    Getting Started <getting-started/index>
-   Taking Ctrl <ctrl/index>
-   Custom Projects <custom-projects/index>
-   Tutorials & Examples <tutorials/index>
-   Firmware & API Reference <api/index>
+   Software <ctrl/index>
+   Programming References <api/index>
    Contact <contact>
    License <license>
+   Custom Projects <custom-projects/index>
+   Tutorials & Examples <tutorials/index>
