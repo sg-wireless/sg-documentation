@@ -99,11 +99,11 @@
    :hidden:
 
    Home <self>
-   Hardware <hardware/index>
    Getting Started <getting-started/index>
+   Hardware <hardware/index>
    Software <software/index>
    Programming References <programming-references/index>
    Contact <contact>
    License <license>
-   Custom Projects <custom-projects/index>
-   Tutorials & Examples <tutorials/index>
+   to remove - Custom Projects <custom-projects/index>
+   to remove - Tutorials & Examples <tutorials/index>
