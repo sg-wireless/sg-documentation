@@ -36,7 +36,7 @@ A specialized extension for Microsoft Visual Studio Code (VS Code), which acts a
 CtrlR is designed to bridge the gap between the physical F1 Starter Kit hardware and the Ctrl Cloud Platform.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    setup-computer
-   creating-projects
+   programming-basics

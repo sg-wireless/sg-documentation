@@ -1,4 +1,4 @@
-Setting up Custom Networks
+to remove - Setting up Custom Networks
 ==========================
 
 If you are using a third-party SIM card or need to connect to a specific LTE
