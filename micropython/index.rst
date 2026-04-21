@@ -62,21 +62,21 @@ SG Wireless Extensions
 -----------------------
 
 The following modules are **SG Wireless specific** and are documented in the
-:doc:`API Reference </api/index>` section:
+:doc:`API Reference </programming-references/index>` section:
 
-- :doc:`/api/lora` --- LoRa WAN and RAW radio
-- :doc:`/api/lte` --- LTE Cat-M1 / NB-IoT
-- :doc:`/api/ctrl-client` --- Ctrl Cloud client
-- :doc:`/api/nvs` --- Non-volatile storage
-- :doc:`/api/sysinfo` --- Board and firmware info
-- :doc:`/api/ioexp` --- GPIO expander
-- :doc:`/api/fuel-gauge` --- Battery fuel gauge
-- :doc:`/api/can` --- CAN bus
-- :doc:`/api/efuse` --- eFuse identity data
-- :doc:`/api/fuota` --- Firmware OTA updates
-- :doc:`/api/safeboot` --- SafeBoot feature
-- :doc:`/api/sys-inspect` --- Memory and peripheral inspection
-- :doc:`/api/rgbled` --- RGB LED
+- :doc:`/programming-references/lora` --- LoRa WAN and RAW radio
+- :doc:`/programming-references/lte` --- LTE Cat-M1 / NB-IoT
+- :doc:`/programming-references/ctrl-client` --- Ctrl Cloud client
+- :doc:`/programming-references/nvs` --- Non-volatile storage
+- :doc:`/programming-references/sysinfo` --- Board and firmware info
+- :doc:`/programming-references/ioexp` --- GPIO expander
+- :doc:`/programming-references/fuel-gauge` --- Battery fuel gauge
+- :doc:`/programming-references/can` --- CAN bus
+- :doc:`/programming-references/efuse` --- eFuse identity data
+- :doc:`/programming-references/fuota` --- Firmware OTA updates
+- :doc:`/programming-references/safeboot` --- SafeBoot feature
+- :doc:`/programming-references/sys-inspect` --- Memory and peripheral inspection
+- :doc:`/programming-references/rgbled` --- RGB LED
 
 
 Further Reading

@@ -5,15 +5,17 @@ This section documents the MicroPython modules available on the SG Wireless F1
 platform.  Each module is implemented as a built-in C extension and can be
 imported directly from the MicroPython REPL or from user scripts.
 
+Application
+------------------
 .. toctree::
    :maxdepth: 1
-   :caption: Application
 
    ctrl-client
 
+Network Interfaces
+------------------
 .. toctree::
    :maxdepth: 1
-   :caption: Network Interfaces
 
    lora
    lora-wan
@@ -22,9 +24,10 @@ imported directly from the MicroPython REPL or from user scripts.
    lte
    lte-legacy
 
+Peripherals & System
+------------------
 .. toctree::
    :maxdepth: 1
-   :caption: Peripherals & System
 
    rgbled
    nvs

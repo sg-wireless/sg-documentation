@@ -8,9 +8,9 @@ Add a Sensor to Ctrl
 
 In this section, we will explain how to add an SG Wireless sensor to Ctrl.
 
-1. Navigate to **Sensors** and click on ``Add Sensor``.
+1. Navigate to **Sensors** and click on ``Add sensor``.
 
-   .. image:: /_static/images/ctrl/sensors/sensor_page.png
+   .. image:: /_static/images/ctrl/sensors/add_sensor_1.5.png
       :width: 80%
       :alt: Sensors page in Ctrl
 
@@ -18,17 +18,16 @@ In this section, we will explain how to add an SG Wireless sensor to Ctrl.
 
 3. Choose the device you want the sensor to be initially linked to.
 
-4. Enter an appropriate ``Sensor Name`` and ``Sensor Description`` to better
+4. Enter an appropriate ``Name`` and ``Description`` to better
    identify it.
 
-   .. image:: /_static/images/ctrl/sensors/add_sensor_popup.png
+   .. image:: /_static/images/ctrl/sensors/add_sensor_popup_1.5.png
       :width: 80%
       :alt: Add sensor popup
 
-5. The new sensor will appear on the ``Sensors`` page and in the linked device's
-   ``Sensor`` tab.
+5. The new sensor will appear on the ``Sensors`` page.
 
-   .. image:: /_static/images/ctrl/sensors/sensor_page_2.png
+   .. image:: /_static/images/ctrl/sensors/add_sensor_done_1.5.png
       :width: 80%
       :alt: Sensor added to list
 
@@ -36,9 +35,7 @@ Each sensor can be linked to multiple devices, allowing for versatile
 integration. The data collected by the sensor will flow through the connected
 devices and ultimately reach Ctrl.
 
-On your Dashboard, there should now be a Temperature and Humidity widget. These
-will update when the device sends sensor data to Ctrl. Multiple sensors will show
-up in a different colour with their name in the legend.
+You can access Temperature and Humidity data from the sensor through the fields of the linked device. 
 
 .. _ctrl-update-sensor:
 
@@ -51,15 +48,15 @@ Update Sensor Information
 
 3. Select the ``Edit`` option from the dropdown menu.
 
-   .. image:: /_static/images/ctrl/sensors/sensor_page_update.png
+   .. image:: /_static/images/ctrl/sensors/edit_sensor_1.5.png
       :width: 80%
       :alt: Edit sensor option
 
 4. Update the ``Name`` or ``Description`` fields as needed.
 
-5. Save your changes by clicking ``Edit Sensor``.
+5. Save your changes by clicking ``Save``.
 
-   .. image:: /_static/images/ctrl/sensors/update_sensor_popup.png
+   .. image:: /_static/images/ctrl/sensors/edit_sensor_popup_1.5.png
       :width: 80%
       :alt: Update sensor popup
 
@@ -68,22 +65,24 @@ Update Sensor Information
 Remove a Sensor from Ctrl
 -------------------------
 
-1. Navigate to the ``Sensors`` page.
+1. Unlink all devices from the sensor.
 
-2. Click on the "..." (ellipsis) icon next to the sensor you wish to remove.
+2. Navigate to the ``Sensors`` page.
 
-3. Select the ``Remove Sensor`` option from the dropdown menu.
+3. Click on the "..." (ellipsis) icon next to the sensor you wish to remove.
 
-   .. image:: /_static/images/ctrl/sensors/sensors_page_remove.png
+4. Select the ``Delete`` option from the dropdown menu. The option will only be enabled if there is no devices linked to it.
+
+   .. image:: /_static/images/ctrl/sensors/delete_sensor_1.5.png
       :width: 80%
       :alt: Remove sensor option
 
-4. Confirm by clicking ``Delete``.
+5. Confirm by clicking ``Delete sensor``.
 
-5. Deleting will unlink sensors from any linked devices and remove the sensor from
+6. Deleting will unlink sensors from any linked devices and remove the sensor from
    the platform.
 
-   .. image:: /_static/images/ctrl/sensors/remove_prompt.png
+   .. image:: /_static/images/ctrl/sensors/delete_sensor_popup_1.5.png
       :width: 80%
       :alt: Confirm remove sensor
 
@@ -102,20 +101,20 @@ transmits the data readings with the sensor as the source.
 
 3. Click on ``Link Sensor``.
 
-   .. image:: /_static/images/ctrl/sensors/device_sensor_page.png
+   .. image:: /_static/images/ctrl/sensors/link_device_1.5.png
       :width: 80%
       :alt: Device sensors tab
 
 4. Choose the sensor you want to link from the list provided.
 
-5. Click the ``Link Sensor`` button to confirm.
+5. Click the ``Link device`` button to confirm.
 
-   .. image:: /_static/images/ctrl/sensors/link_sensor_prompt.png
+   .. image:: /_static/images/ctrl/sensors/link_device_popup_1.5.png
       :width: 80%
       :alt: Link sensor prompt
 
-6. Ctrl will send a message to the device, instructing it to listen for the
-   sensor's MAC address and establish the link.
+6. If the device is connected to the internet over Wi-Fi or LTE, Ctrl will send a message to the device over-the-air, instructing it to listen for the
+   sensor's MAC address and establish the link. Otherwise, user need to update the configuration file through CtrlR.
 
 .. _ctrl-unlink-sensor:
 
@@ -132,15 +131,15 @@ sensor.
 
 3. Click on the "..." (ellipsis) icon next to the sensor you wish to unlink.
 
-4. Select the ``Unlink Sensor from Device`` option from the dropdown menu.
+4. Select the ``Unlink device`` option from the dropdown menu.
 
-   .. image:: /_static/images/ctrl/sensors/device_sensor_page_unlink.png
+   .. image:: /_static/images/ctrl/sensors/unlink_device_1.5.png
       :width: 80%
       :alt: Unlink sensor option
 
-5. Confirm the action by clicking on the ``Unlink`` button in the confirmation
+5. Confirm the action by clicking on the ``Confirm`` button in the confirmation
    dialog.
 
-   .. image:: /_static/images/ctrl/sensors/unlink_prompt.png
+   .. image:: /_static/images/ctrl/sensors/unlink_device_popup_1.5.png
       :width: 80%
       :alt: Confirm unlink sensor
