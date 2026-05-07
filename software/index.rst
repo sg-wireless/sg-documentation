@@ -4,7 +4,7 @@ Software
 Ctrl Web Platform
 ------------------
 The all-in-one Cloud Platform that lets you configure, deploy and manage your
-devices to give you full Ctrl. over your IoT networks.
+devices to give you full Ctrl over your IoT networks.
 
 * Visualizes your sensor data.
 * Checks the status of your entire deployment.
