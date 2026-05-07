@@ -444,8 +444,8 @@ Pin Definitions
 Board Operation
 ---------------
 
-* :doc:`/getting-started/index` — Setup computer for F1
-* :doc:`/tutorials/index` — Tutorials and examples
+* :doc:`/getting-started/index` — F1 platform setup guide
+* :doc:`/programming-references/index` — MicroPython references for F1 platform
 * Additional online resources at https://www.sgwireless.com
 
 See :doc:`/getting-started/index` for setup instructions.
