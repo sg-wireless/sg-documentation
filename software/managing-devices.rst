@@ -1,4 +1,4 @@
-Managing Devices
+Devices
 ================
 
 In general, Ctrl communicates to your device through MQTT. Depending on the type
