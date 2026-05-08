@@ -62,7 +62,7 @@ There are two types of fields in Ctrl:
 
 .. _dt-dashboard:
 
-Device Dashboard
+Dasboard Layout
 ------------------
 
 All devices using the same template share identical dashboard configurations. This includes:
@@ -72,25 +72,23 @@ All devices using the same template share identical dashboard configurations. Th
 
 Details regarding the data widget settings can be found on Dashboard & Widgets section
 
-.. _mp-add:
+.. _dt-devices:
 
-Add Project
+Associated Devices
 -----------
 
-To set up new projects, click on "Add project" and follow the prompts. These can
-always be changed later in "Settings".
+Associated Devices tab lists all devices under the same template. Any changes made to the template elements, such as dashboard, fields, or software releases, will be reflected on all associated devices. 
 
 .. image:: /_static/images/ctrl/managing-projects/Ctrl-Create-New-Project.png
    :width: 80%
    :alt: Create new project in Ctrl
 
-.. _mp-switch:
+.. _dt-releases:
 
-Switch Project
+Software Releases
 --------------
 
-Switch between different projects simply by selecting it. The checkmark indicates
-the selected project.
+A repository of file content that can be uploaded over-the-air to the device. User needs to first create a new release and upload the zipped file content on this page before deploying it to the target device(s).
 
 .. image:: /_static/images/ctrl/managing-projects/Ctrl-Switch-Project.png
    :width: 80%
