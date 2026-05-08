@@ -1,4 +1,4 @@
-Managing Networks
+Networks
 =================
 
 For each project, you can save multiple LTE and Wi-Fi profiles for use across
