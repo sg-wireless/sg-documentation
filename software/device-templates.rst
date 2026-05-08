@@ -102,9 +102,31 @@ A repository of file content that can be uploaded over-the-air to the device. Us
 Automation
 ===================
 
-Automation triggers autonomous actions based on the specified triggers. User can apply the automation rule to all devices under the same template or to a specific device.  
+Automation triggers autonomous actions based on the specified condition. User can apply the automation rule to all devices under the same template or to a specific device.  
 
+Trigger
+-------------
 
+Determine what triggers the condition-checking mechanism:
+
+- Immediately: Checks the condition on every incoming measurement
+- Device status: Checks the condition based on the specified device status
+- Interval: Checks the condition once every specified interval
+- Fixed time: Periodically checks the condition at a specified time of the day. Make sure the time zone has been set correctly.
+
+On top of the nature of triggers, user also can configure the applicable days of the week. For example: user can set the automation to only activated from Monday to Friday.
+
+Source
+-------------
+
+Determine which device template the automation be applied to. The conditions checking will be applicable to devices of the specified template. However, user can also specify specific device(s) the automation will be applied to.
+
+Condition
+-------------
+
+Set criteria for the device state or field value to execute the action. User can compare the field value with other field or with a constant. Logical operations OR and AND can be used to check for multiple conditions.
+
+Furthermore, to prevent from repeating actions being executed, user can set a delay time before the next condition checking is executed.
 
 
 .. image:: /_static/images/ctrl/managing-projects/image5.png
