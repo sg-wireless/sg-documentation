@@ -34,7 +34,7 @@ Uplink data received from your device is stored in Ctrl's 'Device Fields' - cons
 
 The device field also stores downlink values sent from Ctrl to your device. For example:
 
-- A SET_TEMPERATURE field stores the temperature value adjustment done through your Ctrl dashboard to your device. 
+- A SET TEMPERATURE field stores the temperature value adjustment done through your Ctrl dashboard to your device. 
 
 Note that each field can be used for both uplink and downlink data.
 
@@ -53,9 +53,10 @@ There are two types of fields in Ctrl:
 -- Text (status: "online")
 -- Boolean (door_open: true/false)
 -- Location (GPS coordinates: 22.123,144.123)
-Calculated Device Field: Stores derived values created from manipulation of direct sensor readings, such as ...
-Offset operations: Add or subtract a constant (convert Celsius to Fahrenheit)
-Factor operations: Multiply or divide by a constant (convert voltage to percentage)
+
+- Calculated Device Field: Stores derived values created from manipulation of direct sensor readings, such as:
+-- Offset operation field: Add or subtract a constant (convert Celsius to Fahrenheit)
+-- Factor operation field: Multiply or divide by a constant (convert voltage to percentage)
 
 
 
