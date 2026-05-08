@@ -17,7 +17,6 @@ See how each component comes together to set up your own Device Template:
 
 - :ref:`Device Fields <dt-fields>`
 - :ref:`Dashboard Layout <dt-dashboard>`
-- :ref:`Switch project <mp-switch>`
 - :ref:`Associated Devices <dt-devices>`
 - :ref:`Software releases <dt-releases>`
 - :ref:`Automation <dt-automation>`
@@ -28,12 +27,36 @@ See how each component comes together to set up your own Device Template:
 Fields
 ------------------
 
-All devices using the same template share identical dashboard configurations. This includes:
+Uplink data received from your device is stored in Ctrl's 'Device Fields' - consider them as individual buckets that store different types of data. For example:
 
-- **Dashboard layout:** Configure types, positions, and sizes of the widgets on each device dashboard. This dashboard is located on each device details.
-- **Widget data sources:** Configure data souce fields of each widget. 
+- A TEMPERATURE field stores temperature readings from the temperature sensor connected to your F1 Starter Kit
+- A HUMIDITY field stores humidity measurements from the humidity sensor
 
-Details regarding the data widget settings can be found on 
+The device field also stores downlink values sent from Ctrl to your device. For example:
+
+- A SET_TEMPERATURE field stores the temperature value adjustment done through your Ctrl dashboard to your device. 
+
+Note that each field can be used for both uplink and downlink data.
+
+Below are the elements of fields:
+
+- **Field name:** User-friendly name to identify the fields
+- **Key:** Used to identify the field when exchanging data over MQTT. Only uppercase letters, numbers, and underscores are accepted
+- **PIN number:** Connects Ctrl to the device for data sharing. It is non-editable.
+- **Data type:** Defines the data type of field data. It is non-editable.
+- **Unit:** Identifies the quantification unit of the field data.
+
+There are two types of fields in Ctrl:
+
+- Standard Device Field: Stores direct sensor readings as they come from your device, such as:
+-- Numbers (temperature: 23.5°C)
+-- Text (status: "online")
+-- Boolean (door_open: true/false)
+-- Location (GPS coordinates: 22.123,144.123)
+Calculated Device Field: Stores derived values created from manipulation of direct sensor readings, such as ...
+Offset operations: Add or subtract a constant (convert Celsius to Fahrenheit)
+Factor operations: Multiply or divide by a constant (convert voltage to percentage)
+
 
 
 .. _dt-dashboard:
