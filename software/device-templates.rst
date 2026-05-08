@@ -1,3 +1,4 @@
+=================
 Device Templates
 =================
 
@@ -25,7 +26,7 @@ See how each component comes together to set up your own Device Template:
 .. _dt-fields:
 
 Fields
-------------------
+=========
 
 Uplink data received from your device is stored in Ctrl's 'Device Fields' - consider them as individual buckets that store different types of data. For example:
 
@@ -94,33 +95,17 @@ A repository of file content that can be uploaded over-the-air to the device. Us
    :width: 80%
    :alt: Switch between projects
 
-.. _mp-edit:
+.. _dt-automation:
 
-Edit Project
+Automation
 ------------
 
-Update your project settings through the following steps:
+Automation triggers autonomous actions based on the specified triggers. User can apply the automation rule to all devices under the same template or to a specific device.  
 
-1. On the target project, go to the Home tab.
-2. Click the "Settings" button on the top right corner.
-3. Make necessary changes.
-4. Click "Confirm" to apply the changes.
+
+
 
 .. image:: /_static/images/ctrl/managing-projects/image5.png
    :width: 80%
    :alt: Edit project settings
 
-.. _mp-delete:
-
-Delete Project
---------------
-
-To delete a project, click on "...", then "Delete project". You'll be asked to
-confirm this action by inputting your project name.
-
-Upon project deletion, all related information will be deleted. **This action
-cannot be undone.**
-
-.. image:: /_static/images/ctrl/managing-projects/image6.png
-   :width: 80%
-   :alt: Delete project
