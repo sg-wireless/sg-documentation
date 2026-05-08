@@ -48,15 +48,15 @@ Below are the elements of fields:
 
 There are two types of fields in Ctrl:
 
-- Standard Device Field: Stores direct sensor readings as they come from your device, such as:
--- Numbers (temperature: 23.5°C)
--- Text (status: "online")
--- Boolean (door_open: true/false)
--- Location (GPS coordinates: 22.123,144.123)
+- Standard Field: Stores direct sensor readings as they come from your device, such as:
+   - Numbers (temperature: 23.5°C)
+   - Text (status: "online")
+   - Boolean (door_open: true/false)
+   - Location (GPS coordinates: 22.123,144.123)
 
-- Calculated Device Field: Stores derived values created from manipulation of direct sensor readings, such as:
--- Offset operation field: Add or subtract a constant (convert Celsius to Fahrenheit)
--- Factor operation field: Multiply or divide by a constant (convert voltage to percentage)
+- Calculated Field: Can enabled by activating the 'enable' toggle during field creation. It stores calculated values of the standard field. Each calculated field can only be associated with one standard field. There are two options of operation available in calculated field:
+   - Offset: Add or subtract a constant. For example: HKT_Time calculated field stores GMT+8 timestamps by adding 8 to all the values of UTC_Time standard field.
+   - Factor: Multiply or divide by a constant. For example, depth_feet calculated field stores the depth measurement in feet by dividing all values of depth_meter by 3,28084. 
 
 
 
