@@ -39,7 +39,8 @@ The device field also stores downlink values sent from Ctrl to your device. For 
 
 Note that each field can be used for both uplink and downlink data.
 
-Below are the elements of fields:
+Field Elements
+------------------
 
 - **Field name:** User-friendly name to identify the fields
 - **Key:** Used to identify the field when exchanging data over MQTT. Only uppercase letters, numbers, and underscores are accepted
@@ -47,7 +48,8 @@ Below are the elements of fields:
 - **Data type:** Defines the data type of field data. It is non-editable.
 - **Unit:** Identifies the quantification unit of the field data.
 
-There are two types of fields in Ctrl:
+Field Types
+-------------
 
 - Standard Field: Stores direct sensor readings as they come from your device, such as:
    - Numbers (temperature: 23.5°C)
@@ -64,7 +66,7 @@ There are two types of fields in Ctrl:
 .. _dt-dashboard:
 
 Dasboard Layout
-------------------
+===================
 
 All devices using the same template share identical dashboard configurations. This includes:
 
@@ -76,7 +78,7 @@ Details regarding the data widget settings can be found on Dashboard & Widgets s
 .. _dt-devices:
 
 Associated Devices
------------
+=====================
 
 Associated Devices tab lists all devices under the same template. Any changes made to the template elements, such as dashboard, fields, or software releases, will be reflected on all associated devices. 
 
@@ -87,7 +89,7 @@ Associated Devices tab lists all devices under the same template. Any changes ma
 .. _dt-releases:
 
 Software Releases
---------------
+===================
 
 A repository of file content that can be uploaded over-the-air to the device. User needs to first create a new release and upload the zipped file content on this page before deploying it to the target device(s).
 
@@ -98,7 +100,7 @@ A repository of file content that can be uploaded over-the-air to the device. Us
 .. _dt-automation:
 
 Automation
-------------
+===================
 
 Automation triggers autonomous actions based on the specified triggers. User can apply the automation rule to all devices under the same template or to a specific device.  
 
