@@ -1,4 +1,4 @@
-Managing Projects
+Projects
 =================
 
 Your initial project is automatically generated when you create your account. You
