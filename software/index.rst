@@ -17,12 +17,14 @@ when using F1 smart modules.
    :maxdepth: 2
 
    managing-projects
-   managing-networks
-   account-settings
+   device-templates
    managing-devices
-   visualize-data
+   managing-networks
    sensors
+   visualize-data
    integrations/index
+   account-settings
+
 
 CtrlR Visual Studio Plugin
 ------------------
