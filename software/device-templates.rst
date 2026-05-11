@@ -147,7 +147,5 @@ Set criteria for the device state or field value to execute the action. User can
 Furthermore, to prevent from repeating actions being executed, user can set a delay time before the next condition checking is executed.
 
 
-.. image:: /_static/images/ctrl/managing-projects/image5.png
-   :width: 80%
-   :alt: Edit project settings
+
 
