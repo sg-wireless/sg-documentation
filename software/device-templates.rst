@@ -6,6 +6,10 @@ Scaling IoT projects is great! Until you realize that it means there'll be hundr
 
 A Device Template solves this problem: you set up one template that tells a device how to collect and display its data, then apply to all.
 
+.. image:: /_static/images/ctrl/device-templates/ctrl_device_template_home.png
+   :width: 80%
+   :alt: Ctrl device template home page
+
 You can expect:
 
 - Consistent data handling - All devices using the template store and display data identically
@@ -39,6 +43,10 @@ The device field also stores downlink values sent from Ctrl to your device. For 
 
 Note that each field can be used for both uplink and downlink data.
 
+.. image:: /_static/images/ctrl/device-templates/ctrl_device_template_fields.png
+   :width: 80%
+   :alt: Ctrl fields
+
 Field Elements
 ------------------
 
@@ -47,6 +55,10 @@ Field Elements
 - **PIN number:** Connects Ctrl to the device for data sharing. It is non-editable.
 - **Data type:** Defines the data type of field data. It is non-editable.
 - **Unit:** Identifies the quantification unit of the field data.
+
+.. image:: /_static/images/ctrl/device-templates/ctrl_device_template_fields_add.png
+   :width: 80%
+   :alt: Ctrl field elements
 
 Field Types
 -------------
@@ -61,7 +73,9 @@ Field Types
    - Offset: Add or subtract a constant. For example: HKT_Time calculated field stores GMT+8 timestamps by adding 8 to all the values of UTC_Time standard field.
    - Factor: Multiply or divide by a constant. For example, depth_feet calculated field stores the depth measurement in feet by dividing all values of depth_meter by 3,28084. 
 
-
+.. image:: /_static/images/ctrl/device-templates/ctrl_device_template_calcfields_add.png
+   :width: 80%
+   :alt: Ctrl calculated fields
 
 .. _dt-dashboard:
 
@@ -75,6 +89,10 @@ All devices using the same template share identical dashboard configurations. Th
 
 Details regarding the data widget settings can be found on Dashboard & Widgets section
 
+.. image:: /_static/images/ctrl/device-templates/ctrl_device_template_dashboard.png
+   :width: 80%
+   :alt: Ctrl dashboard template
+
 .. _dt-devices:
 
 Associated Devices
@@ -82,9 +100,9 @@ Associated Devices
 
 Associated Devices tab lists all devices under the same template. Any changes made to the template elements, such as dashboard, fields, or software releases, will be reflected on all associated devices. 
 
-.. image:: /_static/images/ctrl/managing-projects/Ctrl-Create-New-Project.png
+.. image:: /_static/images/ctrl/device-templates/ctrl_device_template_devices.png
    :width: 80%
-   :alt: Create new project in Ctrl
+   :alt: Ctrl template associated devices
 
 .. _dt-releases:
 
@@ -93,9 +111,9 @@ Software Releases
 
 A repository of file content that can be uploaded over-the-air to the device. User needs to first create a new release and upload the zipped file content on this page before deploying it to the target device(s).
 
-.. image:: /_static/images/ctrl/managing-projects/Ctrl-Switch-Project.png
+.. image:: /_static/images/ctrl/device-templates/ctrl_device_template_releases_add.png
    :width: 80%
-   :alt: Switch between projects
+   :alt: Ctrl releases template 
 
 .. _dt-automation:
 
