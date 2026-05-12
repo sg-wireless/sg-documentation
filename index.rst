@@ -99,9 +99,9 @@
    :hidden:
 
    Home <self>
-   Product Information <product-info/index>
+   Product Information <hardware/index>
    Getting Started <getting-started/index>
-   Taking Ctrl <ctrl/index>
+   Taking Ctrl <software/index>
    Custom Projects <custom-projects/index>
    Tutorials & Examples <tutorials/index>
    Firmware & API Reference <api/index>
