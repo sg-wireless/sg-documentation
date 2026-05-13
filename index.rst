@@ -102,8 +102,11 @@
    Getting Started <getting-started/index>
    Hardware <hardware/index>
    Software <software/index>
+   Getting Started <getting-started/index>
+   Taking Ctrl <ctrl/index>
    Programming References <programming-references/index>
+   Custom Projects <custom-projects/index>
+   Tutorials & Examples <tutorials/index>
+   Firmware & API Reference <api/index>
    Contact <contact>
    License <license>
-   to remove - Custom Projects <custom-projects/index>
-   to remove - Tutorials & Examples <tutorials/index>
