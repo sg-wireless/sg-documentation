@@ -22,7 +22,7 @@ development with multi-network creation flexibility and rapid scaling capacity.
 Key Features
 ~~~~~~~~~~~~
 
-* **Multi-connectivity:**
+* Multi-connectivity:
 
   - WiFi 802.11b/g/n (2.4 GHz)
   - Bluetooth BLE 5.0

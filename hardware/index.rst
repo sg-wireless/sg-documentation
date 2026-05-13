@@ -1,4 +1,4 @@
-Product Information
+Hardware
 ===================
 
 The following pages contain all information relating to each product: pinouts,

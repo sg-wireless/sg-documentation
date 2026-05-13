@@ -17,6 +17,22 @@ requiring connectivity flexibility.
    *F1 Starter Kit*
 
 
+Varieties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Based on the cellular technologies and region, there are 4 varieties of F1 Starter Kit:
+
+* **F1 Starter Kit NA, CAT-M1** (SGW3501-EVK-NA-CATM1-8130D)
+* **F1 Starter Kit EU, CAT-M1** (SGW3501-EVK-NA-CATM1-8130D)
+* **F1 Starter Kit Global, CAT-M1** (SGW3501-EVK-NA-CATM1-8130D)
+* **F1 Starter Kit Global, NB-IoT** (SGW3501-EVK-NA-CATM1-8130D)
+
+Each Starter Kit comes with the following:
+
+* F1 EVK
+* CAP/T sensor
+* 1-hour consultation
+
+
 What Makes the F1 Starter Kit Unique
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -444,8 +460,8 @@ Pin Definitions
 Board Operation
 ---------------
 
-* :doc:`/getting-started/index` — Setup computer for F1
-* :doc:`/tutorials/index` — Tutorials and examples
+* :doc:`/getting-started/index` — F1 platform setup guide
+* :doc:`/programming-references/index` — MicroPython references for F1 platform
 * Additional online resources at https://www.sgwireless.com
 
 See :doc:`/getting-started/index` for setup instructions.

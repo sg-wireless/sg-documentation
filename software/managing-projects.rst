@@ -1,4 +1,4 @@
-Managing Projects
+Projects
 =================
 
 Your initial project is automatically generated when you create your account. You
@@ -25,7 +25,8 @@ account. This is the project home page. Below are the components of a project:
   needed.
 - **Set-up:** Overview of your project set-up, from connected assets to
   configured workflows.
-- **Customization:** Create dashboards and device templates for your use case.
+- **Project Dashboard:** Create a centralized view of devices under the same project.
+- **Device Templates:** Manage device templates to scale up your deployment and maintenance.
 - **Menu Bar:** Quick links to configure each Ctrl building block.
 
 .. image:: /_static/images/ctrl/managing-projects/Ctrl-Homepage.png

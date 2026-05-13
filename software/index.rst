@@ -4,7 +4,7 @@ Software
 Ctrl Web Platform
 ------------------
 The all-in-one Cloud Platform that lets you configure, deploy and manage your
-devices to give you full Ctrl. over your IoT networks.
+devices to give you full Ctrl over your IoT networks.
 
 * Visualizes your sensor data.
 * Checks the status of your entire deployment.
@@ -17,12 +17,14 @@ when using F1 smart modules.
    :maxdepth: 2
 
    managing-projects
-   managing-networks
-   account-settings
+   device-templates
    managing-devices
-   visualize-data
+   managing-networks
    sensors
+   visualize-data
    integrations/index
+   account-settings
+
 
 CtrlR Visual Studio Plugin
 ------------------
