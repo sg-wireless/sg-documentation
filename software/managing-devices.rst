@@ -26,7 +26,7 @@ You can perform Over-The-Air (OTA) firmware update by clicking the 'Update now' 
 - The current firmware version is older than the latest version
 - Device status is online
 
-If you wish to deploy other firmware versions or if the device is currently offline, you can perform the update  though USB connection using our Visual Studio Code CtrlR plugin.  
+If you wish to deploy other firmware versions or if the device is currently offline, you can perform the update though USB connection using our Visual Studio Code CtrlR plugin.  
 
 
 File Management
@@ -66,11 +66,12 @@ File content management of F1 Starter Kit consists of two main parts:
         - Device is offline
         - A software release is in progress
         - Device is currently connected over LoRa - the file size is too large to be handled over LoRa connection
-    
+
+If OTA software release is not available, you can perform the deployment though USB connection using our Visual Studio Code CtrlR plugin.      
 
 
 Next Steps
-----------
+*****************
 
 - :doc:`Dashboards & Widgets <visualize-data>`
 - :doc:`Link sensors to your device <sensors>`
