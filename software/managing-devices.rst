@@ -10,6 +10,17 @@ of device, add your devices to Ctrl through one of the following steps:
 - **Adding other devices:** Use the
   :doc:`Manual Provisioning </getting-started/manual-provisioning>` flow
 
+Updating Device Firmware
+-------------------------
+- Over-the-air update via Ctrl
+- Wired update via CtrlR
+
+Updating File Control 
+-------------------------
+
+- Over-the-air update via Ctrl
+- Wired update via CtrlR
+
 Next Steps
 ----------
 
