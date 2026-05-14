@@ -102,7 +102,7 @@
    Getting Started <getting-started/index>
    Hardware <hardware/index>
    Software <software/index>
-   Getting Started <getting-started/index>
+   Product Information <product-info/index>
    Taking Ctrl <ctrl/index>
    Programming References <programming-references/index>
    Custom Projects <custom-projects/index>
