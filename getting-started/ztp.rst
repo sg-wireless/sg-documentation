@@ -4,11 +4,11 @@ Zero-Touch Provisioning (ZTP)
 Zero-Touch Provisioning (ZTP) automatically performs the following three tasks to
 set up your Starter Kit seamlessly:
 
-- Get your F1 Starter Kit online using the default LTE network.
+- Get your F1 Starter Kit online using the default LTE or LoRa network, depending on your selected configuration.
 - Add your F1 Starter Kit and CAP/T sensor to your Ctrl account for remote
   monitoring and management.
 - Link your F1 Starter Kit and the CAP/T sensor to start viewing its data
-  through your Ctrl page.
+  through your Ctrl page. This feature is not available on ZTP over LoRa.
 
 Regional Coverage
 -----------------
@@ -50,14 +50,16 @@ not supported in your region.
 Provisioning Steps
 ------------------
 
-1. Unpack the F1 Starter Kit and scan the QR code on the F1 evaluation board.
+1. IF you are performing ZTP over LoRa, ensure you have a LoRaWAN gateway within accessible range of your device. The LoRa region setting should be the same as the one you requested for your device pre-configuration during purchase. Make sure that it's also connected to the internet.
+
+2. Unpack the F1 Starter Kit and scan the QR code on the F1 evaluation board.
    You'll be directed to the Ctrl IoT Platform.
 
    .. image:: /_static/images/getting-started/ztp/Screenshot-2025-09-19-at-4.51.42-PM.png
       :width: 80%
       :alt: Scan QR code on F1 evaluation board
 
-2. Input the email address to be associated with your Ctrl account. Your Starter
+3. Input the email address to be associated with your Ctrl account. Your Starter
    Kit will be tied to this account. (No other Ctrl accounts can use the same
    Starter Kit until it is deleted from the account it is tied to.)
 
@@ -65,7 +67,7 @@ Provisioning Steps
       :width: 80%
       :alt: Enter email for Ctrl account
 
-3. Select a Ctrl project & Device Template -- as this is your first device,
+4. Select a Ctrl project & Device Template -- as this is your first device,
    you'll land on both "New Project" and "New device template" pages by default
    and you'll be given system-generated identifiers accordingly. Click "Next".
    (Device Templates will be important as you scale -- more on this later.)
@@ -74,15 +76,14 @@ Provisioning Steps
       :width: 80%
       :alt: Select project and device template
 
-4. Connect the F1 evaluation board to a power source and toggle SW200 from OFF
+5. Connect the F1 evaluation board to a power source and toggle SW200 from OFF
    to ON (LEDs will light up).
 
    .. image:: /_static/images/getting-started/ztp/Screenshot-2025-09-18-at-3.45.12-PM-e1758188262398.png
       :width: 80%
       :alt: Power on F1 evaluation board
 
-5. If you also purchased a CAP/T sensor, you can directly connect your sensor to
-   your F1 during the provisioning flow. Remove the transparent battery cover
+6. (Not applicable for ZTP over LoRa) If you also purchased a CAP/T sensor, you can directly connect your sensor to your F1 during the provisioning flow. Remove the transparent battery cover
    from the sensor and press the button on the top corner. Notice that the sensor
    LED will be blinking green.
 
@@ -90,7 +91,7 @@ Provisioning Steps
       :width: 40%
       :alt: CAP/T sensor with LED blinking green
 
-6. Monitor the provisioning status on your screen. You can also check the RGB LED
+7. Monitor the provisioning status on your screen. You can also check the RGB LED
    on the F1 evaluation board:
 
    - **Blinking blue** = registering
@@ -105,7 +106,7 @@ Provisioning Steps
       :width: 60%
       :alt: F1 Starter Kit green LED on
 
-7. When provisioning is complete, click "Go to device details" on your Ctrl
+8. When provisioning is complete, click "Go to device details" on your Ctrl
    screen to see sensor data coming through.
 
    .. image:: /_static/images/getting-started/ztp/ZTP-Complete.png
