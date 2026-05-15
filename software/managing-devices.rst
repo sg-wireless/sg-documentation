@@ -64,14 +64,28 @@ File content management of F1 Starter Kit consists of two main parts:
 
 .. image:: /_static/images/ctrl/device-templates/ctrl_device_template_releases_add.png
    :width: 80%
-   :alt: Ctrl template releases
+   :alt: Ctrl template create releases
 
     - Select any devices under the Associated Devices tab to deploy the release.
     
 - Deployment manager tab on Device Details - over-the-air (OTA) software release
     - Make sure that your device is connected to the internet over Wi-Fi or cellular connection
     - Go to Deployment Management tab of the target device details
+
+.. image:: /_static/images/ctrl/managing-devices/ctrl_device_details_releases_online.png
+   :width: 80%
+   :alt: Ctrl device deploy releases online
+
     - Select the release version and click 'Deploy release' - device will be reset upon completion. 
+
+.. image:: /_static/images/ctrl/managing-devices/ctrl_device_details_releases_reset.png
+   :width: 80%
+   :alt: Ctrl device deploy releases reset
+
+.. image:: /_static/images/ctrl/managing-devices/ctrl_device_details_releases_done.png
+   :width: 80%
+   :alt: Ctrl device deploy releases done
+
     - The OTA software release is not available under the following situations:
         - Device is offline
         - A software release is in progress
