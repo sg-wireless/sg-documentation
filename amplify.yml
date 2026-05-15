@@ -6,19 +6,43 @@ frontend:
         - git fetch --unshallow || true
         - git fetch --tags --force
         - |
-          if command -v apt-get >/dev/null 2>&1; then
-            export DEBIAN_FRONTEND=noninteractive
-            apt-get update
-            apt-get install -y --no-install-recommends latexmk texlive-xetex texlive-latex-extra
-          elif command -v yum >/dev/null 2>&1; then
-            yum install -y texlive-xetex texlive-latex
-            yum install -y latexmk || true
-          else
-            echo "ERROR: Unsupported package manager; cannot install LaTeX toolchain"
+          mkdir -p "$HOME/.local/bin"
+          export PATH="$HOME/.local/bin:$PATH"
+
+          if ! command -v latexmk >/dev/null 2>&1 && ! command -v xelatex >/dev/null 2>&1 && ! command -v tectonic >/dev/null 2>&1; then
+            ARCH="$(uname -m)"
+            case "$ARCH" in
+              x86_64) TECTONIC_ARCH="x86_64-unknown-linux-gnu" ;;
+              aarch64|arm64) TECTONIC_ARCH="aarch64-unknown-linux-gnu" ;;
+              *)
+                echo "ERROR: Unsupported architecture for tectonic bootstrap: $ARCH"
+                exit 1
+                ;;
+            esac
+
+            TECTONIC_VERSION="0.15.0"
+            TECTONIC_TGZ="tectonic-${TECTONIC_VERSION}-${TECTONIC_ARCH}.tar.gz"
+            TECTONIC_URL="https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%40${TECTONIC_VERSION}/${TECTONIC_TGZ}"
+
+            echo "Bootstrapping tectonic ${TECTONIC_VERSION} for ${TECTONIC_ARCH}"
+            curl -fsSL "$TECTONIC_URL" -o "/tmp/${TECTONIC_TGZ}"
+            TECTONIC_BIN_PATH="$(tar -tzf "/tmp/${TECTONIC_TGZ}" | grep -E '(^|/)tectonic$' | head -1)"
+            if [ -z "$TECTONIC_BIN_PATH" ]; then
+              echo "ERROR: Could not find tectonic binary in downloaded archive"
+              exit 1
+            fi
+            tar -xzf "/tmp/${TECTONIC_TGZ}" -C /tmp "$TECTONIC_BIN_PATH"
+            install -m 755 "/tmp/${TECTONIC_BIN_PATH}" "$HOME/.local/bin/tectonic"
+          fi
+
+          command -v latexmk >/dev/null 2>&1 && latexmk --version || true
+          command -v xelatex >/dev/null 2>&1 && xelatex --version || true
+          command -v tectonic >/dev/null 2>&1 && tectonic --version || true
+
+          if ! command -v latexmk >/dev/null 2>&1 && ! command -v xelatex >/dev/null 2>&1 && ! command -v tectonic >/dev/null 2>&1; then
+            echo "ERROR: No PDF toolchain available (latexmk/xelatex/tectonic)"
             exit 1
           fi
-        - xelatex --version
-        - latexmk --version || true
         - export PYENV_ROOT="$HOME/.pyenv"
         - export PATH="$PYENV_ROOT/bin:$PATH"
         - eval "$(pyenv init -)"

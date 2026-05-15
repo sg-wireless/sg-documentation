@@ -45,13 +45,8 @@ build_pdf_noninteractive() {
     timeout "$PDF_BUILD_TIMEOUT_SEC" env \
       LATEXMKOPTS="-interaction=nonstopmode -halt-on-error -file-line-error -f" \
       latexmk -cd -pdfxe -interaction=nonstopmode -halt-on-error -file-line-error -f "$tex_file"
-  else
+  elif command -v xelatex >/dev/null 2>&1; then
     echo "WARNING: latexmk not found; falling back to direct xelatex build"
-    if ! command -v xelatex >/dev/null 2>&1; then
-      echo "ERROR: Neither latexmk nor xelatex is available in PATH"
-      return 127
-    fi
-
     timeout "$PDF_BUILD_TIMEOUT_SEC" bash -c '
       set -euo pipefail
       cd "$1"
@@ -62,6 +57,21 @@ build_pdf_noninteractive() {
       xelatex -interaction=nonstopmode -halt-on-error -file-line-error "$2"
       xelatex -interaction=nonstopmode -halt-on-error -file-line-error "$2"
     ' _ "$latex_dir" "$tex_name" "$tex_base"
+  elif command -v tectonic >/dev/null 2>&1; then
+    echo "WARNING: latexmk/xelatex not found; falling back to tectonic build"
+    timeout "$PDF_BUILD_TIMEOUT_SEC" bash -c '
+      set -euo pipefail
+      cd "$1"
+      tectonic --keep-logs --outdir "$1" "$2"
+      if [[ -f "$3.idx" ]] && command -v makeindex >/dev/null 2>&1; then
+        makeindex "$3.idx"
+        tectonic --keep-logs --outdir "$1" "$2"
+      fi
+      tectonic --keep-logs --outdir "$1" "$2"
+    ' _ "$latex_dir" "$tex_name" "$tex_base"
+  else
+    echo "ERROR: None of latexmk, xelatex, or tectonic is available in PATH"
+    return 127
   fi
 }
 
