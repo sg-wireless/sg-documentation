@@ -1,5 +1,5 @@
 Networks
-=================
+##############
 
 For each project, you can save multiple LTE and Wi-Fi profiles for use across
 various devices through the Networks tab. This eliminates the need to repeatedly
@@ -18,7 +18,7 @@ network settings remotely through Ctrl.
 .. _net-profiles:
 
 Manage Network Profiles
------------------------
+==========================
 
 A *network profile* is a set of network configurations that can be implemented to
 multiple devices in the project.
@@ -29,7 +29,7 @@ multiple devices in the project.
    added for you, with name "1NCE".
 
 Create new network profile
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------
 
 1. In the side menu, click "Networks", then "Add network profile".
 
@@ -47,7 +47,7 @@ Create new network profile
    available under the corresponding tab.
 
 Edit network profile
-^^^^^^^^^^^^^^^^^^^^
+------------------------------
 
 1. In the side menu, click "Networks".
 
@@ -74,7 +74,7 @@ Edit network profile
    changes through each device's network tab.
 
 Delete network profile
-^^^^^^^^^^^^^^^^^^^^^^
+------------------------------
 
 A network can only be deleted if it is not being used by an existing device.
 
@@ -89,21 +89,23 @@ A network can only be deleted if it is not being used by an existing device.
 
 .. _net-device:
 
+
+
 Manage Device Network Settings
-------------------------------
+====================================
 
 The F1 Starter Kit supports multiple network types that can be adjusted according
 to your need. You can *enable or disable* particular network types AND adjust the
 *network type priority* of your Starter Kit through Ctrl.
 
 Accessing the device network settings
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------
 
 1. In the side menu, click "Devices". Then, click on the target device.
 2. Click on the device's "Networks" tab.
 
 Activate or deactivate a network
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------
 
 1. Click on the arrow icon on the target network.
 
@@ -123,8 +125,45 @@ Activate or deactivate a network
 4. The activated networks are displayed under the "Activated networks" section,
    while the non-active networks are displayed under "Other networks" section.
 
+
+Ctrl LoRaWAN integration
+----------------------------------------
+
+LoRa connectivity activation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Since Ctrl is integrated with SG Wireless TTN LoRaWAN, it will automatically register and connect your devices upon LoRa activation through Ctrl. 
+
+1. First, ensure you have a LoRaWAN gateway within accessible range of your device. Identify the region setting of the gateway and make sure that it's also connected to the internet.
+2. Once you activate the LoRa profile toggle, you will need to select the LoRaWAN region that matches with your LoRaWAN gateway region. Upon clicking the ``save`` button, Ctrl will automatically generate TTN device activation information, such as JoinEUI, DevEUI, AppKey, and NwkKey. This information is currently not visible by user in Ctrl. But it can be accessed by calling ``ctr.print_config()`` Ctrl Client endpoint through any IDE of your choice.
+
+.. image:: /_static/images/ctrl/managing-networks/ctrl_network_lora_settings.png
+      :width: 80%
+      :alt: Enable lora network
+
+3. This device activation information will be passed to the device when you :ref:`deploy the network profile <net-deploy>`. 
+
+If you wish to use your own LoRaWAN setup, you can use the programming resources on this page to configure the LoRa connection: :doc:`Network Interfaces </programming-references/index.html#network-interfaces>`
+
+LoRa Connectivity Limitations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. **Downlink data is not real-time.** As a LoRa Class A device, F1 Starter Kit always initiates communication from the device side and operates fully asynchronously, so downlink messages are not delivered instantly.
+2. LoRa’s long-range, low-power design limits the size of data packets, so that these capabilities are not supported over LoRa:
+      a. Linking / unlinking sensors
+      b. OTA firmware update
+      c. OTA file content update
+      d. OTA network settings update
+
+
+Rejoining SGW LoRaWAN TTN Network
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Supposedly, you only need to register your device to SG Wireless TTN network once during activation. However if your device looses connectivity from activities like firmware reflashing, the device needs to rejoin the network. While the device activation credentials remain unchanged, you might encounter errors like 'DevNonce is too small'. In this case, kindly contact us at info@sgwireless.com for support. We will help you to reset the DevNonce. 
+
+
 Adjust the device network priority
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------
 
 In the list of *activated networks*, click and hold the three lines on the left
 of the target network, and drag it to its desired priority.
@@ -138,8 +177,10 @@ of the target network, and drag it to its desired priority.
    This priority will only be used during the first-time connection. Automatic
    network switching is not supported after connection has been established.
 
+.. _net-deploy:
+
 Deploy the network setting
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------
 
 To implement the updated settings on your device, deploy it using one of the
 following approaches:
@@ -163,3 +204,5 @@ following approaches:
   2. Copy the resulting activation code.
 
   3. :ref:`Deploy the code through the CtrlR Visual Studio plugin <mp-deploy>`.
+
+
