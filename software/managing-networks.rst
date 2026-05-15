@@ -1,5 +1,5 @@
 Networks
-=================
+##############
 
 For each project, you can save multiple LTE and Wi-Fi profiles for use across
 various devices through the Networks tab. This eliminates the need to repeatedly
@@ -18,7 +18,7 @@ network settings remotely through Ctrl.
 .. _net-profiles:
 
 Manage Network Profiles
------------------------
+==========================
 
 A *network profile* is a set of network configurations that can be implemented to
 multiple devices in the project.
@@ -29,7 +29,7 @@ multiple devices in the project.
    added for you, with name "1NCE".
 
 Create new network profile
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------
 
 1. In the side menu, click "Networks", then "Add network profile".
 
@@ -47,7 +47,7 @@ Create new network profile
    available under the corresponding tab.
 
 Edit network profile
-^^^^^^^^^^^^^^^^^^^^
+------------------------------
 
 1. In the side menu, click "Networks".
 
@@ -74,7 +74,7 @@ Edit network profile
    changes through each device's network tab.
 
 Delete network profile
-^^^^^^^^^^^^^^^^^^^^^^
+------------------------------
 
 A network can only be deleted if it is not being used by an existing device.
 
@@ -89,21 +89,23 @@ A network can only be deleted if it is not being used by an existing device.
 
 .. _net-device:
 
+
+
 Manage Device Network Settings
-------------------------------
+====================================
 
 The F1 Starter Kit supports multiple network types that can be adjusted according
 to your need. You can *enable or disable* particular network types AND adjust the
 *network type priority* of your Starter Kit through Ctrl.
 
 Accessing the device network settings
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------
 
 1. In the side menu, click "Devices". Then, click on the target device.
 2. Click on the device's "Networks" tab.
 
 Activate or deactivate a network
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------
 
 1. Click on the arrow icon on the target network.
 
@@ -123,8 +125,25 @@ Activate or deactivate a network
 4. The activated networks are displayed under the "Activated networks" section,
    while the non-active networks are displayed under "Other networks" section.
 
+
+Ctrl LoRaWAN integration
+----------------------------------------
+
+LoRa connectivity activation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Since Ctrl is integrated with SG Wireless TTN LoRaWAN, it will automatically register and connect your devices upon LoRa activation through Ctrl. 
+
+1. First, ensure you have a LoRaWAN gateway within accessible range of your device. Identify the region setting of the gateway and make sure that it's also connected to the internet.
+2. Once you activate the LoRa profile toggle, you will need to select the LoRaWAN region that matches with your LoRaWAN gateway region. Upon clicking the 'save' button, Ctrl will automatically generate TTN device activation information, such as JoinEUI, DevEUI, AppKey, and NwkKey.  
+3. This device activation information will be passed to the device when you deploy the network setting. 
+
+
+
+
+
 Adjust the device network priority
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------
 
 In the list of *activated networks*, click and hold the three lines on the left
 of the target network, and drag it to its desired priority.
@@ -139,7 +158,7 @@ of the target network, and drag it to its desired priority.
    network switching is not supported after connection has been established.
 
 Deploy the network setting
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------
 
 To implement the updated settings on your device, deploy it using one of the
 following approaches:
@@ -163,3 +182,5 @@ following approaches:
   2. Copy the resulting activation code.
 
   3. :ref:`Deploy the code through the CtrlR Visual Studio plugin <mp-deploy>`.
+
+
