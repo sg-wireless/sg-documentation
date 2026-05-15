@@ -91,7 +91,6 @@ latex_dir = Path(sys.argv[1])
 converted_webp = 0
 converted_gif = 0
 updated_tex_files = 0
-updated_font_refs = 0
 
 # Fix mislabeled WEBP files saved with .png/.jpg/.jpeg extensions.
 for pattern in ("*.png", "*.jpg", "*.jpeg"):
@@ -131,26 +130,13 @@ for tex_path in latex_dir.glob("*.tex"):
   original = tex_path.read_text(encoding="utf-8", errors="ignore")
   updated = original.replace(".gif}", ".png}")
 
-  # Sphinx XeLaTeX defaults may reference Free* fonts that are not present
-  # in minimal CI environments; remap to DejaVu families that we install in CI.
-  updated = updated.replace("FreeSerif", "DejaVu Serif")
-  updated = updated.replace("FreeSans", "DejaVu Sans")
-  updated = updated.replace("FreeMono", "DejaVu Sans Mono")
-
   if updated != original:
-    if (
-      "FreeSerif" in original
-      or "FreeSans" in original
-      or "FreeMono" in original
-    ):
-      updated_font_refs += 1
     tex_path.write_text(updated, encoding="utf-8")
     updated_tex_files += 1
 
 print(f"Converted mislabeled WEBP images: {converted_webp}")
 print(f"Converted GIF images to PNG: {converted_gif}")
 print(f"Updated LaTeX files (asset refs/fonts): {updated_tex_files}")
-print(f"Updated LaTeX files with font remaps: {updated_font_refs}")
 PY
 }
 

@@ -9,14 +9,29 @@ frontend:
           if command -v apt-get >/dev/null 2>&1; then
             export DEBIAN_FRONTEND=noninteractive
             sudo apt-get update
-            sudo apt-get install -y --no-install-recommends latexmk texlive-xetex texlive-latex-extra texlive-latex-recommended fonts-dejavu-core
+            sudo apt-get install -y --no-install-recommends latexmk texlive-xetex texlive-latex-extra texlive-latex-recommended fonts-freefont-ttf fontconfig curl
           elif command -v yum >/dev/null 2>&1; then
-            sudo yum install -y texlive-xetex texlive-latex texlive-cmap dejavu-sans-fonts dejavu-serif-fonts
+            sudo yum install -y texlive-xetex texlive-latex texlive-cmap fontconfig curl
+            sudo yum install -y gnu-free-serif-fonts gnu-free-sans-fonts gnu-free-mono-fonts || true
             sudo yum install -y latexmk || true
           else
             echo "ERROR: Unsupported package manager; cannot install LaTeX toolchain"
             exit 1
           fi
+        - |
+          if ! fc-list | grep -qi "FreeSerif"; then
+            mkdir -p "$HOME/.local/share/fonts/freefont"
+            TMP_FREEFONT_DIR="$(mktemp -d)"
+            if curl -fsSL -o "$TMP_FREEFONT_DIR/freefont.tar.gz" https://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.tar.gz; then
+              tar -xzf "$TMP_FREEFONT_DIR/freefont.tar.gz" -C "$TMP_FREEFONT_DIR"
+              find "$TMP_FREEFONT_DIR" -type f -name '*.ttf' -exec cp -f {} "$HOME/.local/share/fonts/freefont/" \;
+              fc-cache -f "$HOME/.local/share/fonts/freefont"
+            else
+              echo "ERROR: Failed to download GNU FreeFont package"
+              exit 1
+            fi
+          fi
+        - fc-list | grep -Ei "FreeSerif|FreeSans|FreeMono" | head -20
         - xelatex --version
         - latexmk --version || true
         - export PYENV_ROOT="$HOME/.pyenv"
