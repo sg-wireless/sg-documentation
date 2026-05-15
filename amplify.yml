@@ -12,8 +12,8 @@ frontend:
           if ! command -v latexmk >/dev/null 2>&1 && ! command -v xelatex >/dev/null 2>&1 && ! command -v tectonic >/dev/null 2>&1; then
             ARCH="$(uname -m)"
             case "$ARCH" in
-              x86_64) TECTONIC_ARCH="x86_64-unknown-linux-gnu" ;;
-              aarch64|arm64) TECTONIC_ARCH="aarch64-unknown-linux-gnu" ;;
+              x86_64) TECTONIC_ARCH_CANDIDATES="x86_64-unknown-linux-musl x86_64-unknown-linux-gnu" ;;
+              aarch64|arm64) TECTONIC_ARCH_CANDIDATES="aarch64-unknown-linux-musl aarch64-unknown-linux-gnu" ;;
               *)
                 echo "ERROR: Unsupported architecture for tectonic bootstrap: $ARCH"
                 exit 1
@@ -21,18 +21,38 @@ frontend:
             esac
 
             TECTONIC_VERSION="0.15.0"
-            TECTONIC_TGZ="tectonic-${TECTONIC_VERSION}-${TECTONIC_ARCH}.tar.gz"
-            TECTONIC_URL="https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%40${TECTONIC_VERSION}/${TECTONIC_TGZ}"
+            TECTONIC_OK=0
+            for TECTONIC_ARCH in $TECTONIC_ARCH_CANDIDATES; do
+              TECTONIC_TGZ="tectonic-${TECTONIC_VERSION}-${TECTONIC_ARCH}.tar.gz"
+              TECTONIC_URL="https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%40${TECTONIC_VERSION}/${TECTONIC_TGZ}"
+              echo "Bootstrapping tectonic ${TECTONIC_VERSION} for ${TECTONIC_ARCH}"
 
-            echo "Bootstrapping tectonic ${TECTONIC_VERSION} for ${TECTONIC_ARCH}"
-            curl -fsSL "$TECTONIC_URL" -o "/tmp/${TECTONIC_TGZ}"
-            TECTONIC_BIN_PATH="$(tar -tzf "/tmp/${TECTONIC_TGZ}" | grep -E '(^|/)tectonic$' | head -1)"
-            if [ -z "$TECTONIC_BIN_PATH" ]; then
-              echo "ERROR: Could not find tectonic binary in downloaded archive"
+              if ! curl -fsSL "$TECTONIC_URL" -o "/tmp/${TECTONIC_TGZ}"; then
+                echo "WARNING: Failed to download ${TECTONIC_TGZ}; trying next candidate"
+                continue
+              fi
+
+              TECTONIC_BIN_PATH="$(tar -tzf "/tmp/${TECTONIC_TGZ}" | grep -E '(^|/)tectonic$' | head -1)"
+              if [ -z "$TECTONIC_BIN_PATH" ]; then
+                echo "WARNING: Could not find tectonic binary in ${TECTONIC_TGZ}; trying next candidate"
+                continue
+              fi
+
+              tar -xzf "/tmp/${TECTONIC_TGZ}" -C /tmp "$TECTONIC_BIN_PATH"
+              install -m 755 "/tmp/${TECTONIC_BIN_PATH}" "$HOME/.local/bin/tectonic"
+
+              if "$HOME/.local/bin/tectonic" --version >/dev/null 2>&1; then
+                TECTONIC_OK=1
+                break
+              fi
+
+              echo "WARNING: Downloaded tectonic for ${TECTONIC_ARCH} is not runnable on this host"
+            done
+
+            if [ "$TECTONIC_OK" -ne 1 ]; then
+              echo "ERROR: Could not bootstrap a runnable tectonic binary for this Amplify environment"
               exit 1
             fi
-            tar -xzf "/tmp/${TECTONIC_TGZ}" -C /tmp "$TECTONIC_BIN_PATH"
-            install -m 755 "/tmp/${TECTONIC_BIN_PATH}" "$HOME/.local/bin/tectonic"
           fi
 
           command -v latexmk >/dev/null 2>&1 && latexmk --version || true
