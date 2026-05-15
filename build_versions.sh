@@ -47,7 +47,11 @@ normalize_latex_assets() {
 import sys
 from pathlib import Path
 
-from PIL import Image
+try:
+  from PIL import Image
+except ModuleNotFoundError:
+  print("ERROR: Pillow is required for PDF asset normalization. Install it with: pip install Pillow", file=sys.stderr)
+  raise SystemExit(2)
 
 latex_dir = Path(sys.argv[1])
 converted_webp = 0
