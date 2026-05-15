@@ -6,63 +6,19 @@ frontend:
         - git fetch --unshallow || true
         - git fetch --tags --force
         - |
-          mkdir -p "$HOME/.local/bin"
-          export PATH="$HOME/.local/bin:$PATH"
-
-          if ! command -v latexmk >/dev/null 2>&1 && ! command -v xelatex >/dev/null 2>&1 && ! command -v tectonic >/dev/null 2>&1; then
-            ARCH="$(uname -m)"
-            case "$ARCH" in
-              x86_64) TECTONIC_ARCH_CANDIDATES="x86_64-unknown-linux-musl x86_64-unknown-linux-gnu" ;;
-              aarch64|arm64) TECTONIC_ARCH_CANDIDATES="aarch64-unknown-linux-musl aarch64-unknown-linux-gnu" ;;
-              *)
-                echo "ERROR: Unsupported architecture for tectonic bootstrap: $ARCH"
-                exit 1
-                ;;
-            esac
-
-            TECTONIC_VERSION="0.15.0"
-            TECTONIC_OK=0
-            for TECTONIC_ARCH in $TECTONIC_ARCH_CANDIDATES; do
-              TECTONIC_TGZ="tectonic-${TECTONIC_VERSION}-${TECTONIC_ARCH}.tar.gz"
-              TECTONIC_URL="https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%40${TECTONIC_VERSION}/${TECTONIC_TGZ}"
-              echo "Bootstrapping tectonic ${TECTONIC_VERSION} for ${TECTONIC_ARCH}"
-
-              if ! curl -fsSL "$TECTONIC_URL" -o "/tmp/${TECTONIC_TGZ}"; then
-                echo "WARNING: Failed to download ${TECTONIC_TGZ}; trying next candidate"
-                continue
-              fi
-
-              TECTONIC_BIN_PATH="$(tar -tzf "/tmp/${TECTONIC_TGZ}" | grep -E '(^|/)tectonic$' | head -1)"
-              if [ -z "$TECTONIC_BIN_PATH" ]; then
-                echo "WARNING: Could not find tectonic binary in ${TECTONIC_TGZ}; trying next candidate"
-                continue
-              fi
-
-              tar -xzf "/tmp/${TECTONIC_TGZ}" -C /tmp "$TECTONIC_BIN_PATH"
-              install -m 755 "/tmp/${TECTONIC_BIN_PATH}" "$HOME/.local/bin/tectonic"
-
-              if "$HOME/.local/bin/tectonic" --version >/dev/null 2>&1; then
-                TECTONIC_OK=1
-                break
-              fi
-
-              echo "WARNING: Downloaded tectonic for ${TECTONIC_ARCH} is not runnable on this host"
-            done
-
-            if [ "$TECTONIC_OK" -ne 1 ]; then
-              echo "ERROR: Could not bootstrap a runnable tectonic binary for this Amplify environment"
-              exit 1
-            fi
-          fi
-
-          command -v latexmk >/dev/null 2>&1 && latexmk --version || true
-          command -v xelatex >/dev/null 2>&1 && xelatex --version || true
-          command -v tectonic >/dev/null 2>&1 && tectonic --version || true
-
-          if ! command -v latexmk >/dev/null 2>&1 && ! command -v xelatex >/dev/null 2>&1 && ! command -v tectonic >/dev/null 2>&1; then
-            echo "ERROR: No PDF toolchain available (latexmk/xelatex/tectonic)"
+          if command -v apt-get >/dev/null 2>&1; then
+            export DEBIAN_FRONTEND=noninteractive
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends latexmk texlive-xetex texlive-latex-extra
+          elif command -v yum >/dev/null 2>&1; then
+            sudo yum install -y texlive-xetex texlive-latex
+            sudo yum install -y latexmk || true
+          else
+            echo "ERROR: Unsupported package manager; cannot install LaTeX toolchain"
             exit 1
           fi
+        - xelatex --version
+        - latexmk --version || true
         - export PYENV_ROOT="$HOME/.pyenv"
         - export PATH="$PYENV_ROOT/bin:$PATH"
         - eval "$(pyenv init -)"
