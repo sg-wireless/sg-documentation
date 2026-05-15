@@ -132,10 +132,10 @@ for tex_path in latex_dir.glob("*.tex"):
   updated = original.replace(".gif}", ".png}")
 
   # Sphinx XeLaTeX defaults may reference Free* fonts that are not present
-  # in minimal CI environments; remap to TeX-bundled Latin Modern fonts.
-  updated = updated.replace("FreeSerif", "Latin Modern Roman")
-  updated = updated.replace("FreeSans", "Latin Modern Sans")
-  updated = updated.replace("FreeMono", "Latin Modern Mono")
+  # in minimal CI environments; remap to DejaVu families that we install in CI.
+  updated = updated.replace("FreeSerif", "DejaVu Serif")
+  updated = updated.replace("FreeSans", "DejaVu Sans")
+  updated = updated.replace("FreeMono", "DejaVu Sans Mono")
 
   if updated != original:
     if (

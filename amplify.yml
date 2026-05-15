@@ -9,9 +9,9 @@ frontend:
           if command -v apt-get >/dev/null 2>&1; then
             export DEBIAN_FRONTEND=noninteractive
             sudo apt-get update
-            sudo apt-get install -y --no-install-recommends latexmk texlive-xetex texlive-latex-extra texlive-latex-recommended
+            sudo apt-get install -y --no-install-recommends latexmk texlive-xetex texlive-latex-extra texlive-latex-recommended fonts-dejavu-core
           elif command -v yum >/dev/null 2>&1; then
-            sudo yum install -y texlive-xetex texlive-latex texlive-cmap
+            sudo yum install -y texlive-xetex texlive-latex texlive-cmap dejavu-sans-fonts dejavu-serif-fonts
             sudo yum install -y latexmk || true
           else
             echo "ERROR: Unsupported package manager; cannot install LaTeX toolchain"
