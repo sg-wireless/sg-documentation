@@ -136,7 +136,7 @@ Since Ctrl is integrated with SG Wireless TTN LoRaWAN, it will automatically reg
 
 1. First, ensure you have a LoRaWAN gateway within accessible range of your device. Identify the region setting of the gateway and make sure that it's also connected to the internet.
 2. Once you activate the LoRa profile toggle, you will need to select the LoRaWAN region that matches with your LoRaWAN gateway region. Upon clicking the 'save' button, Ctrl will automatically generate TTN device activation information, such as JoinEUI, DevEUI, AppKey, and NwkKey.  
-3. This device activation information will be passed to the device when you deploy the network setting. 
+3. This device activation information will be passed to the device when you :ref:`deploy the network profile <net-deploy>`. 
 
 
 
@@ -156,6 +156,8 @@ of the target network, and drag it to its desired priority.
 
    This priority will only be used during the first-time connection. Automatic
    network switching is not supported after connection has been established.
+
+.. _net-deploy:
 
 Deploy the network setting
 ----------------------------------------
