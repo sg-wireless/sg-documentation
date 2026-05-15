@@ -12,6 +12,94 @@ set -euo pipefail
 
 SRCDIR="$(cd "$(dirname "$0")" && pwd)"
 OUTDIR="$SRCDIR/_build/html"
+PDF_BUILD_TIMEOUT_SEC="${PDF_BUILD_TIMEOUT_SEC:-1200}"
+
+build_pdf_noninteractive() {
+  local source_dir="$1"
+  local build_dir="$2"
+  local version_label="$3"
+  local latex_dir="$build_dir/latex"
+  local tex_file
+
+  echo "--- Building PDF for $version_label (timeout ${PDF_BUILD_TIMEOUT_SEC}s) ---"
+
+  # Step 1: Generate LaTeX sources.
+  timeout "$PDF_BUILD_TIMEOUT_SEC" sphinx-build -b latex -j auto "$source_dir" "$latex_dir"
+
+  # Step 2: Normalize known image incompatibilities in the generated latex tree.
+  normalize_latex_assets "$latex_dir"
+
+  tex_file="$(find "$latex_dir" -maxdepth 1 -type f -name '*.tex' | head -1)"
+  if [[ -z "$tex_file" ]]; then
+    echo "ERROR: No .tex file generated under $latex_dir"
+    return 1
+  fi
+
+  # Step 3: Compile with latexmk in nonstop mode to avoid interactive stalls.
+  timeout "$PDF_BUILD_TIMEOUT_SEC" env \
+    LATEXMKOPTS="-interaction=nonstopmode -halt-on-error -file-line-error -f" \
+    latexmk -cd -pdfxe -interaction=nonstopmode -halt-on-error -file-line-error -f "$tex_file"
+}
+
+normalize_latex_assets() {
+  local latex_dir="$1"
+  python3 - "$latex_dir" <<'PY'
+import sys
+from pathlib import Path
+
+from PIL import Image
+
+latex_dir = Path(sys.argv[1])
+converted_webp = 0
+converted_gif = 0
+updated_tex_files = 0
+
+# Fix mislabeled WEBP files saved with .png/.jpg/.jpeg extensions.
+for pattern in ("*.png", "*.jpg", "*.jpeg"):
+  for path in latex_dir.rglob(pattern):
+    try:
+      with Image.open(path) as img:
+        fmt = (img.format or "").upper()
+        if fmt != "WEBP":
+          continue
+
+        ext = path.suffix.lower()
+        if ext == ".png":
+          save_format = "PNG"
+        else:
+          save_format = "JPEG"
+          if img.mode not in ("RGB", "L"):
+            img = img.convert("RGB")
+
+        img.save(path, save_format)
+        converted_webp += 1
+    except Exception:
+      continue
+
+# Convert GIFs to PNG (first frame) and rewrite latex references accordingly.
+for gif_path in latex_dir.rglob("*.gif"):
+  png_path = gif_path.with_suffix(".png")
+  try:
+    with Image.open(gif_path) as img:
+      if img.mode not in ("RGB", "RGBA", "L"):
+        img = img.convert("RGBA")
+      img.save(png_path, "PNG")
+      converted_gif += 1
+  except Exception:
+    continue
+
+for tex_path in latex_dir.glob("*.tex"):
+  original = tex_path.read_text(encoding="utf-8", errors="ignore")
+  updated = original.replace(".gif}", ".png}")
+  if updated != original:
+    tex_path.write_text(updated, encoding="utf-8")
+    updated_tex_files += 1
+
+print(f"Converted mislabeled WEBP images: {converted_webp}")
+print(f"Converted GIF images to PNG: {converted_gif}")
+print(f"Updated LaTeX files with GIF->PNG refs: {updated_tex_files}")
+PY
+}
 
 # -------------------------------------------------------------------
 # Branch detection: on non-main branches, build only the current
@@ -33,6 +121,14 @@ if [[ "$CURRENT_BRANCH" != "main" ]]; then
     SGW_CURRENT_VERSION="$PREVIEW_TAG" \
     SGW_ALL_VERSIONS="$ALL_JSON" \
     sphinx-build -b html -j auto "$SRCDIR" "$OUTDIR/$PREVIEW_TAG"
+
+    # Build preview PDF from the current working tree and publish it under
+    # the same version-scoped path used by the flyout download link.
+    SGW_CURRENT_VERSION="$PREVIEW_TAG" \
+    SGW_ALL_VERSIONS="$ALL_JSON" \
+    build_pdf_noninteractive "$SRCDIR" "$SRCDIR/_build" "$PREVIEW_TAG"
+    mkdir -p "$OUTDIR/$PREVIEW_TAG/_static"
+    cp "$SRCDIR/_build/latex/SGWirelessDocs.pdf" "$OUTDIR/$PREVIEW_TAG/_static/SGWirelessDocs.pdf"
 
     # Root redirect → preview
     cat > "$OUTDIR/index.html" << EOF
@@ -92,16 +188,24 @@ for TAG in "${TAGS[@]}"; do
     # Export the full tree at that tag into a temp directory
     git -C "$SRCDIR" archive "$TAG" | tar -x -C "$WORKDIR"
 
-    # Copy templates, static, config, and homepage from the current branch
-    # (so the version flyout and homepage are always up-to-date)
+    # Copy templates, static, and config from the current branch so the
+    # version flyout logic stays consistent across versions.
+    # Keep each tag's own index.rst to avoid cross-version content breakage.
     cp -r "$SRCDIR/_templates" "$WORKDIR/_templates"
     cp -r "$SRCDIR/_static" "$WORKDIR/_static"
     cp "$SRCDIR/conf.py" "$WORKDIR/conf.py"
-    cp "$SRCDIR/index.rst" "$WORKDIR/index.rst"
 
     SGW_CURRENT_VERSION="$TAG" \
     SGW_ALL_VERSIONS="$ALL_JSON" \
     sphinx-build -b html -j auto "$WORKDIR" "$OUTDIR/$TAG"
+
+    # Build a PDF from the same tagged tree so each version has a matching
+    # downloadable PDF in /<tag>/_static/SGWirelessDocs.pdf.
+    SGW_CURRENT_VERSION="$TAG" \
+    SGW_ALL_VERSIONS="$ALL_JSON" \
+    build_pdf_noninteractive "$WORKDIR" "$WORKDIR/_build" "$TAG"
+    mkdir -p "$OUTDIR/$TAG/_static"
+    cp "$WORKDIR/_build/latex/SGWirelessDocs.pdf" "$OUTDIR/$TAG/_static/SGWirelessDocs.pdf"
 
     rm -rf "$WORKDIR"
 done

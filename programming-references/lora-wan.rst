@@ -7,48 +7,82 @@ Available LoRa WAN APIs Summary
 .. list-table::
    :header-rows: 1
 
-   * - API Call
-     - Brief description
-   * - ``lora.stats()``
-     - displays the current stats of lora WAN
-   * - ``lora.wan_params()``
-     - set the lora WAN regional parameters
-   * - ``lora.commission()``
-     - set the LoRa-WAN commissioning parameters
-   * - ``lora.join()``
-     - start performing join procedure
-   * - ``lora.send()``
-     - transmit a LoRa-WAN packet
-   * - ``lora.recv()``
-     - receive a LoRa-WAN packet
-   * - ``lora.port_open()``
-     - open a lora-wan port to be able to tx/rx over it
-   * - ``lora.port_close()``
-     - close a lora-wan port, tx/rx on it will be discarded
-   * - ``lora.callback()``
-     - set a user level callback to listen to specifc events
-   * - ``lora.duty_get()``
-     - get the current duty-cycle in milliseconds
-   * - ``lora.duty_set()``
-     - set the the duty-cycle to a specific value
-   * - ``lora.duty_start()``
-     - start duty-cycle operation
-   * - ``lora.duty_stop()``
-     - stop duty-cycle operation
-   * - ``lora.enable_rx_listening()``
-     - perform class-a cycle to fetch pending DL msg
-   * - ``lora.disable_rx_listening()``
-     - if no pending UL msg, discard class-a cycle
-   * - ``lora.mode(adr=)``
-     - enable or disable Adaptive Data Rate (ADR)
-   * - ``lora.tx_airtime()``
-     - get last TX time-on-air in milliseconds
-   * - ``lora.last_rx_at()``
-     - get timestamp (ms since boot) of last network reception
-   * - ``lora.nvm_flush()``
-     - immediately flush cached NVM data to flash
-   * - ``lora.nvm_flush_interval()``
-     - get or set periodic NVM flush interval (0 = write-through)
+   - 
+
+      - API Call
+      - Brief description
+   - 
+
+      - ``lora.stats()``
+      - displays the current stats of lora WAN
+   - 
+
+      - ``lora.wan_params()``
+      - set the lora WAN regional parameters
+   - 
+
+      - ``lora.commission()``
+      - set the LoRa-WAN commissioning parameters
+   - 
+
+      - ``lora.join()``
+      - start performing join procedure
+   - 
+
+      - ``lora.send()``
+      - transmit a LoRa-WAN packet
+   - 
+
+      - ``lora.recv()``
+      - receive a LoRa-WAN packet
+   - 
+
+      - ``lora.port_open()``
+      - open a lora-wan port to be able to tx/rx over it
+   - 
+
+      - ``lora.port_close()``
+      - close a lora-wan port, tx/rx on it will be discarded
+   - 
+
+      - ``lora.callback()``
+      - set a user level callback to listen to specifc events
+   - 
+
+      - ``lora.duty_get()``
+      - get the current duty-cycle in milliseconds
+   - 
+
+      - ``lora.duty_set()``
+      - set the the duty-cycle to a specific value
+   - 
+
+      - ``lora.duty_start()``
+      - start duty-cycle operation
+   - 
+
+      - ``lora.duty_stop()``
+      - stop duty-cycle operation
+   - 
+
+      - ``lora.enable_rx_listening()``
+      - perform class-a cycle to fetch pending DL msg
+   - 
+
+      - ``lora.disable_rx_listening()``
+      - if no pending UL msg, discard class-a cycle
+   - 
+
+      - ``lora.mode(adr=)``
+      - enable or disable Adaptive Data Rate (ADR)
+   - 
+
+      - ``lora.tx_airtime()``
+      - get last TX time-on-air in milliseconds
+   - 
+
+      - ``lora.last_rx_at()``
+      - get timestamp (ms since boot) of last network reception
 
 LoRa WAN Stats
 ~~~~~~~~~~~~~~
@@ -101,33 +135,33 @@ the commissioning will be ignored.
 
 the end-device commissioning credentials are as follows:
 
-- ``version=<version>`` to specify the end-device LoRa standard. It takes one
-  of the following:
+-  ``version=<version>`` to specify the end-device LoRa standard. It takes one
+   of the following:
 
-  - ``version=lora._version.VERSION_1_0_x`` LoRa version 1.0.x
-  - ``version=lora._version.VERSION_1_1_x`` LoRa version 1.1.x
+   -  ``version=lora._version.VERSION_1_0_x`` LoRa version 1.0.x
+   -  ``version=lora._version.VERSION_1_1_x`` LoRa version 1.1.x
 
-- ``type=lora._commission.OTAA`` Device will be commissioned using OTAA
-  procedure and the device shall perform the Join procedure before tx/rx with
-  the network in this activation method, the following keys shall be provided
-  along with:
+-  ``type=lora._commission.OTAA`` Device will be commissioned using OTAA
+   procedure and the device shall perform the Join procedure before tx/rx with
+   the network in this activation method, the following keys shall be provided
+   along with:
 
-  - ``DevEUI`` The device EUI
-  - ``JoinEUI`` The Join EUI
-  - ``AppKey`` The AppKey
-  - ``NwkKey`` The NwkKey if version 1.1.x
+   -  ``DevEUI`` The device EUI
+   -  ``JoinEUI`` The Join EUI
+   -  ``AppKey`` The AppKey
+   -  ``NwkKey`` The NwkKey if version 1.1.x
 
-- ``type=lora._commission.ABP`` The device will not perform the join procedure
-  and it will send directly an UL message. The following parameters shall be
-  provided:
+-  ``type=lora._commission.ABP`` The device will not perform the join procedure
+   and it will send directly an UL message. The following parameters shall be
+   provided:
 
-  - ``DevEUI`` The device EUI
-  - ``DevAddr`` The device network address
-  - ``AppSKey`` The application security key
-  - ``NwkSKey`` The network security key
+   -  ``DevEUI`` The device EUI
+   -  ``DevAddr`` The device network address
+   -  ``AppSKey`` The application security key
+   -  ``NwkSKey`` The network security key
 
-- ``verify=True`` To check the provided parameters are same as the current
-  commissioned parameters or not without doing any commissioning processing.
+-  ``verify=True`` To check the provided parameters are same as the current
+   commissioned parameters or not without doing any commissioning processing.
 
 .. note::
 
@@ -223,41 +257,55 @@ start tx/rx operation, the user shall open a port first using the
 
 To plan an UL message. It takes the following parameters:
 
-- ``message`` the message buffer to be sent, can be a normal string or byte
-  array
-- optional arguments:
+-  ``message`` the message buffer to be sent, can be a normal string or byte
+   array
+-  optional arguments:
 
 .. list-table::
    :header-rows: 1
 
-   * - parameter-name
-     - value-type
-     - default-value
-     - desc
-   * - ``confirm``
-     - bool
-     - False
-     - To receive an ack from network server upon its reception
-   * - ``port``
-     - int
-     - 1
-     - on which lora-wan port to send this message
-   * - ``retries``
-     - int
-     - 0
-     - number of retried until the UL tx succeeded
-   * - ``timeout``
-     - int
-     - ``no-timeout``
-     - time-out in ms to perform the full UL operation
-   * - ``sync``
-     - int
-     - False
-     - block until timeout or operation success/failure
-   * - ``id``
-     - int
-     - 0
-     - user defined message id to be returned in the callback
+   - 
+
+      - parameter-name
+      - value-type
+      - default-value
+      - desc
+   - 
+
+      - ``confirm``
+      - bool
+      - False
+      - To receive an ack from network server upon its reception
+   - 
+
+      - ``port``
+      - int
+      - 1
+      - on which lora-wan port to send this message
+   - 
+
+      - ``retries``
+      - int
+      - 0
+      - number of retried until the UL tx succeeded
+   - 
+
+      - ``timeout``
+      - int
+      - ``no-timeout``
+      - time-out in ms to perform the full UL operation
+   - 
+
+      - ``sync``
+      - int
+      - False
+      - block until timeout or operation success/failure
+   - 
+
+      - ``id``
+      - int
+      - 0
+      - user defined message id to be returned in the callback
 
 Example:
 
@@ -322,10 +370,10 @@ Callbacks ``lora.callback()``
 
 It can set a user lever callback and it takes the following parameters:
 
-- 'handler' a callbeack function to be called.
-- 'trigger' an OR combination of the required events that can trigger to this
-  callback.
-- 'port' a special port of the incoming messages events (default ``any``)
+-  'handler' a callbeack function to be called.
+-  'trigger' an OR combination of the required events that can trigger to this
+   callback.
+-  'port' a special port of the incoming messages events (default ``any``)
 
 Example:
 
@@ -462,10 +510,10 @@ network.
 
 The timestamp is updated on:
 
-- Any application-layer downlink (port 1–223)
-- Any MAC-only downlink (port 0 / network commands)
-- An uplink ACK (``AckReceived``) returned by the network server in response to
-  a confirmed uplink
+-  Any application-layer downlink (port 1–223)
+-  Any MAC-only downlink (port 0 / network commands)
+-  An uplink ACK (``AckReceived``) returned by the network server in response
+   to a confirmed uplink
 
 The returned value is ``0`` until the first downlink (or ACK) has been received
 in the current session.
@@ -493,68 +541,3 @@ Example:
            print('no network contact for {} ms — triggering rejoin'.format(elapsed))
            return False
        return True
-
-NVM Cache Management
-~~~~~~~~~~~~~~~~~~~~
-
-The LoRa stack maintains an in-memory write-back cache of the LoRaWAN MAC state
-(session keys, frame counters, region parameters, etc.). By default the cache
-is flushed to flash every **60 seconds** via a periodic timer. This
-dramatically reduces flash wear compared to writing on every MAC state change
-while still ensuring reasonable persistence.
-
-Both ``machine.deepsleep()`` and ``machine.lightsleep()`` automatically flush
-the cache before the CPU halts, so no data is lost on sleep transitions.
-
-.. _loranvm_flush:
-
-``lora.nvm_flush()``
-^^^^^^^^^^^^^^^^^^^^
-
-Immediately writes any dirty (modified) NVM data to flash storage, regardless
-of the periodic timer. Call this before any operation where you want to
-guarantee that the latest MAC state has been persisted — for example before a
-controlled reboot.
-
-.. _loranvm_flush_interval:
-
-``lora.nvm_flush_interval()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Getter / setter for the periodic flush interval, in **seconds**.
-
-.. list-table::
-   :header-rows: 1
-
-   * - Call
-     - Effect
-   * - ``lora.nvm_flush_interval()``
-     - Returns the current interval (default ``60``)
-   * - ``lora.nvm_flush_interval(n)``
-     - Sets interval to ``n`` seconds and restarts the timer
-   * - ``lora.nvm_flush_interval(0)``
-     - Disables the cache: every MAC state change is written to flash
-       immediately (write-through mode)
-
-Setting the interval to ``0`` is useful during development or one-off
-commissioning scripts where flash lifetime is not a concern and you want
-immediate persistence. For production use a value of **30–120 seconds** is
-recommended.
-
-Example:
-
-.. code:: python
-
-   import lora
-
-   # query and print the current interval
-   print('flush interval: {} s'.format(lora.nvm_flush_interval()))
-
-   # increase to 2 minutes to reduce flash wear
-   lora.nvm_flush_interval(120)
-
-   # force an immediate flush before a controlled reboot
-   lora.nvm_flush()
-
-   # disable caching entirely (write-through mode)
-   lora.nvm_flush_interval(0)

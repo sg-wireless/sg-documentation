@@ -6,11 +6,12 @@ platform.  Each module is implemented as a built-in C extension and can be
 imported directly from the MicroPython REPL or from user scripts.
 
 Application
-------------------
+-----------
 .. toctree::
    :maxdepth: 1
 
    ctrl-client
+   logs
 
 Network Interfaces
 ------------------
@@ -25,7 +26,7 @@ Network Interfaces
    lte-legacy
 
 Peripherals & System
-------------------
+--------------------
 .. toctree::
    :maxdepth: 1
 

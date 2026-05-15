@@ -102,6 +102,10 @@ latex_documents = [
 latex_elements = {
     "papersize": "a4paper",
     "pointsize": "11pt",
+    # Use openany so chapters can start on any page (even or odd).
+    # Without this the default "manual" class uses openright, inserting
+    # a blank page whenever a chapter would fall on an even page.
+    "classoptions": ",openany",
 }
 
 # -- Options for todo extension ------------------------------------------------

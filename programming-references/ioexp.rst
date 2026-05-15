@@ -4,14 +4,14 @@ IO Expander Interface (PCAL6408A)
 Contents
 --------
 
-- Introduction
-- PCAL6408A Features
-- MicroPython Interface
-- Complete Example
-- C/C++ Interface
-- Hardware Connection
-- Troubleshooting
-- Register Map
+-  Introduction
+-  PCAL6408A Features
+-  MicroPython Interface
+-  Complete Example
+-  C/C++ Interface
+-  Hardware Connection
+-  Troubleshooting
+-  Register Map
 
 Introduction
 ------------
@@ -26,29 +26,29 @@ I2C Bridge Architecture
 The IO expander implementation uses MicroPython I2C Bridge architecture for
 ESP-IDF v5.4+ compatibility:
 
-- **Driver**: PCAL6408A 8-bit I2C GPIO expander
-- **Bridge**: ``mp_i2c_bridge`` component provides C interface to MicroPython
-  I2C
-- **Benefits**: Unified I2C management, modern ESP-IDF compatibility,
-  future-proof
+-  **Driver**: PCAL6408A 8-bit I2C GPIO expander
+-  **Bridge**: ``mp_i2c_bridge`` component provides C interface to MicroPython
+   I2C
+-  **Benefits**: Unified I2C management, modern ESP-IDF compatibility,
+   future-proof
 
 Implementation Details
 ~~~~~~~~~~~~~~~~~~~~~~
 
-- **Device Address**: 0x20 (7-bit I2C address)
-- **I2C Pins**: SCL=20, SDA=21 (configurable)
-- **Frequency**: 100kHz I2C bus frequency
-- **Integration**: Uses ``ioexp_mp.c`` with I2C bridge for MicroPython builds
+-  **Device Address**: 0x20 (7-bit I2C address)
+-  **I2C Pins**: SCL=20, SDA=21 (configurable)
+-  **Frequency**: 100kHz I2C bus frequency
+-  **Integration**: Uses ``ioexp_mp.c`` with I2C bridge for MicroPython builds
 
 PCAL6408A Features
 ------------------
 
-- 8-bit I2C-bus GPIO with interrupt and weak pull-up
-- 5V tolerant inputs
-- Polarity inversion register
-- Low current consumption
-- Interrupt output for pin change detection
-- Compatible with standard GPIO operations
+-  8-bit I2C-bus GPIO with interrupt and weak pull-up
+-  5V tolerant inputs
+-  Polarity inversion register
+-  Low current consumption
+-  Interrupt output for pin change detection
+-  Compatible with standard GPIO operations
 
 MicroPython Interface
 ---------------------
@@ -191,12 +191,12 @@ Hardware Connection
 
 The PCAL6408A is typically connected as follows on SGW3501-F1-StarterKit:
 
-- **VCC**: 3.3V power supply
-- **GND**: Ground
-- **SCL**: I2C clock line (GPIO 20)
-- **SDA**: I2C data line (GPIO 21)
-- **INT**: Interrupt output (optional, board-dependent)
-- **ADDR**: Address select pin (determines I2C address)
+-  **VCC**: 3.3V power supply
+-  **GND**: Ground
+-  **SCL**: I2C clock line (GPIO 20)
+-  **SDA**: I2C data line (GPIO 21)
+-  **INT**: Interrupt output (optional, board-dependent)
+-  **ADDR**: Address select pin (determines I2C address)
 
 Troubleshooting
 ---------------
@@ -206,21 +206,21 @@ Common Issues
 
 1. **I2C Communication Errors**
 
-   - Verify I2C connections (SCL, SDA, power, ground)
-   - Check I2C address (0x20 default)
-   - Ensure proper pull-up resistors on I2C lines
+   -  Verify I2C connections (SCL, SDA, power, ground)
+   -  Check I2C address (0x20 default)
+   -  Ensure proper pull-up resistors on I2C lines
 
 2. **Pin State Issues**
 
-   - Verify pin direction configuration
-   - Check for polarity inversion settings
-   - Ensure proper voltage levels (5V tolerance)
+   -  Verify pin direction configuration
+   -  Check for polarity inversion settings
+   -  Ensure proper voltage levels (5V tolerance)
 
 3. **Initialization Failures**
 
-   - Confirm device presence with I2C scan
-   - Verify power supply stability
-   - Check for I2C bus conflicts
+   -  Confirm device presence with I2C scan
+   -  Verify power supply stability
+   -  Check for I2C bus conflicts
 
 Debug Commands
 ~~~~~~~~~~~~~~
@@ -243,39 +243,63 @@ For advanced users, the PCAL6408A register map:
 .. list-table::
    :header-rows: 1
 
-   * - Register
-     - Address
-     - Function
-   * - Input Port
-     - 0x00
-     - Read input levels
-   * - Output Port
-     - 0x01
-     - Write output levels
-   * - Polarity Inversion
-     - 0x02
-     - Configure input polarity
-   * - Configuration
-     - 0x03
-     - Set pin direction
-   * - Output Drive Strength
-     - 0x40
-     - Configure drive strength
-   * - Input Latch
-     - 0x42
-     - Input latch control
-   * - Pull-up/Pull-down Enable
-     - 0x43
-     - Pull resistor enable
-   * - Pull-up/Pull-down Select
-     - 0x44
-     - Pull resistor direction
-   * - Interrupt Mask
-     - 0x45
-     - Interrupt enable
-   * - Interrupt Status
-     - 0x46
-     - Interrupt status
-   * - Output Port Configuration
-     - 0x4F
-     - Output port configuration
+   - 
+
+      - Register
+      - Address
+      - Function
+   - 
+
+      - Input Port
+      - 0x00
+      - Read input levels
+   - 
+
+      - Output Port
+      - 0x01
+      - Write output levels
+   - 
+
+      - Polarity Inversion
+      - 0x02
+      - Configure input polarity
+   - 
+
+      - Configuration
+      - 0x03
+      - Set pin direction
+   - 
+
+      - Output Drive Strength
+      - 0x40
+      - Configure drive strength
+   - 
+
+      - Input Latch
+      - 0x42
+      - Input latch control
+   - 
+
+      - Pull-up/Pull-down Enable
+      - 0x43
+      - Pull resistor enable
+   - 
+
+      - Pull-up/Pull-down Select
+      - 0x44
+      - Pull resistor direction
+   - 
+
+      - Interrupt Mask
+      - 0x45
+      - Interrupt enable
+   - 
+
+      - Interrupt Status
+      - 0x46
+      - Interrupt status
+   - 
+
+      - Output Port Configuration
+      - 0x4F
+      - Output port configuration

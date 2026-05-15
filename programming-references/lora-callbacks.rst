@@ -4,12 +4,12 @@ LoRa Callback System
 Contents
 --------
 
-- Introduction
-- LoRa Events
-- LoRa Callback Generic Interface
-- Example - LoRa-RAW
-- Example - LoRa-WAN
-- Remarks
+-  Introduction
+-  LoRa Events
+-  LoRa Callback Generic Interface
+-  Example - LoRa-RAW
+-  Example - LoRa-WAN
+-  Remarks
 
 Introduction
 ------------
@@ -29,30 +29,46 @@ LoRa stack can emmit the events described in the following table:
 .. list-table::
    :header-rows: 1
 
-   * - LoRa Event
-     - Valid Mode
-     - Brief description
-   * - ``lora._event.EVENT_RX_DONE``
-     - RAW, WAN
-     - occurs when the LoRa stack receives something
-   * - ``lora._event.EVENT_RX_FAIL``
-     - RAW
-     - occurs if the receiving operation failed
-   * - ``lora._event.EVENT_RX_TIMEOUT``
-     - RAW
-     - occurs if the receiving operation timed-out
-   * - ``lora._event.EVENT_TX_DONE``
-     - RAW, WAN
-     - when the requested transmission operation is fullfilled
-   * - ``lora._event.EVENT_TX_CONFIRM``
-     - WAN
-     - when a LoRa-WAN confirmation is received
-   * - ``lora._event.EVENT_TX_FAILED``
-     - RAW, WAN
-     - requested transmission operation failed
-   * - ``lora._event.EVENT_TX_TIMEOUT``
-     - RAW, WAN
-     - requested tx operation timedout (deadline)
+   - 
+
+      - LoRa Event
+      - Valid Mode
+      - Brief description
+   - 
+
+      - ``lora._event.EVENT_RX_DONE``
+      - RAW, WAN
+      - occurs when the LoRa stack receives something
+   - 
+
+      - ``lora._event.EVENT_RX_FAIL``
+      - RAW
+      - occurs if the receiving operation failed
+   - 
+
+      - ``lora._event.EVENT_RX_TIMEOUT``
+      - RAW
+      - occurs if the receiving operation timed-out
+   - 
+
+      - ``lora._event.EVENT_TX_DONE``
+      - RAW, WAN
+      - when the requested transmission operation is fullfilled
+   - 
+
+      - ``lora._event.EVENT_TX_CONFIRM``
+      - WAN
+      - when a LoRa-WAN confirmation is received
+   - 
+
+      - ``lora._event.EVENT_TX_FAILED``
+      - RAW, WAN
+      - requested transmission operation failed
+   - 
+
+      - ``lora._event.EVENT_TX_TIMEOUT``
+      - RAW, WAN
+      - requested tx operation timedout (deadline)
 
 .. _lora_eventevent_rx_done:
 
@@ -61,40 +77,40 @@ LoRa stack can emmit the events described in the following table:
 
 This event occurs when the lora stack received something from the air.
 
-- **In LoRa-RAW mode**
+-  **In LoRa-RAW mode**
 
-  It is generated if the device is set to receive something from the air and
-  successfully received new data. or the device is set in continuous receiving
-  mode and new data received and present to be delivered to the user.
+   It is generated if the device is set to receive something from the air and
+   successfully received new data. or the device is set in continuous receiving
+   mode and new data received and present to be delivered to the user.
 
-  The event data attached to this event in the callback is a tuble that carry
-  the following key information:
+   The event data attached to this event in the callback is a tuble that carry
+   the following key information:
 
-  - ``data`` a byte array object containing the actual received data.
-  - ``RSSI`` an integer value represnting the RSSI of the received signal.
-  - ``SNR`` an integer value represnting the SNR of the received signal.
+   -  ``data`` a byte array object containing the actual received data.
+   -  ``RSSI`` an integer value represnting the RSSI of the received signal.
+   -  ``SNR`` an integer value represnting the SNR of the received signal.
 
-- **In LoRa-WAN mode**
+-  **In LoRa-WAN mode**
 
-  It is generated automatically if a Class-A cycle occurs and a scheduled data
-  from the network side is successfully received by the device.
+   It is generated automatically if a Class-A cycle occurs and a scheduled data
+   from the network side is successfully received by the device.
 
-  It is also generated when the device is working in Class-C and the device
-  receives a message from the network.
+   It is also generated when the device is working in Class-C and the device
+   receives a message from the network.
 
-  In LoRa-WAN, only data dedicated for this device identity (DevEUI, AppEUI)
-  will be received and the user will be notified by the received data by this
-  event.
+   In LoRa-WAN, only data dedicated for this device identity (DevEUI, AppEUI)
+   will be received and the user will be notified by the received data by this
+   event.
 
-  The event data attached to this event in the callback is a tuble that carry
-  the following key information:
+   The event data attached to this event in the callback is a tuble that carry
+   the following key information:
 
-  - ``data`` a byte array object containing the actual received data.
-  - ``RSSI`` an integer value represnting the RSSI of the received signal.
-  - ``SNR`` an integer value represnting the SNR of the received signal.
-  - ``port`` the port number on which this data is received.
-  - ``DR`` the data rate of the received data.
-  - ``dl_frame_counter`` The LoRa-WAN parameter (Downlink Frame Counter).
+   -  ``data`` a byte array object containing the actual received data.
+   -  ``RSSI`` an integer value represnting the RSSI of the received signal.
+   -  ``SNR`` an integer value represnting the SNR of the received signal.
+   -  ``port`` the port number on which this data is received.
+   -  ``DR`` the data rate of the received data.
+   -  ``dl_frame_counter`` The LoRa-WAN parameter (Downlink Frame Counter).
 
 .. _lora_eventevent_rx_fail:
 
@@ -126,13 +142,13 @@ managed successfully to fullfil the sending operation.
 In case of the **LoRa-WAN**, it depends on whether the user wants a
 confirmation from the network upon receiving this message or not.
 
-- If a confirmation is requested, this event will not occur at all, and the
-  user should be waiting for either ``lora._event.EVENT_TX_CONFIRM`` or
-  ``lora._event.EVENT_TX_FAILED``
+-  If a confirmation is requested, this event will not occur at all, and the
+   user should be waiting for either ``lora._event.EVENT_TX_CONFIRM`` or
+   ``lora._event.EVENT_TX_FAILED``
 
-- If a confirmation is not requested, this event will be generated upon an an
-  operation fulfillment from the device perspective without waiting a network
-  confirmation on the requested transmission data.
+-  If a confirmation is not requested, this event will be generated upon an an
+   operation fulfillment from the device perspective without waiting a network
+   confirmation on the requested transmission data.
 
 .. _lora_eventevent_tx_confirm:
 
@@ -151,15 +167,15 @@ generated.
 
 This event occurs in the following cases:
 
-- In **LoRa-RAW**: If the user requested to send a data and the device failed
-  to fullfil the transmission operation.
+-  In **LoRa-RAW**: If the user requested to send a data and the device failed
+   to fullfil the transmission operation.
 
-- In **LoRa-WAN**: It can occur in two distinct situations:
+-  In **LoRa-WAN**: It can occur in two distinct situations:
 
-  - If the user requested to send a data to the network and the device failed
-    to fullfil the transmission operation from the device side.
-  - If the user wants a reception confirmation from the network side and the
-    confirmation is not received.
+   -  If the user requested to send a data to the network and the device failed
+      to fullfil the transmission operation from the device side.
+   -  If the user wants a reception confirmation from the network side and the
+      confirmation is not received.
 
 .. _lora_eventevent_tx_timeout:
 
@@ -185,118 +201,137 @@ shall be used at the micropython level:
 
 The parameters description is as follows:
 
-- **``handler``** This is the real micropython function to be called when a
-  LoRa event occurs.
+-  **``handler``** This is the real micropython function to be called when a
+   LoRa event occurs.
 
-  The handler takes an argument called ``context`` which is a tuple carrying
-  all needed information attached to event that triggerred the callback. The
-  ``context`` elemnts are:
+   The handler takes an argument called ``context`` which is a tuple carrying
+   all needed information attached to event that triggerred the callback. The
+   ``context`` elemnts are:
 
-  .. list-table::
-     :header-rows: 1
+   .. list-table::
+      :header-rows: 1
 
-     * - key
-       - Valid Mode
-       - event
-     * - ``event``
-       - WAN, RAW
-       - All Events
-     * - ``msg_id``
-       - WAN
-       - Only any TX event
-     * - ``data``
-       - WAN, RAW
-       - ``lora._event.EVENT_RX_DONE``
-     * - ``RSSI``
-       - WAN, RAW
-       - ``lora._event.EVENT_RX_DONE``
-     * - ``SNR``
-       - WAN, RAW
-       - ``lora._event.EVENT_RX_DONE``
-     * - ``port``
-       - WAN
-       - ``lora._event.EVENT_RX_DONE``
-     * - ``DR``
-       - WAN
-       - ``lora._event.EVENT_RX_DONE``
-     * - ``dl_frame_counter``
-       - WAN
-       - ``lora._event.EVENT_RX_DONE``
+      - 
 
-  The following is a typical example of the LoRa callback function
+         - key
+         - Valid Mode
+         - event
+      - 
 
-  .. code:: python
+         - ``event``
+         - WAN, RAW
+         - All Events
+      - 
 
-     def lora_generic_callback(context):
+         - ``msg_id``
+         - WAN
+         - Only any TX event
+      - 
 
-       event = context.get('event')
+         - ``data``
+         - WAN, RAW
+         - ``lora._event.EVENT_RX_DONE``
+      - 
 
-       # --- lora raw case
-       if lora.mode() == lora._mode.RAW:
+         - ``RSSI``
+         - WAN, RAW
+         - ``lora._event.EVENT_RX_DONE``
+      - 
 
-           if event == lora._event.EVENT_RX_DONE:
-               print(f'received data: {context.get('data')}')
-               pass
-           elif event == lora._event.EVENT_RX_FAIL:
-               pass
-           elif event == lora._event.EVENT_RX_TIMEOUT:
-               pass
-           elif event == lora._event.EVENT_TX_DONE:
-               pass
-           elif event == lora._event.EVENT_TX_CONFIRM:
-               # unexpected event in lora-raw
-               pass
-           elif event == lora._event.EVENT_TX_FAILED:
-               pass
-           elif event == lora._event.EVENT_TX_TIMEOUT:
-               pass
-           else:
-               print('error: unknown error')
+         - ``SNR``
+         - WAN, RAW
+         - ``lora._event.EVENT_RX_DONE``
+      - 
 
-       # --- lora wan case
-       elif lora.mode() == lora._mode.WAN:
+         - ``port``
+         - WAN
+         - ``lora._event.EVENT_RX_DONE``
+      - 
 
-           msg_id = context.get('msg_id')
+         - ``DR``
+         - WAN
+         - ``lora._event.EVENT_RX_DONE``
+      - 
 
-           if event == lora._event.EVENT_RX_DONE:
-               print(f'received data: {context.get('data')}')
-               pass
-           elif event == lora._event.EVENT_RX_FAIL:
-               # unexpected event in lora-wan
-               pass
-           elif event == lora._event.EVENT_RX_TIMEOUT:
-               # unexpected event in lora-wan
-               pass
-           elif event == lora._event.EVENT_TX_DONE:
-               print(f"Message ID {msg_id} has transmitted successfully")
-               pass
-           elif event == lora._event.EVENT_TX_CONFIRM:
-               print(f"Message ID {msg_id} has been confirmed")
-               pass
-           elif event == lora._event.EVENT_TX_FAILED:
-               print(f"Message ID {msg_id} is not transmitted")
-               pass
-           elif event == lora._event.EVENT_TX_TIMEOUT:
-               print(f"Message ID {msg_id} tx timeout")
-               pass
-           else:
-               print('error: unknown error')
+         - ``dl_frame_counter``
+         - WAN
+         - ``lora._event.EVENT_RX_DONE``
 
-       else:
-           print('error: unknown lora mode')
-           pass
+   The following is a typical example of the LoRa callback function
 
-       pass  
+   .. code:: python
 
-- **``trigger``** It is an optional argument to set a callback routine
-  dedicated for a certain lora stack event. It shall be equal to one or more of
-  the expected mode lora events. If more than one event shall be used they
-  shall be combined using an ``OR`` operation (ex:
-  ``lora._event.EVENT_TX_TIMEOUT | lora._event.EVENT_RX_TIMEOUT``)
+      def lora_generic_callback(context):
 
-- **``port``** It is an optional argument applicable only for LoRa-WAN mode. It
-  gives the user more flexibility in callbacks to be able to receive lora-stack
-  events for dedicated LoRa-WAN port in a specialized callback routine.
+        event = context.get('event')
+
+        # --- lora raw case
+        if lora.mode() == lora._mode.RAW:
+
+            if event == lora._event.EVENT_RX_DONE:
+                print(f'received data: {context.get('data')}')
+                pass
+            elif event == lora._event.EVENT_RX_FAIL:
+                pass
+            elif event == lora._event.EVENT_RX_TIMEOUT:
+                pass
+            elif event == lora._event.EVENT_TX_DONE:
+                pass
+            elif event == lora._event.EVENT_TX_CONFIRM:
+                # unexpected event in lora-raw
+                pass
+            elif event == lora._event.EVENT_TX_FAILED:
+                pass
+            elif event == lora._event.EVENT_TX_TIMEOUT:
+                pass
+            else:
+                print('error: unknown error')
+
+        # --- lora wan case
+        elif lora.mode() == lora._mode.WAN:
+
+            msg_id = context.get('msg_id')
+
+            if event == lora._event.EVENT_RX_DONE:
+                print(f'received data: {context.get('data')}')
+                pass
+            elif event == lora._event.EVENT_RX_FAIL:
+                # unexpected event in lora-wan
+                pass
+            elif event == lora._event.EVENT_RX_TIMEOUT:
+                # unexpected event in lora-wan
+                pass
+            elif event == lora._event.EVENT_TX_DONE:
+                print(f"Message ID {msg_id} has transmitted successfully")
+                pass
+            elif event == lora._event.EVENT_TX_CONFIRM:
+                print(f"Message ID {msg_id} has been confirmed")
+                pass
+            elif event == lora._event.EVENT_TX_FAILED:
+                print(f"Message ID {msg_id} is not transmitted")
+                pass
+            elif event == lora._event.EVENT_TX_TIMEOUT:
+                print(f"Message ID {msg_id} tx timeout")
+                pass
+            else:
+                print('error: unknown error')
+
+        else:
+            print('error: unknown lora mode')
+            pass
+
+        pass  
+
+-  **``trigger``** It is an optional argument to set a callback routine
+   dedicated for a certain lora stack event. It shall be equal to one or more
+   of the expected mode lora events. If more than one event shall be used they
+   shall be combined using an ``OR`` operation (ex:
+   ``lora._event.EVENT_TX_TIMEOUT | lora._event.EVENT_RX_TIMEOUT``)
+
+-  **``port``** It is an optional argument applicable only for LoRa-WAN mode.
+   It gives the user more flexibility in callbacks to be able to receive
+   lora-stack events for dedicated LoRa-WAN port in a specialized callback
+   routine.
 
 Example LoRa-RAW
 ----------------

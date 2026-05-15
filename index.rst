@@ -102,11 +102,9 @@
    Getting Started <getting-started/index>
    Hardware <hardware/index>
    Software <software/index>
-   Product Information <product-info/index>
-   Taking Ctrl <ctrl/index>
+    MicroPython Libraries <micropython/index>
    Programming References <programming-references/index>
    Custom Projects <custom-projects/index>
    Tutorials & Examples <tutorials/index>
-   Firmware & API Reference <api/index>
    Contact <contact>
    License <license>
