@@ -138,8 +138,23 @@ Since Ctrl is integrated with SG Wireless TTN LoRaWAN, it will automatically reg
 2. Once you activate the LoRa profile toggle, you will need to select the LoRaWAN region that matches with your LoRaWAN gateway region. Upon clicking the 'save' button, Ctrl will automatically generate TTN device activation information, such as JoinEUI, DevEUI, AppKey, and NwkKey.  
 3. This device activation information will be passed to the device when you :ref:`deploy the network profile <net-deploy>`. 
 
+If you wish to use your own LoRaWAN setup, you can 
+
+LoRa Connectivity Limitations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. **Downlink data is not real-time.** LoRa Class A always initiates communication from the device side and operates fully asynchronously, so downlink messages are not delivered instantly.
+2. The following features are not available over LoRa:
+      1. Linking / unlinking sensors
+      2. OTA firmware update
+      3. OTA file content update
+      4. OTA network settings update
 
 
+Rejoning SGW LoRaWAN TTN Network
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Supposedly, you only need to register your device to SG Wireless TTN network once during activation. However if your device looses connectivity from activities like firmware reflashing, the device needs to rejoin the network. While the device activation credentials remain unchanged, you might encounter errors like 'DevNonce is too small'. In this case, kindly contact us at info@sgwireless.com for support. We will help you to reset the DevNonce. 
 
 
 Adjust the device network priority
