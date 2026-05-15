@@ -52,10 +52,20 @@ File content management of F1 Starter Kit consists of two main parts:
 - Software releases management on Device Templates - one release for all devices under the same template.
     - Go to your target device template, either by clicking 'device template in use' from the device details or by clicking one of the templates on the Home page's Device Template tab.
     - Go to the Software Releases tab. You will find a list of applicable release versions of the template.
+
+.. image:: /_static/images/ctrl/device-templates/ctrl_device_template_releases.png
+   :width: 80%
+   :alt: Ctrl template releases
+
     - To create a new release version:
         - Compress all the file contents to be included into a zip file (maximum size: 1.2MB)
         - Click 'Create release' button
         - Type the version name and upload the zip file
+
+.. image:: /_static/images/ctrl/device-templates/ctrl_device_template_releases_add.png
+   :width: 80%
+   :alt: Ctrl template releases
+
     - Select any devices under the Associated Devices tab to deploy the release.
     
 - Deployment manager tab on Device Details - over-the-air (OTA) software release
