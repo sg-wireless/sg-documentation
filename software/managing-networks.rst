@@ -143,12 +143,12 @@ If you wish to use your own LoRaWAN setup, you can
 LoRa Connectivity Limitations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. **Downlink data is not real-time.** LoRa Class A always initiates communication from the device side and operates fully asynchronously, so downlink messages are not delivered instantly.
-2. The following features are not available over LoRa:
-      1. Linking / unlinking sensors
-      2. OTA firmware update
-      3. OTA file content update
-      4. OTA network settings update
+1. **Downlink data is not real-time.** As a LoRa Class A device, F1 Starter Kit always initiates communication from the device side and operates fully asynchronously, so downlink messages are not delivered instantly.
+2. LoRa’s long-range, low-power design limits the size of data packets, so that these capabilities are not supported over LoRa:
+      a. Linking / unlinking sensors
+      b. OTA firmware update
+      c. OTA file content update
+      d. OTA network settings update
 
 
 Rejoning SGW LoRaWAN TTN Network
