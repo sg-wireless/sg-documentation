@@ -20,6 +20,8 @@ build_pdf_noninteractive() {
   local version_label="$3"
   local latex_dir="$build_dir/latex"
   local tex_file
+  local tex_name
+  local tex_base
 
   echo "--- Building PDF for $version_label (timeout ${PDF_BUILD_TIMEOUT_SEC}s) ---"
 
@@ -35,10 +37,32 @@ build_pdf_noninteractive() {
     return 1
   fi
 
-  # Step 3: Compile with latexmk in nonstop mode to avoid interactive stalls.
-  timeout "$PDF_BUILD_TIMEOUT_SEC" env \
-    LATEXMKOPTS="-interaction=nonstopmode -halt-on-error -file-line-error -f" \
-    latexmk -cd -pdfxe -interaction=nonstopmode -halt-on-error -file-line-error -f "$tex_file"
+  tex_name="$(basename "$tex_file")"
+  tex_base="${tex_name%.tex}"
+
+  # Step 3: Compile PDF non-interactively.
+  if command -v latexmk >/dev/null 2>&1; then
+    timeout "$PDF_BUILD_TIMEOUT_SEC" env \
+      LATEXMKOPTS="-interaction=nonstopmode -halt-on-error -file-line-error -f" \
+      latexmk -cd -pdfxe -interaction=nonstopmode -halt-on-error -file-line-error -f "$tex_file"
+  else
+    echo "WARNING: latexmk not found; falling back to direct xelatex build"
+    if ! command -v xelatex >/dev/null 2>&1; then
+      echo "ERROR: Neither latexmk nor xelatex is available in PATH"
+      return 127
+    fi
+
+    timeout "$PDF_BUILD_TIMEOUT_SEC" bash -c '
+      set -euo pipefail
+      cd "$1"
+      xelatex -interaction=nonstopmode -halt-on-error -file-line-error "$2"
+      if [[ -f "$3.idx" ]] && command -v makeindex >/dev/null 2>&1; then
+        makeindex "$3.idx"
+      fi
+      xelatex -interaction=nonstopmode -halt-on-error -file-line-error "$2"
+      xelatex -interaction=nonstopmode -halt-on-error -file-line-error "$2"
+    ' _ "$latex_dir" "$tex_name" "$tex_base"
+  fi
 }
 
 normalize_latex_assets() {
