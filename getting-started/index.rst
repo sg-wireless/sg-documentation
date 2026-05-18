@@ -16,7 +16,7 @@ Begin your IoT journey in three simple steps:
    :hidden:
 
    unboxing
-   setup-computer
+   /software/setup-computer
    ztp
    manual-provisioning
    first-sensor-data

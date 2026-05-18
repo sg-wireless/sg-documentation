@@ -49,35 +49,36 @@ The modem intelligently handles three possible power states:
 
 **Parameters:**
 
-- ``carrier`` (str, optional): Carrier conformance mode for band selection.
-  Options:
+-  ``carrier`` (str, optional): Carrier conformance mode for band selection.
+   Options:
 
-  - ``'standard'`` (default)
-  - ``'verizon'``
-  - ``'att'``
-  - ``'docomo'``
-  - ``'kddi'``
-  - ``'telstra'``
-  - ``'tmo'``
-  - ``'verizon-no-roaming'``
-  - ``'3gpp-conformance'``
+   -  ``'standard'`` (default)
+   -  ``'verizon'``
+   -  ``'att'``
+   -  ``'docomo'``
+   -  ``'kddi'``
+   -  ``'telstra'``
+   -  ``'tmo'``
+   -  ``'verizon-no-roaming'``
+   -  ``'3gpp-conformance'``
 
 **Carrier Conformance Mode Behavior:**
 
 The ``carrier`` parameter controls the modem's carrier conformance mode
 (AT+SQNCTM), which affects band selection and carrier-specific optimizations:
 
-- **``lte.init()`` or ``lte.init(carrier=None)``**: Uses whatever conformance
-  mode is currently configured on the modem. Does not change or check the mode.
+-  **``lte.init()`` or ``lte.init(carrier=None)``**: Uses whatever conformance
+   mode is currently configured on the modem. Does not change or check the
+   mode.
 
-- **``lte.init(carrier='standard')``** or any explicit carrier: Checks the
-  modem's current conformance mode and changes it if different. If the mode
-  needs to change, the modem will automatically reset during initialization.
+-  **``lte.init(carrier='standard')``** or any explicit carrier: Checks the
+   modem's current conformance mode and changes it if different. If the mode
+   needs to change, the modem will automatically reset during initialization.
 
-- **Changing conformance mode after initialization**: If you call
-  ``lte.init(carrier='verizon')`` after already initializing with a different
-  carrier, the modem will automatically change the conformance mode and reset.
-  No need to call ``lte.deinit()`` first - the change is handled seamlessly.
+-  **Changing conformance mode after initialization**: If you call
+   ``lte.init(carrier='verizon')`` after already initializing with a different
+   carrier, the modem will automatically change the conformance mode and reset.
+   No need to call ``lte.deinit()`` first - the change is handled seamlessly.
 
 **Example:**
 
@@ -114,15 +115,15 @@ operation - use ``lte.isattached()`` to poll for registration status.
 
 **Parameters:**
 
-- ``apn`` (str, optional): Access Point Name (e.g., ``'iot.1nce.net'``).
-  Defaults to empty string (carrier default)
-- ``type`` (str, optional): PDP context type. Options: ``'IP'`` (default),
-  ``'IPV6'``, ``'IPV4V6'``
-- ``cid`` (int, optional): Context Identifier. Default: 1 (Verizon uses 3)
-- ``band`` (int, optional): Single frequency band to use. 0 for auto-select.
-  Valid bands: 1-28, 66, 71
-- ``bands`` (list, optional): List of frequency bands (e.g., ``[2, 4, 12]``).
-  Cannot use with ``band``
+-  ``apn`` (str, optional): Access Point Name (e.g., ``'iot.1nce.net'``).
+   Defaults to empty string (carrier default)
+-  ``type`` (str, optional): PDP context type. Options: ``'IP'`` (default),
+   ``'IPV6'``, ``'IPV4V6'``
+-  ``cid`` (int, optional): Context Identifier. Default: 1 (Verizon uses 3)
+-  ``band`` (int, optional): Single frequency band to use. 0 for auto-select.
+   Valid bands: 1-28, 66, 71
+-  ``bands`` (list, optional): List of frequency bands (e.g., ``[2, 4, 12]``).
+   Cannot use with ``band``
 
 **Example:**
 
@@ -158,8 +159,8 @@ Start a data session using CMUX multiplexing and PPP protocol. This is a
 
 **Parameters:**
 
-- ``cid`` (int, optional): Context Identifier (typically uses CID from
-  ``attach()``)
+-  ``cid`` (int, optional): Context Identifier (typically uses CID from
+   ``attach()``)
 
 **Example:**
 
@@ -211,30 +212,30 @@ off.
 
 This method allows flexible power management strategies:
 
-- **Full shutdown** (default): Detaches from network and powers off modem
-- **Low power mode**: Keeps modem powered and attached, using PSM/eDRX for
-  power saving
-- **Quick restart**: Keeps modem powered for faster re-initialization
+-  **Full shutdown** (default): Detaches from network and powers off modem
+-  **Low power mode**: Keeps modem powered and attached, using PSM/eDRX for
+   power saving
+-  **Quick restart**: Keeps modem powered for faster re-initialization
 
 **Parameters:**
 
-- ``detach`` (bool, optional): If ``True``, detach from cellular network.
-  Default: ``True``
-- ``power_off`` (bool, optional): If ``True``, power off the modem completely.
-  Default: ``True``
+-  ``detach`` (bool, optional): If ``True``, detach from cellular network.
+   Default: ``True``
+-  ``power_off`` (bool, optional): If ``True``, power off the modem completely.
+   Default: ``True``
 
 **Power Saving Strategy:**
 
 When using ``detach=False, power_off=False``, the modem stays attached to the
 network in a low-power state:
 
-- Flow control pins are de-asserted, allowing the modem to enter power saving
-  mode
-- Use PSM (Power Saving Mode) or eDRX (extended DRX) for ultra-low power
-  consumption
-- Modem can wake the ESP32 via RING signal for incoming messages or
-  mobile-terminated events
-- ESP32 can enter deep sleep while modem maintains network connection
+-  Flow control pins are de-asserted, allowing the modem to enter power saving
+   mode
+-  Use PSM (Power Saving Mode) or eDRX (extended DRX) for ultra-low power
+   consumption
+-  Modem can wake the ESP32 via RING signal for incoming messages or
+   mobile-terminated events
+-  ESP32 can enter deep sleep while modem maintains network connection
 
 **Example:**
 
@@ -344,13 +345,14 @@ Send a raw AT command to the modem and return the response.
 
 **Parameters:**
 
-- ``cmd`` (str): AT command to send (without ``\r\n``). Default: ``'AT'``
-- ``timeout`` (int, optional): Timeout in milliseconds. -1 for default (5000ms)
-- ``wait_ok_error`` (bool, optional): Wait for OK/ERROR response. Default:
-  False
-- ``check_error`` (bool, optional): Raise exception on ERROR. Default: False
-- ``buffer_size`` (int, optional): Response buffer size (1024-32768). Default:
-  4096
+-  ``cmd`` (str): AT command to send (without ``\r\n``). Default: ``'AT'``
+-  ``timeout`` (int, optional): Timeout in milliseconds. -1 for default
+   (5000ms)
+-  ``wait_ok_error`` (bool, optional): Wait for OK/ERROR response. Default:
+   False
+-  ``check_error`` (bool, optional): Raise exception on ERROR. Default: False
+-  ``buffer_size`` (int, optional): Response buffer size (1024-32768). Default:
+   4096
 
 **Returns:** Response string with OK/ERROR lines removed
 
@@ -378,13 +380,13 @@ Get or set the modem operating mode (CAT-M1 or NB-IoT).
 
 **Parameters:**
 
-- ``new_mode`` (int, optional): New mode to set. Use ``lte.CATM1`` (0) or
-  ``lte.NBIOT`` (1)
+-  ``new_mode`` (int, optional): New mode to set. Use ``lte.CATM1`` (0) or
+   ``lte.NBIOT`` (1)
 
 **Returns:**
 
-- If no parameter: Current mode (0 for CAT-M1, 1 for NB-IoT)
-- If parameter provided: None (mode is set)
+-  If no parameter: Current mode (0 for CAT-M1, 1 for NB-IoT)
+-  If parameter provided: None (mode is set)
 
 ..
 
@@ -449,9 +451,9 @@ Get signal strength information from the modem.
 
 **Returns:** Tuple of ``(rssi, rssi_dbm, ber)`` where:
 
-- ``rssi``: Raw RSSI value (0-31, 99=unknown)
-- ``rssi_dbm``: RSSI in dBm (-113 to -51, -999=unknown)
-- ``ber``: Bit Error Rate (0-7, 99=unknown)
+-  ``rssi``: Raw RSSI value (0-31, 99=unknown)
+-  ``rssi_dbm``: RSSI in dBm (-113 to -51, -999=unknown)
+-  ``ber``: Bit Error Rate (0-7, 99=unknown)
 
 **Example:**
 
@@ -469,14 +471,14 @@ Get comprehensive modem status information.
 
 **Returns:** Dictionary with the following keys:
 
-- ``powered`` (bool): Modem power state
-- ``sim_ready`` (bool): SIM card present and ready
-- ``network_attached`` (bool): Attached to network
-- ``ppp_connected`` (bool): PPP session active
-- ``cmux_active`` (bool): CMUX multiplexing enabled
-- ``baudrate`` (int): Current UART baudrate
-- ``rssi`` (int): Signal strength (raw RSSI value)
-- ``ber`` (int): Bit error rate
+-  ``powered`` (bool): Modem power state
+-  ``sim_ready`` (bool): SIM card present and ready
+-  ``network_attached`` (bool): Attached to network
+-  ``ppp_connected`` (bool): PPP session active
+-  ``cmux_active`` (bool): CMUX multiplexing enabled
+-  ``baudrate`` (int): Current UART baudrate
+-  ``rssi`` (int): Signal strength (raw RSSI value)
+-  ``ber`` (int): Bit error rate
 
 **Example:**
 
@@ -517,8 +519,8 @@ Power on the LTE modem hardware via IO expander.
 
 **Parameters:**
 
-- ``wait_ok`` (bool, optional): Wait for modem to respond with OK. Default:
-  True
+-  ``wait_ok`` (bool, optional): Wait for modem to respond with OK. Default:
+   True
 
 **Example:**
 
@@ -537,8 +539,8 @@ Power off the LTE modem hardware via IO expander.
 
 **Parameters:**
 
-- ``force`` (bool, optional): Force immediate power off without graceful
-  shutdown. Default: False
+-  ``force`` (bool, optional): Force immediate power off without graceful
+   shutdown. Default: False
 
 **Example:**
 
@@ -596,13 +598,13 @@ event data with automatic parsing.
 
 **Parameters:**
 
-- ``handler`` (function): Event handler function that receives a dictionary, or
-  ``None`` to unregister
-- ``event_mask`` (int, optional): Bitmask of events to subscribe to. Default:
-  ``lte.EVENT_ALL``
-- ``lock`` (bool, optional): If ``True``, lock the event handler so it cannot
-  be overridden until ``lte.deinit()`` is called. Attempting to set or
-  unregister the handler while locked raises ``OSError``. Default: ``False``
+-  ``handler`` (function): Event handler function that receives a dictionary,
+   or ``None`` to unregister
+-  ``event_mask`` (int, optional): Bitmask of events to subscribe to. Default:
+   ``lte.EVENT_ALL``
+-  ``lock`` (bool, optional): If ``True``, lock the event handler so it cannot
+   be overridden until ``lte.deinit()`` is called. Attempting to set or
+   unregister the handler while locked raises ``OSError``. Default: ``False``
 
 **Event Handler Signature:**
 
@@ -622,56 +624,57 @@ event data with automatic parsing.
 1. **``lte.EVENT_REGISTRATION_STATUS`` (0x0001)** - Network registration
    changes
 
-   - ``stat`` (int): Registration status (0-10, 80)
+   -  ``stat`` (int): Registration status (0-10, 80)
 
-     - 0: Not registered (not searching)
-     - 1: Registered (home network)
-     - 2: Not registered (searching)
-     - 3: Registration denied
-     - 5: Registered (roaming)
+      -  0: Not registered (not searching)
+      -  1: Registered (home network)
+      -  2: Not registered (searching)
+      -  3: Registration denied
+      -  5: Registered (roaming)
 
-   - ``tac`` (str, optional): Tracking Area Code
-   - ``ci`` (str, optional): Cell ID
-   - ``act`` (int, optional): Access Technology (-1=unknown, 7=LTE-M, 9=NB-IoT)
-   - ``cause_type`` (int, optional): Reject cause type
-   - ``reject_cause`` (int, optional): Reject cause code
-   - ``active_time`` (str, optional): PSM active time
-   - ``periodic_tau`` (str, optional): PSM periodic TAU
+   -  ``tac`` (str, optional): Tracking Area Code
+   -  ``ci`` (str, optional): Cell ID
+   -  ``act`` (int, optional): Access Technology (-1=unknown, 7=LTE-M,
+      9=NB-IoT)
+   -  ``cause_type`` (int, optional): Reject cause type
+   -  ``reject_cause`` (int, optional): Reject cause code
+   -  ``active_time`` (str, optional): PSM active time
+   -  ``periodic_tau`` (str, optional): PSM periodic TAU
 
 2. **``lte.EVENT_PPP_CONNECTED`` (0x0002)** - PPP connection established
 
-   - ``ip`` (str): Assigned IP address
-   - ``netmask`` (str): Network mask
-   - ``gateway`` (str): Gateway address
-   - ``dns1`` (str): Primary DNS server
-   - ``dns2`` (str, optional): Secondary DNS server
+   -  ``ip`` (str): Assigned IP address
+   -  ``netmask`` (str): Network mask
+   -  ``gateway`` (str): Gateway address
+   -  ``dns1`` (str): Primary DNS server
+   -  ``dns2`` (str, optional): Secondary DNS server
 
 3. **``lte.EVENT_PPP_DISCONNECTED`` (0x0004)** - PPP connection lost
 
 4. **``lte.EVENT_MODEM_CRASH`` (0x0008)** - Modem crash detected
 
-   - ``break_count`` (int): Number of break signals received
+   -  ``break_count`` (int): Number of break signals received
 
 5. **``lte.EVENT_MODEM_RESET`` (0x0010)** - Modem was reset
 
-   - ``user_initiated`` (bool): Whether reset was user-initiated
-   - ``reason`` (str, optional): Reset reason
+   -  ``user_initiated`` (bool): Whether reset was user-initiated
+   -  ``reason`` (str, optional): Reset reason
 
 6. **``lte.EVENT_SIGNAL_QUALITY`` (0x0020)** - Signal strength update
 
-   - ``rssi`` (int): Raw RSSI value (0-31, 99=unknown)
-   - ``rssi_dbm`` (int): RSSI in dBm (-113 to -51, -999=unknown)
-   - ``ber`` (int): Bit Error Rate (0-7, 99=unknown)
+   -  ``rssi`` (int): Raw RSSI value (0-31, 99=unknown)
+   -  ``rssi_dbm`` (int): RSSI in dBm (-113 to -51, -999=unknown)
+   -  ``ber`` (int): Bit Error Rate (0-7, 99=unknown)
 
 7. **``lte.EVENT_URC`` (0x0040)** - Unsolicited response code (raw AT response)
 
-   - ``data`` (str): The raw URC string
+   -  ``data`` (str): The raw URC string
 
 8. **``lte.EVENT_ERROR`` (0x0080)** - Error occurred
 
-   - ``error_code`` (int): Error code
-   - ``message`` (str, optional): Error message
-   - ``operation`` (str, optional): Operation that failed
+   -  ``error_code`` (int): Error code
+   -  ``message`` (str, optional): Error message
+   -  ``operation`` (str, optional): Operation that failed
 
 **Event Mask Combinations:**
 
@@ -759,8 +762,8 @@ Constants
 Mode Constants
 ~~~~~~~~~~~~~~
 
-- ``lte.CATM1`` (0): CAT-M1 mode constant
-- ``lte.NBIOT`` (1): NB-IoT mode constant
+-  ``lte.CATM1`` (0): CAT-M1 mode constant
+-  ``lte.NBIOT`` (1): NB-IoT mode constant
 
 **Example:**
 
@@ -777,16 +780,16 @@ Event Type Constants
 
 Event type constants for use with ``lte.set_event_handler()``:
 
-- ``lte.EVENT_REGISTRATION_STATUS`` (0x0001): Network registration status
-  changes
-- ``lte.EVENT_PPP_CONNECTED`` (0x0002): PPP connection established
-- ``lte.EVENT_PPP_DISCONNECTED`` (0x0004): PPP connection lost
-- ``lte.EVENT_MODEM_CRASH`` (0x0008): Modem crash detected
-- ``lte.EVENT_MODEM_RESET`` (0x0010): Modem reset occurred
-- ``lte.EVENT_SIGNAL_QUALITY`` (0x0020): Signal strength update
-- ``lte.EVENT_URC`` (0x0040): Raw unsolicited response code
-- ``lte.EVENT_ERROR`` (0x0080): Error occurred
-- ``lte.EVENT_ALL`` (0xFFFF): Subscribe to all events
+-  ``lte.EVENT_REGISTRATION_STATUS`` (0x0001): Network registration status
+   changes
+-  ``lte.EVENT_PPP_CONNECTED`` (0x0002): PPP connection established
+-  ``lte.EVENT_PPP_DISCONNECTED`` (0x0004): PPP connection lost
+-  ``lte.EVENT_MODEM_CRASH`` (0x0008): Modem crash detected
+-  ``lte.EVENT_MODEM_RESET`` (0x0010): Modem reset occurred
+-  ``lte.EVENT_SIGNAL_QUALITY`` (0x0020): Signal strength update
+-  ``lte.EVENT_URC`` (0x0040): Raw unsolicited response code
+-  ``lte.EVENT_ERROR`` (0x0080): Error occurred
+-  ``lte.EVENT_ALL`` (0xFFFF): Subscribe to all events
 
 **Example:**
 
@@ -803,10 +806,10 @@ Error Handling
 
 The module raises MicroPython exceptions for errors:
 
-- ``OSError`` - General modem errors (timeout, not responding, etc.)
-- ``ValueError`` - Invalid parameters
-- ``MemoryError`` - Memory allocation failure
-- ``TypeError`` - Wrong type for callback
+-  ``OSError`` - General modem errors (timeout, not responding, etc.)
+-  ``ValueError`` - Invalid parameters
+-  ``MemoryError`` - Memory allocation failure
+-  ``TypeError`` - Wrong type for callback
 
 **Example:**
 
@@ -833,44 +836,44 @@ module:
 
 1. **Better Resource Management:**
 
-   - Proper UART reservation/release
-   - Memory-efficient buffers
-   - WiFi/LTE coexistence handled automatically
+   -  Proper UART reservation/release
+   -  Memory-efficient buffers
+   -  WiFi/LTE coexistence handled automatically
 
 2. **CMUX Support:**
 
-   - Simultaneous AT commands and data sessions
-   - No need for ``pause_ppp()``/``resume_ppp()``
-   - More reliable operation
+   -  Simultaneous AT commands and data sessions
+   -  No need for ``pause_ppp()``/``resume_ppp()``
+   -  More reliable operation
 
 3. **Event-Driven Architecture:**
 
-   - Unified event handler with structured data
-   - No need to manually poll for status changes
-   - Real-time event notification with automatic parsing
+   -  Unified event handler with structured data
+   -  No need to manually poll for status changes
+   -  Real-time event notification with automatic parsing
 
 4. **Robust Initialization:**
 
-   - Handles modem power states intelligently
-   - Automatic crash recovery
-   - Idempotent initialization
+   -  Handles modem power states intelligently
+   -  Automatic crash recovery
+   -  Idempotent initialization
 
 5. **Performance:**
 
-   - Native C implementation
-   - Faster command execution
-   - Lower memory footprint
+   -  Native C implementation
+   -  Faster command execution
+   -  Lower memory footprint
 
 Compatibility Notes
 ~~~~~~~~~~~~~~~~~~~
 
 Most methods are compatible with ``LTE.py``, but note:
 
-- ``pause_ppp()`` and ``resume_ppp()`` are **not needed** (CMUX handles this)
-- ``read_rsp()`` is replaced by ``set_event_handler()``
-- Initialization is simpler (no explicit baudrate management)
-- ``check_power()`` renamed to ``is_powered()``
-- Automatic WiFi conflict detection/resolution
+-  ``pause_ppp()`` and ``resume_ppp()`` are **not needed** (CMUX handles this)
+-  ``read_rsp()`` is replaced by ``set_event_handler()``
+-  Initialization is simpler (no explicit baudrate management)
+-  ``check_power()`` renamed to ``is_powered()``
+-  Automatic WiFi conflict detection/resolution
 
 Advanced Usage
 --------------
@@ -1031,10 +1034,10 @@ Logging and Debugging
 The ``lte`` module uses the SG-SDK structured logging system with two
 components:
 
-- **``espmodem``** - Low-level ESP modem library operations (UART, AT commands,
-  internal state)
-- **``modlte``** - High-level MicroPython bindings (function calls, operations,
-  results)
+-  **``espmodem``** - Low-level ESP modem library operations (UART, AT
+   commands, internal state)
+-  **``modlte``** - High-level MicroPython bindings (function calls,
+   operations, results)
 
 Enabling Logging
 ~~~~~~~~~~~~~~~~
@@ -1059,32 +1062,32 @@ Logging Levels
 
 Each component logs at different levels:
 
-- **INFO** - High-level operations (function calls, status changes)
-- **DEBUG** - Detailed operation flow (AT commands, responses, state
-  transitions)
-- **WARN** - Recoverable issues (retries, dropped events)
-- **ERROR** - Failures requiring attention
+-  **INFO** - High-level operations (function calls, status changes)
+-  **DEBUG** - Detailed operation flow (AT commands, responses, state
+   transitions)
+-  **WARN** - Recoverable issues (retries, dropped events)
+-  **ERROR** - Failures requiring attention
 
 What Gets Logged
 ~~~~~~~~~~~~~~~~
 
 **``modlte`` component logs:**
 
-- Function calls with parameters: ``lte.init(carrier='standard')``
-- AT command execution: ``AT: AT+CEREG=2``
-- AT command responses: ``AT response: +CEREG: 2,0``
-- Operation results: ``lte.isattached() -> True``
-- Callback registration and URC handling
-- High-level operation flow (attach, connect, disconnect)
+-  Function calls with parameters: ``lte.init(carrier='standard')``
+-  AT command execution: ``AT: AT+CEREG=2``
+-  AT command responses: ``AT response: +CEREG: 2,0``
+-  Operation results: ``lte.isattached() -> True``
+-  Callback registration and URC handling
+-  High-level operation flow (attach, connect, disconnect)
 
 **``espmodem`` component logs:**
 
-- Modem initialization and power state detection
-- UART communication details
-- ESP modem library events
-- CMUX multiplexing operations
-- PPP session management
-- Low-level error handling and retries
+-  Modem initialization and power state detection
+-  UART communication details
+-  ESP modem library events
+-  CMUX multiplexing operations
+-  PPP session management
+-  Low-level error handling and retries
 
 Example Output
 ~~~~~~~~~~~~~~
@@ -1139,11 +1142,11 @@ Troubleshooting Event Handler Issues
 
 When debugging event handlers, enable ``modlte`` logging to see:
 
-- Handler registration: ``"Event handler registered successfully"``
-- Event reception: ``"Event handler called from UART task context"``
-- Event scheduling: ``"Event successfully scheduled for processing"``
-- Handler execution:
-  ``"Handler is valid and callable, invoking Python function"``
+-  Handler registration: ``"Event handler registered successfully"``
+-  Event reception: ``"Event handler called from UART task context"``
+-  Event scheduling: ``"Event successfully scheduled for processing"``
+-  Handler execution:
+   ``"Handler is valid and callable, invoking Python function"``
 
 .. code:: python
 

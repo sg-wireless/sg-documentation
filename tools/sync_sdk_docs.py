@@ -20,7 +20,7 @@ Usage:
     # specify custom sg-sdk path
     python3 tools/sync_sdk_docs.py --sdk-path /path/to/sg-sdk
 
-Each module name corresponds to the RST filename in api/ (without extension).
+Each module name corresponds to the RST filename in programming-references/ (without extension).
 """
 
 import argparse
@@ -42,6 +42,7 @@ SOURCE_MAP = {
     "lte":            "src/platforms/F1/comps/lte/modlte.md",
     "lte-legacy":     "src/platforms/F1/comps/lte/lte_main.md",
     "can":            "src/platforms/F1/comps/can-if/can.md",
+    "logs":           "src/libs/logs/docs/logs.md",
     "efuse":          "src/platforms/F1/comps/efuse-if/docs/efuse_if.md",
     "fuel-gauge":     "src/platforms/F1/comps/fuel-gauge-if/docs/fuel_gauge.md",
     "fuota":          "src/platforms/F1/comps/fuota/mod_fuota.md",
@@ -121,7 +122,7 @@ def sync_module(module, sdk_path, docs_path, dry_run=False, show_diff=False):
 
     md_rel = SOURCE_MAP[module]
     md_path = os.path.join(sdk_path, md_rel)
-    rst_path = os.path.join(docs_path, "api", f"{module}.rst")
+    rst_path = os.path.join(docs_path, "programming-references", f"{module}.rst")
 
     if not os.path.isfile(md_path):
         return False, f"  SKIP {module}: source not found: {md_rel}"
@@ -144,8 +145,8 @@ def sync_module(module, sdk_path, docs_path, dry_run=False, show_diff=False):
         diff = difflib.unified_diff(
             old_rst.splitlines(keepends=True),
             new_rst.splitlines(keepends=True),
-            fromfile=f"api/{module}.rst (current)",
-            tofile=f"api/{module}.rst (from sdk)",
+            fromfile=f"programming-references/{module}.rst (current)",
+            tofile=f"programming-references/{module}.rst (from sdk)",
             lineterm="",
         )
         diff_text = "\n".join(diff)
@@ -156,9 +157,9 @@ def sync_module(module, sdk_path, docs_path, dry_run=False, show_diff=False):
     if not dry_run:
         with open(rst_path, "w") as f:
             f.write(new_rst)
-        return True, f"  SYNC {module}: updated api/{module}.rst"
+        return True, f"  SYNC {module}: updated programming-references/{module}.rst"
     else:
-        return True, f"  WOULD {module}: api/{module}.rst needs update"
+        return True, f"  WOULD {module}: programming-references/{module}.rst needs update"
 
 
 def main():

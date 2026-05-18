@@ -4,11 +4,11 @@ CTRL API Documentation
 Contents
 --------
 
-- Sending Fields
-- Configuration
-- Connection
-- Miscellaneous
-- Examples
+-  Sending Fields
+-  Configuration
+-  Connection
+-  Miscellaneous
+-  Examples
 
 Fields
 ------
@@ -20,13 +20,13 @@ ctrl.send_field(pin_number, value, [timestamp=0, device_token=None])
 
 Send a field value to CTRL. Arguments are:
 
-- ``pin_number``: The pin/field number in CTRL, can be any integer value
-- ``value``: The value you want to send, this can be any type (int, float,
-  string, etc.)
-- ``timestamp``: Optional. Unix timestamp in seconds. If set to 0 (default),
-  the server will use the current time
-- ``device_token``: Optional. Device token for sending data to a different
-  device
+-  ``pin_number``: The pin/field number in CTRL, can be any integer value
+-  ``value``: The value you want to send, this can be any type (int, float,
+   string, etc.)
+-  ``timestamp``: Optional. Unix timestamp in seconds. If set to 0 (default),
+   the server will use the current time
+-  ``device_token``: Optional. Device token for sending data to a different
+   device
 
 .. _ctrlsend_field_mapmap-timestamp0-device_tokennone:
 
@@ -36,12 +36,12 @@ ctrl.send_field_map(map, [timestamp=0, device_token=None])
 Send multiple field values to CTRL in a single message using a dictionary/map.
 Arguments are:
 
-- ``map``: A dictionary where keys are pin/field numbers and values are the
-  data to send. Example: ``{1: 25.5, 2: 60.3, 3: "online"}``
-- ``timestamp``: Optional. Unix timestamp in seconds. If set to 0 (default),
-  the server will use the current time
-- ``device_token``: Optional. Device token for sending data to a different
-  device
+-  ``map``: A dictionary where keys are pin/field numbers and values are the
+   data to send. Example: ``{1: 25.5, 2: 60.3, 3: "online"}``
+-  ``timestamp``: Optional. Unix timestamp in seconds. If set to 0 (default),
+   the server will use the current time
+-  ``device_token``: Optional. Device token for sending data to a different
+   device
 
 .. _ctrlsend_ping_message:
 
@@ -148,11 +148,11 @@ Update a ``key`` and ``value`` of the default configuration file. This will
 
 **additional options:**
 
-- ``permanent``: will call ``ctrl.write_config()``. If set ``False``, the new
-  value will not be stored in the configuration file and only used this
-  session.
-- ``silent``: set ``silent`` to ``True`` to not print a message to REPL.
-- ``reconnect``: calls ``ctrl.reconnect()``
+-  ``permanent``: will call ``ctrl.write_config()``. If set ``False``, the new
+   value will not be stored in the configuration file and only used this
+   session.
+-  ``silent``: set ``silent`` to ``True`` to not print a message to REPL.
+-  ``reconnect``: calls ``ctrl.reconnect()``
 
 .. _ctrlset_configkey-valuenone-permanenttrue-silentfalse-reconnectfalse:
 
@@ -164,11 +164,11 @@ overwrite any existing settings for the specified key.
 
 **additional options:**
 
-- ``permanent``: will call ``ctrl.write_config()``. If set ``False``, the new
-  value will not be stored in the configuration file and only used this
-  session.
-- ``silent``: set ``silent`` to ``True`` to not print to REPL.
-- ``reconnect``: calls ``ctrl.reconnect()``
+-  ``permanent``: will call ``ctrl.write_config()``. If set ``False``, the new
+   value will not be stored in the configuration file and only used this
+   session.
+-  ``silent``: set ``silent`` to ``True`` to not print to REPL.
+-  ``reconnect``: calls ``ctrl.reconnect()``
 
 .. _ctrlwrite_configfilectrl_configjson-silentfalse:
 
@@ -178,8 +178,8 @@ ctrl.write_config([file='/ctrl_config.json', silent=False])
 Writes the updated configuration to the default configuration file. The
 parameters:
 
-- ``file``: The file name and location
-- ``silent``: set ``silent`` to ``True`` to not print to REPL.
+-  ``file``: The file name and location
+-  ``silent``: set ``silent`` to ``True`` to not print to REPL.
 
 .. _ctrlprint_config:
 
