@@ -9,9 +9,9 @@ frontend:
           if command -v apt-get >/dev/null 2>&1; then
             export DEBIAN_FRONTEND=noninteractive
             sudo apt-get update
-            sudo apt-get install -y --no-install-recommends latexmk texlive-xetex texlive-latex-extra texlive-latex-recommended fonts-freefont-ttf fontconfig curl unzip
+            sudo apt-get install -y --no-install-recommends latexmk texlive-xetex texlive-luatex texlive-latex-extra texlive-latex-recommended fonts-freefont-ttf fontconfig curl unzip
           elif command -v yum >/dev/null 2>&1; then
-            sudo yum install -y texlive-xetex texlive-latex texlive-cmap fontconfig curl unzip
+            sudo yum install -y texlive-xetex texlive-luatex texlive-latex texlive-cmap fontconfig curl unzip
             sudo yum install -y gnu-free-serif-fonts gnu-free-sans-fonts gnu-free-mono-fonts || true
             sudo yum install -y latexmk || true
           else
@@ -32,7 +32,18 @@ frontend:
             fi
           fi
         - fc-list | grep -Ei "FreeSerif|FreeSans|FreeMono" | head -20
-        - xelatex --version
+        - |
+          if command -v xelatex >/dev/null 2>&1; then
+            xelatex --version
+          else
+            echo "WARNING: xelatex not found in PATH; build script will try lualatex or tectonic fallback"
+          fi
+        - |
+          if command -v lualatex >/dev/null 2>&1; then
+            lualatex --version | head -1
+          else
+            echo "WARNING: lualatex not found in PATH"
+          fi
         - latexmk --version || true
         - export PYENV_ROOT="$HOME/.pyenv"
         - export PATH="$PYENV_ROOT/bin:$PATH"

@@ -41,10 +41,15 @@ build_pdf_noninteractive() {
   tex_base="${tex_name%.tex}"
 
   # Step 3: Compile PDF non-interactively.
-  if command -v latexmk >/dev/null 2>&1; then
+  if command -v latexmk >/dev/null 2>&1 && command -v xelatex >/dev/null 2>&1; then
     timeout "$PDF_BUILD_TIMEOUT_SEC" env \
       LATEXMKOPTS="-interaction=nonstopmode -halt-on-error -file-line-error -f" \
       latexmk -cd -pdfxe -interaction=nonstopmode -halt-on-error -file-line-error -f "$tex_file"
+  elif command -v latexmk >/dev/null 2>&1 && command -v lualatex >/dev/null 2>&1; then
+    echo "WARNING: xelatex not found; falling back to latexmk+lualatex"
+    timeout "$PDF_BUILD_TIMEOUT_SEC" env \
+      LATEXMKOPTS="-interaction=nonstopmode -halt-on-error -file-line-error -f" \
+      latexmk -cd -pdflua -interaction=nonstopmode -halt-on-error -file-line-error -f "$tex_file"
   elif command -v xelatex >/dev/null 2>&1; then
     echo "WARNING: latexmk not found; falling back to direct xelatex build"
     timeout "$PDF_BUILD_TIMEOUT_SEC" bash -c '
@@ -57,8 +62,20 @@ build_pdf_noninteractive() {
       xelatex -interaction=nonstopmode -halt-on-error -file-line-error "$2"
       xelatex -interaction=nonstopmode -halt-on-error -file-line-error "$2"
     ' _ "$latex_dir" "$tex_name" "$tex_base"
+  elif command -v lualatex >/dev/null 2>&1; then
+    echo "WARNING: latexmk/xelatex not found; falling back to direct lualatex build"
+    timeout "$PDF_BUILD_TIMEOUT_SEC" bash -c '
+      set -euo pipefail
+      cd "$1"
+      lualatex -interaction=nonstopmode -halt-on-error -file-line-error "$2"
+      if [[ -f "$3.idx" ]] && command -v makeindex >/dev/null 2>&1; then
+        makeindex "$3.idx"
+      fi
+      lualatex -interaction=nonstopmode -halt-on-error -file-line-error "$2"
+      lualatex -interaction=nonstopmode -halt-on-error -file-line-error "$2"
+    ' _ "$latex_dir" "$tex_name" "$tex_base"
   elif command -v tectonic >/dev/null 2>&1; then
-    echo "WARNING: latexmk/xelatex not found; falling back to tectonic build"
+    echo "WARNING: latexmk/xelatex/lualatex not found; falling back to tectonic build"
     timeout "$PDF_BUILD_TIMEOUT_SEC" bash -c '
       set -euo pipefail
       cd "$1"
@@ -70,7 +87,7 @@ build_pdf_noninteractive() {
       tectonic --keep-logs --outdir "$1" "$2"
     ' _ "$latex_dir" "$tex_name" "$tex_base"
   else
-    echo "ERROR: None of latexmk, xelatex, or tectonic is available in PATH"
+    echo "ERROR: No usable PDF engine found. Need one of: xelatex, lualatex, or tectonic (latexmk optional)."
     return 127
   fi
 }
