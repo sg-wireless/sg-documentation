@@ -95,8 +95,4 @@ Configuring F1 Starter Kit for CtrlR Plugin on your PC
        :width: 60%
        :alt: CtrlR file explorer
 
-Next Steps
-----------
 
-Program the Starter Kit to send your data to the Ctrl platform. See
-:doc:`first-sensor-data` or :doc:`first-f1-code`.
