@@ -20,7 +20,7 @@
          <p>Here we have everything in one place to get you started on your IoT journey.</p>
          <ul>
            <li>IoT newbies can follow our <a href="getting-started/index.html">Getting Started</a> guide from unboxing to prototyping.</li>
-           <li>Seasoned pros can find more in-depth instructions in <a href="tutorials/index.html">Tutorials &amp; Examples</a>.</li>
+           <li>Seasoned pros can find more programming instructions in <a href="programming-references/index.html">Programming References</a>.</li>
          </ul>
          <p>Should you have any questions, we are only one message away and always happy to help.</p>
        </div>
