@@ -83,8 +83,8 @@
          <div class="sgw-card__icon">
            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" fill="#fb6362"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
          </div>
-         <h4>API Documentation</h4>
-         <p>Get to understand how our product works and how to configure it to work for you.</p>
+         <h4>Programming References</h4>
+         <p>Start building on your module at your own pace.</p>
          <span class="sgw-card__arrow">
            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10.3 10.3" width="12"><path d="M10.3 5.4V5c0-.1-.1-.1-.1-.2L5.5.1C5.3 0 5 0 4.8.1s-.2.5 0 .7l3.8 3.8H.5c-.3.1-.5.3-.5.6s.2.5.5.5h8.1L4.8 9.5c-.2.2-.2.5 0 .7.1.1.2.1.4.1s.3 0 .4-.1l4.7-4.7c-.1 0 0-.1 0-.1z"/></svg>
          </span>
@@ -102,8 +102,8 @@
    Getting Started <getting-started/index>
    Hardware <hardware/index>
    Software <software/index>
-    MicroPython Libraries <micropython/index>
    Programming References <programming-references/index>
+            MicroPython Libraries <micropython/index>
    Custom Projects <custom-projects/index>
    Tutorials & Examples <tutorials/index>
    Contact <contact>
