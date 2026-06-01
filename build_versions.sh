@@ -202,6 +202,14 @@ if [[ "$CURRENT_BRANCH" != "main" ]]; then
 </html>
 EOF
 
+    # Stable, version-independent downloads (same as the production build)
+    # so preview deployments can validate the permanent /downloads/<name> path.
+    if [[ -d "$SRCDIR/_static/downloads" ]]; then
+        mkdir -p "$OUTDIR/downloads"
+        cp -r "$SRCDIR/_static/downloads/." "$OUTDIR/downloads/"
+        echo "Published stable downloads to $OUTDIR/downloads"
+    fi
+
     echo ""
     echo "=== Done — preview build in $OUTDIR/$PREVIEW_TAG ==="
     exit 0
