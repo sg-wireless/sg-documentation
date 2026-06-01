@@ -106,6 +106,10 @@ This option uploads the script to the F1 Starter Kit's file system. The script
 will persist and run on boot. Use this when your code is ready for deployment.
 
 
+Uploading the entire project to your F1 Starter Kit
+------------------------------------------------
+
+
 
 
 
