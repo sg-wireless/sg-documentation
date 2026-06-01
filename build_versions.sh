@@ -186,20 +186,29 @@ if [[ "$CURRENT_BRANCH" != "main" ]]; then
     mkdir -p "$OUTDIR/$PREVIEW_TAG/_static"
     cp "$SRCDIR/_build/latex/SGWirelessDocs.pdf" "$OUTDIR/$PREVIEW_TAG/_static/SGWirelessDocs.pdf"
 
-    # Root redirect → preview
+    # Root redirect → preview (absolute URL so it can't accumulate when
+    # Amplify rewrites a 404 to this page while keeping the requested URL).
     cat > "$OUTDIR/index.html" << EOF
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0; url=./${PREVIEW_TAG}/index.html">
+  <meta http-equiv="refresh" content="0; url=/${PREVIEW_TAG}/index.html">
   <title>Redirecting…</title>
 </head>
 <body>
-  <p>Redirecting to <a href="./${PREVIEW_TAG}/index.html">${PREVIEW_TAG}</a>…</p>
+  <p>Redirecting to <a href="/${PREVIEW_TAG}/index.html">${PREVIEW_TAG}</a>…</p>
 </body>
 </html>
 EOF
+
+    # Stable, version-independent downloads (same as the production build)
+    # so preview deployments can validate the permanent /downloads/<name> path.
+    if [[ -d "$SRCDIR/_static/downloads" ]]; then
+        mkdir -p "$OUTDIR/downloads"
+        cp -r "$SRCDIR/_static/downloads/." "$OUTDIR/downloads/"
+        echo "Published stable downloads to $OUTDIR/downloads"
+    fi
 
     echo ""
     echo "=== Done — preview build in $OUTDIR/$PREVIEW_TAG ==="
@@ -267,21 +276,34 @@ for TAG in "${TAGS[@]}"; do
 done
 
 # -------------------------------------------------------------------
-# Root redirect → latest version
+# Root redirect → latest version (absolute URL so it can't accumulate
+# when Amplify rewrites a 404 to this page while keeping the URL).
 # -------------------------------------------------------------------
 cat > "$OUTDIR/index.html" << EOF
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0; url=./${LATEST}/index.html">
+  <meta http-equiv="refresh" content="0; url=/${LATEST}/index.html">
   <title>Redirecting…</title>
 </head>
 <body>
-  <p>Redirecting to <a href="./${LATEST}/index.html">${LATEST}</a>…</p>
+  <p>Redirecting to <a href="/${LATEST}/index.html">${LATEST}</a>…</p>
 </body>
 </html>
 EOF
+
+# -------------------------------------------------------------------
+# Stable, version-independent downloads.
+# Files placed in _static/downloads are also published at the site root
+# under /downloads/<name> so external sites can link to a permanent URL
+# that does not change when the latest version bumps.
+# -------------------------------------------------------------------
+if [[ -d "$SRCDIR/_static/downloads" ]]; then
+    mkdir -p "$OUTDIR/downloads"
+    cp -r "$SRCDIR/_static/downloads/." "$OUTDIR/downloads/"
+    echo "Published stable downloads to $OUTDIR/downloads"
+fi
 
 echo ""
 echo "=== Done — output in $OUTDIR ==="
