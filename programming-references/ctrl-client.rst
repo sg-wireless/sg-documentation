@@ -425,7 +425,7 @@ You can define and use a custom logging component:
 .. _logging--debugging:
 
 Logging & Debugging
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 The CTRL client library (``ctrl_debug.py``) uses the logging system internally.
 Each CTRL component registers its own logging component under the ``"ctrl"``
@@ -476,7 +476,7 @@ subsystem:
       - purple
 
 Enabling Debug Output
-^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~
 
 Use ``ctrl.debug(level)`` to set the global debug level for all components at
 once. This stores the level in NVS (``ctrl_debug``) and updates every
@@ -494,7 +494,7 @@ you can fine-tune individual components afterward with ``ctrl.dbg()``.
 .. _per-component-debug-levels-ctrldbg:
 
 Per-Component Debug Levels (``ctrl.dbg()``)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Fine-grained control over individual component output. Levels are stored in NVS
 (``ctrl_dbg``) as a JSON dict and persist across reboots.
@@ -524,7 +524,7 @@ Behavior details:
    ``ctrl_debug`` and ``ctrl_dbg`` in NVS.
 
 Typical Workflow
-^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~
 
 .. code:: python
 
