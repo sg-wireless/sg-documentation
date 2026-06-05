@@ -35,6 +35,9 @@ import json as _json
 _current_ver = os.environ.get("SGW_CURRENT_VERSION", f"v{release}")
 _all_versions_json = os.environ.get("SGW_ALL_VERSIONS", _json.dumps([_current_ver]))
 _all_versions = _json.loads(_all_versions_json)
+_preview_versions_json = os.environ.get("SGW_PREVIEW_VERSIONS", "[]")
+_preview_versions = _json.loads(_preview_versions_json)
+_latest_ver = os.environ.get("SGW_LATEST_VERSION", _all_versions[0] if _all_versions else _current_ver)
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", ".venv", "Thumbs.db", ".DS_Store", "README.md"]
@@ -72,7 +75,8 @@ html_context = {
     # Version selector data (populated by build_versions.sh via env vars)
     "current_version": _current_ver,
     "versions": _all_versions,
-    "latest_version": _all_versions[0],  # first entry = latest
+    "latest_version": _latest_ver,
+    "preview_versions": _preview_versions,
 }
 
 # (sphinx-multiversion settings removed — see build_versions.sh)

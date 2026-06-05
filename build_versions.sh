@@ -7,6 +7,16 @@
 #
 # Output lands in _build/html/<tag>/  with a root index.html that
 # redirects to the latest (highest semver) version.
+#
+# On the main branch the latest version is always built from the current
+# working tree (HEAD) rather than the tagged commit.  This means that a
+# merged PR triggers a correct build immediately without having to move
+# the tag first.  The tag still determines the version label (e.g. v1.4.0)
+# shown in the flyout.
+#
+# On any other branch a single-version "preview" build of the current
+# working tree is produced instead.  Updating the tag before pushing is
+# fine for those branches since they don't use the working-tree shortcut.
 
 set -euo pipefail
 
@@ -221,24 +231,40 @@ fi
 git -C "$SRCDIR" fetch --tags 2>/dev/null || true
 
 # -------------------------------------------------------------------
-# Collect version tags (sorted descending so index 0 = latest)
+# Collect version tags (sorted descending so highest semver comes first)
 # -------------------------------------------------------------------
 if [[ $# -gt 0 ]]; then
-    TAGS=("$@")
+    mapfile -t ALL_TAGS < <(printf '%s\n' "$@" | sort -rV)
 else
-    mapfile -t TAGS < <(git -C "$SRCDIR" tag -l 'v[0-9]*' --sort=-version:refname)
+    mapfile -t ALL_TAGS < <(git -C "$SRCDIR" tag -l 'v[0-9]*' --sort=-version:refname)
 fi
 
-if [[ ${#TAGS[@]} -eq 0 ]]; then
-    echo "ERROR: No version tags found. Create at least one tag like v1.4.0."
+# Separate into clean release tags (vX.Y.Z) and pre-release tags (vX.Y.Z-suffix).
+# Only release tags are eligible for "latest"; pre-release tags appear in the
+# flyout with their suffix shown as a label, e.g. v1.4.1 (dev).
+RELEASE_TAGS=()
+PRERELEASE_TAGS=()
+for _t in "${ALL_TAGS[@]}"; do
+    if [[ "$_t" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        RELEASE_TAGS+=("$_t")
+    else
+        PRERELEASE_TAGS+=("$_t")
+    fi
+done
+
+if [[ ${#RELEASE_TAGS[@]} -eq 0 ]]; then
+    echo "ERROR: No release version tags found. Create at least one vX.Y.Z tag (no suffix)."
     exit 1
 fi
 
-LATEST="${TAGS[0]}"
-ALL_JSON=$(printf '%s\n' "${TAGS[@]}" | python3 -c \
-    'import sys,json; print(json.dumps([l.strip() for l in sys.stdin]))')
+# Build order: release versions first (desc), then pre-release (desc).
+LATEST="${RELEASE_TAGS[0]}"
+TAGS=("${RELEASE_TAGS[@]}" "${PRERELEASE_TAGS[@]}")
+ALL_JSON=$(python3 -c 'import sys,json; print(json.dumps(sys.argv[1:]))' "${TAGS[@]}")
 
 echo "=== Building versions: ${TAGS[*]}  (latest=$LATEST) ==="
+[[ ${#PRERELEASE_TAGS[@]} -gt 0 ]] && echo "    Pre-release: ${PRERELEASE_TAGS[*]}"
+echo "    '$LATEST' will be built from main HEAD (not the tag) so merged PRs are live immediately."
 
 rm -rf "$OUTDIR"
 mkdir -p "$OUTDIR"
@@ -249,30 +275,40 @@ mkdir -p "$OUTDIR"
 for TAG in "${TAGS[@]}"; do
     echo ""
     echo "--- Building $TAG ---"
-    WORKDIR=$(mktemp -d)
-    # Export the full tree at that tag into a temp directory
-    git -C "$SRCDIR" archive "$TAG" | tar -x -C "$WORKDIR"
 
-    # Copy templates, static, and config from the current branch so the
-    # version flyout logic stays consistent across versions.
-    # Keep each tag's own index.rst to avoid cross-version content breakage.
-    cp -r "$SRCDIR/_templates" "$WORKDIR/_templates"
-    cp -r "$SRCDIR/_static" "$WORKDIR/_static"
-    cp "$SRCDIR/conf.py" "$WORKDIR/conf.py"
+    if [[ "$TAG" == "$LATEST" ]]; then
+        # Use the current working tree for the latest version so that content
+        # merged to main is published without needing to move the tag first.
+        WORKDIR="$SRCDIR"
+    else
+        WORKDIR=$(mktemp -d)
+        # Export the full tree at that tag into a temp directory
+        git -C "$SRCDIR" archive "$TAG" | tar -x -C "$WORKDIR"
+
+        # Copy templates, static, and config from the current branch so the
+        # version flyout logic stays consistent across versions.
+        cp -r "$SRCDIR/_templates" "$WORKDIR/_templates"
+        cp -r "$SRCDIR/_static" "$WORKDIR/_static"
+        cp "$SRCDIR/conf.py" "$WORKDIR/conf.py"
+    fi
 
     SGW_CURRENT_VERSION="$TAG" \
     SGW_ALL_VERSIONS="$ALL_JSON" \
+    SGW_LATEST_VERSION="$LATEST" \
     sphinx-build -b html -j auto "$WORKDIR" "$OUTDIR/$TAG"
 
-    # Build a PDF from the same tagged tree so each version has a matching
+    # Build a PDF from the same tree so each version has a matching
     # downloadable PDF in /<tag>/_static/SGWirelessDocs.pdf.
     SGW_CURRENT_VERSION="$TAG" \
     SGW_ALL_VERSIONS="$ALL_JSON" \
+    SGW_LATEST_VERSION="$LATEST" \
     build_pdf_noninteractive "$WORKDIR" "$WORKDIR/_build" "$TAG"
     mkdir -p "$OUTDIR/$TAG/_static"
     cp "$WORKDIR/_build/latex/SGWirelessDocs.pdf" "$OUTDIR/$TAG/_static/SGWirelessDocs.pdf"
 
-    rm -rf "$WORKDIR"
+    if [[ "$WORKDIR" != "$SRCDIR" ]]; then
+        rm -rf "$WORKDIR"
+    fi
 done
 
 # -------------------------------------------------------------------
