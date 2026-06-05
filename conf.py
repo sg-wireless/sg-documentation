@@ -77,6 +77,8 @@ html_context = {
     "versions": _all_versions,
     "latest_version": _latest_ver,
     "preview_versions": _preview_versions,
+    # GA4 measurement ID — set GA_MEASUREMENT_ID in Amplify env vars; omit to disable analytics
+    "ga_measurement_id": os.environ.get("GA_MEASUREMENT_ID", ""),
 }
 
 # (sphinx-multiversion settings removed — see build_versions.sh)
