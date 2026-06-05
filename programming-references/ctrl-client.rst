@@ -421,8 +421,10 @@ You can define and use a custom logging component:
 
    ctrl.send_field(255, "An ERROR occured!")
 
-CTRL Client Integration
-~~~~~~~~~~~~~~~~~~~~~~~
+.. _logging--debugging:
+
+Logging & Debugging
+~~~~~~~~~~~~~~~~~~~
 
 The CTRL client library (``ctrl_debug.py``) uses the logging system internally.
 Each CTRL component registers its own logging component under the ``"ctrl"``
