@@ -4,15 +4,19 @@
      aria-label="Versions">
   <span class="rst-current-version" data-toggle="rst-current-version">
     <span class="fa fa-book"></span>
-    v: {{ current_version }}
+    {%- set _cp = current_version.split('-') %}
+    v: {{ _cp[0] }}{% if _cp|length > 1 %} ({{ _cp[1:] | join('-') }}){% endif %}
     <span class="fa fa-caret-down"></span>
   </span>
   <div class="rst-other-versions">
     <dl>
       <dt>Versions</dt>
       {%- for ver in versions %}
+      {%- set _parts = ver.split('-') %}
+      {%- set _base = _parts[0] %}
+      {%- set _suffix = _parts[1:] | join('-') %}
       <dd{% if ver == current_version %} class="rtd-current"{% endif %}>
-        <a href="/{{ ver }}/index.html">{{ ver }}{% if ver == latest_version %} (latest){% endif %}</a>
+        <a href="/{{ ver }}/index.html">{{ _base }}{% if ver == latest_version %} (latest){% elif _suffix %} ({{ _suffix }}){% endif %}</a>
       </dd>
       {%- endfor %}
     </dl>
