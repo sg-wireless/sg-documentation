@@ -9,6 +9,7 @@ Contents
 -  Connection
 -  Miscellaneous
 -  Examples
+-  Logging & Debugging
 
 Fields
 ------
