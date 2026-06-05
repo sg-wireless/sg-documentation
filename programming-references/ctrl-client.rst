@@ -13,10 +13,10 @@ Contents
 Fields
 ------
 
-.. _ctrlsend_fieldpin_number-value-timestamp0-device_tokennone:
+.. _ctrlsend_fieldpin_number-value-timestamp0:
 
-ctrl.send_field(pin_number, value, [timestamp=0, device_token=None])
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ctrl.send_field(pin_number, value, [timestamp=0])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Send a field value to CTRL. Arguments are:
 
@@ -25,23 +25,19 @@ Send a field value to CTRL. Arguments are:
    string, etc.)
 -  ``timestamp``: Optional. Unix timestamp in seconds. If set to 0 (default),
    the server will use the current time
--  ``device_token``: Optional. Device token for sending data to a different
-   device
 
-.. _ctrlsend_field_mapmap-timestamp0-device_tokennone:
+.. _ctrlsend_field_mapmap-timestamp0:
 
-ctrl.send_field_map(map, [timestamp=0, device_token=None])
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ctrl.send_field_map(map, [timestamp=0])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Send multiple field values to CTRL in a single message using a dictionary/map.
-Arguments are:
+Send multiple field values to CTRL in a single message using a list of
+``[pin, value]`` pairs. Arguments are:
 
--  ``map``: A dictionary where keys are pin/field numbers and values are the
-   data to send. Example: ``{1: 25.5, 2: 60.3, 3: "online"}``
+-  ``map``: A list of pairs where each pair contains the pin/field number and
+   the value to send. Example: ``[[1, 25.5], [2, 60.3], [3, "online"]]``
 -  ``timestamp``: Optional. Unix timestamp in seconds. If set to 0 (default),
    the server will use the current time
--  ``device_token``: Optional. Device token for sending data to a different
-   device
 
 .. _ctrlsend_ping_message:
 
@@ -51,28 +47,12 @@ ctrl.send_ping_message()
 Sends a ping (is-alive) message to CTRL. The platform will answer with a
 ``pong`` message if connected via WiFi or LTE-M
 
-.. _ctrlsend_info_message:
+.. _ctrlsend_info_messagedevice_idnone-releasenone:
 
-ctrl.send_info_message()
-~~~~~~~~~~~~~~~~~~~~~~~~
+ctrl.send_info_message([device_id=None, release=None])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Send an info message to CTRL containing the device type and firmware version.
-
-.. _ctrlsend_battery_levelbattery_level:
-
-ctrl.send_battery_level(battery_level)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Sends the battery level to `Ctrl <https://app.sgwireless.com/>`__. The argument
-``battery_level`` can be any integer.
-
-You can define ``battery_level`` with a function depending on your hardware.
-
-.. code:: python
-
-   def battery_level():
-       return 3.7
-   ctrl.send_battery_level(battery_level())
 
 --------------
 
@@ -121,10 +101,10 @@ shows how it is loaded from the build-in frozen code.
 
 The CTRL API offers several helper functions to work with the configuration:
 
-.. _ctrlread_configfilenamectrl_configjson-reconnectfalse:
+.. _ctrlread_configfilectrl_configjson-reconnectfalse:
 
-ctrl.read_config([filename='/ctrl_config.json', reconnect=False])
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ctrl.read_config([file='/ctrl_config.json', reconnect=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Load the CTRL configuration file. By default, this is loaded from
 ``/ctrl_config.json`` If reconnect=True, ctrl will disconnect and re-connect
@@ -154,10 +134,10 @@ Update a ``key`` and ``value`` of the default configuration file. This will
 -  ``silent``: set ``silent`` to ``True`` to not print a message to REPL.
 -  ``reconnect``: calls ``ctrl.reconnect()``
 
-.. _ctrlset_configkey-valuenone-permanenttrue-silentfalse-reconnectfalse:
+.. _ctrlset_configkeynone-valuenone-permanenttrue-silentfalse-reconnectfalse:
 
-ctrl.set_config(key, [value=None, permanent=True, silent=False, reconnect=False])
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ctrl.set_config([key=None, value=None, permanent=True, silent=False, reconnect=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Set a ``key`` and ``value`` of the default configuration file. This will
 overwrite any existing settings for the specified key.
@@ -219,10 +199,10 @@ need to load a configuration file before calling this. If you are using the
 WiFi or LTE-M connection, and it is already available, CTRL will use the
 existing connection.
 
-.. _ctrlenable_ltecarrie-apn-typeip-cid1-bandnone-bandsnone-mode0-fallbackfalse:
+.. _ctrlenable_ltecarrier-apn-typeip-cid1-bandnone-bandsnone-mode0-fallbackfalse:
 
-ctrl.enable_lte(carrie, apn, [type='IP', cid=1, band=None, bands=None, mode=0, fallback=False])
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ctrl.enable_lte(carrier, apn, [type='IP', cid=1, band=None, bands=None, mode=0, fallback=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Enable connecting via LTE-M connection to CTRL. Enter the paramters you would
 normally enter for an LTE connection. If fallback is True, will add LTE-M as
@@ -255,18 +235,26 @@ ctrl.connect_wifi([timeout=120])
 Manually connect to CTRL using WiFi and the settings from the configuration
 file. The ``timeout`` option is in seconds.
 
-.. _ctrlconnect_lora_otaatimeout120:
+.. _ctrlconnect_lora_otaatimeout240:
 
-ctrl.connect_lora_otaa([timeout=120])
+ctrl.connect_lora_otaa([timeout=240])
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Manually connect to CTRL using LoRa OTAA and the settings from the
 configuration file. The ``timeout`` option is in seconds.
 
-.. _ctrldisconnect:
+.. _ctrlconnect_lora_abptimeout240:
 
-ctrl.disconnect()
-~~~~~~~~~~~~~~~~~
+ctrl.connect_lora_abp([timeout=240])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Manually connect to CTRL using LoRa ABP and the settings from the configuration
+file. The ``timeout`` option is in seconds.
+
+.. _ctrldisconnectforcetrue:
+
+ctrl.disconnect([force=True])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Disconnect from CTRL gracefully. Closes the MQTT connection and socket.
 
@@ -291,10 +279,10 @@ ctrl.ifconfig()
 
 Returns a tuple with IP information when connected over WiFi or LTE-M
 
-.. _ctrlenable_ssl:
+.. _ctrlenable_sslca_filenone-dump_cafalse:
 
-ctrl.enable_ssl()
-~~~~~~~~~~~~~~~~~
+ctrl.enable_ssl([ca_file=None, dump_ca=False])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Enable SSL on the CTRL connection
 
@@ -304,10 +292,10 @@ Enable SSL on the CTRL connection
 
    **Note that SSL is not currently supported by the CTRL platform**
 
-.. _ctrldump_cafilecertsgw-capem:
+.. _ctrldump_caca_filecertsgw-capem:
 
-ctrl.dump_ca([file='/cert/sgw-ca.pem'])
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ctrl.dump_ca([ca_file='/cert/sgw-ca.pem'])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Write CTRL ROOT CA certificate to file. In order for the firmware to load the
 certificate, it needs to be present in the file system. While the firmware has
@@ -349,13 +337,21 @@ ctrl.get_network_type()
 
 Returns the network type currently in use
 
-.. _ctrldebugnew_level-update_nvstrue:
+.. _ctrldebugnew_levelnone-update_nvstrue:
 
-ctrl.debug(new_level, [update_nvs=True])
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ctrl.debug([new_level=None, update_nvs=True])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sets the debug level at new_level [0-65565] update_nvs will preserve the
-setting after reset
+setting after reset For more details, see CTRL Client Integration.
+
+.. _ctrldbgcomponentnone-levelnone:
+
+ctrl.dbg([component=None, level=None])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Sets or gets component-level debug settings. For more details, see CTRL Client
+Integration.
 
 .. _ctrlztpnew_statusnone:
 
@@ -406,15 +402,157 @@ Optionally, you can send a timestamp:
            print('sent signal {}'.format(i))
            time.sleep(10)
 
+You can also send multiple fields in one message using ``send_field_map()``:
+
+.. code:: python
+
+   ctrl.send_field_map([[1, 25.5], [2, 60.3], [3, "online"]])
+
+You can define and use a custom logging component:
+
+.. code:: python
+
+   from ctrl_debug import print_debug, register_component
+
+   DEBUG_COMPONENT = "my_module"
+   register_component(DEBUG_COMPONENT, color='yellow')
+
+   print_debug(5, "Something happened", component=DEBUG_COMPONENT)
+
+   ctrl.send_field(255, "An ERROR occured!")
+
+CTRL Client Integration
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The CTRL client library (``ctrl_debug.py``) uses the logging system internally.
+Each CTRL component registers its own logging component under the ``"ctrl"``
+subsystem:
+
+.. list-table::
+   :header-rows: 1
+
+   - 
+
+      - Component File
+      - Component Name
+      - Color
+   - 
+
+      - ``ctrl_debug.py``
+      - ``main``
+      - green
+   - 
+
+      - ``ctrl_config.py``
+      - ``config``
+      - yellow
+   - 
+
+      - ``ctrl_connection.py``
+      - ``connection``
+      - blue
+   - 
+
+      - ``ctrl_protocol.py``
+      - ``protocol``
+      - white
+   - 
+
+      - ``ctrl_library.py``
+      - ``library``
+      - green
+   - 
+
+      - ``ctrl_sensors.py``
+      - ``sensors``
+      - cyan
+   - 
+
+      - ``ctrl_pyconfig.py``
+      - ``pyconfig``
+      - purple
+
+Enabling Debug Output
+^^^^^^^^^^^^^^^^^^^^^
+
+Use ``ctrl.debug(level)`` to set the global debug level for all components at
+once. This stores the level in NVS (``ctrl_debug``) and updates every
+component's level in ``ctrl.dbg()``:
+
+.. code:: python
+
+   ctrl.debug(100)   # Enable all components at level 100
+   ctrl.debug(0)     # Disable all components
+   ctrl.debug()      # Returns current global debug level
+
+When ``ctrl.debug()`` sets a level, it also populates the per-component dict so
+you can fine-tune individual components afterward with ``ctrl.dbg()``.
+
+.. _per-component-debug-levels-ctrldbg:
+
+Per-Component Debug Levels (``ctrl.dbg()``)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Fine-grained control over individual component output. Levels are stored in NVS
+(``ctrl_dbg``) as a JSON dict and persist across reboots.
+
+.. code:: python
+
+   # Query
+   ctrl.dbg()                  # Returns full dict, e.g. {'sensors': 0, 'connection': 100, ...}
+   ctrl.dbg("connection")      # Returns level for 'connection' (0 if not set)
+
+   # Set individual components
+   ctrl.dbg("connection", 100) # Enable connection at level 100
+   ctrl.dbg("sensors", 0)      # Disable sensors (silenced on next boot)
+
+   # Mass update via dict
+   ctrl.dbg({"connection": 10, "protocol": 10, "sensors": 0, "config": 0})
+
+Behavior details:
+
+-  Components set to ``0`` are remembered in the dict. On next boot they are
+   registered with ``enabled=False`` and ``silent=True`` with no log output.
+-  Components with a level ``> 0`` are registered as enabled.
+-  The ``"*"`` wildcard key sets the default level for any component not
+   explicitly listed: ``ctrl.dbg({"*": 100, "sensors": 0})`` enables everything
+   except sensors.
+-  ``ctrl.debug(N)`` sets all components to level ``N`` and updates both
+   ``ctrl_debug`` and ``ctrl_dbg`` in NVS.
+
+Typical Workflow
+^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+   # 1. Enable everything to see what's happening
+   ctrl.debug(100)
+
+   # 2. Too noisy - disable sensors and config, keep connection/protocol
+   ctrl.dbg({"sensors": 0, "config": 0, "connection": 10, "protocol": 10})
+
+   # 3. Check current state
+   ctrl.dbg()
+   # {'sensors': 0, 'config': 0, 'library': 100, 'connection': 10, 'protocol': 10, ...}
+
+   # 4. Re-enable a single component
+   ctrl.dbg("sensors", 50)
+
+   # 5. Disable everything
+   ctrl.debug(0)
+
+All settings persist to NVS automatically. After a reboot, each component
+resumes at its saved level.
+
 --------------
 
 Deprecated API
 --------------
 
-.. _ctrlsend_signalsignal_number-value:
+.. _ctrlsend_signalargs-kwargs:
 
-ctrl.send_signal(signal_number, value)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ctrl.send_signal(\*args, \**kwargs)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
    **Deprecated: ``send_signal`` has been removed. Use ``send_field``
    instead.**
