@@ -3,7 +3,7 @@ F1 Smart Module
 
 *Datasheet — March 2024 V1.1*
 
-:download:`Download PDF Datasheet </_static/downloads/F1-Datasheet.pdf>`
+:download:`Download PDF Datasheet </_static/downloads/SG Wireless_F1 Smart Module Datasheet.pdf>`
 
 .. figure:: /_static/images/f1-module-top.png
    :alt: F1 Smart Module
