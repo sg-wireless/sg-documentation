@@ -1,4 +1,4 @@
-Account Settings test
+Account Settings
 ================
 
 You can modify your personal account settings and/or organization settings on
