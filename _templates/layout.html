@@ -56,6 +56,11 @@
     </div>
   </div>
 </div>
+
+{# Cookie consent modal backdrop — only rendered when GA is enabled #}
+{% if ga_measurement_id %}
+<div id="sgw-cookie-backdrop" hidden></div>
+{% endif %}
 {% endblock %}
 
 {# Hide the default sidebar logo/search — we have the full-width header instead #}
@@ -64,7 +69,8 @@
 {% block footer %}
   {{ super() }}
   {% if ga_measurement_id %}
-  <div id="sgw-cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+  <div id="sgw-cookie-banner" role="dialog" aria-label="Cookie consent" aria-modal="true" hidden>
+    <h2>Cookie Consent</h2>
     <p class="sgw-cookie-text">
       We use analytics cookies to understand how visitors use our docs.
       See our <a href="https://sgwireless.com/cookies-policy/" target="_blank" rel="noopener noreferrer">Cookies Policy</a>.
@@ -75,34 +81,41 @@
     </div>
   </div>
   <script>
-  <script>
     (function () {
       var consent = null;
       try { consent = localStorage.getItem('sgw_cookie_consent'); } catch (e) { consent = null; }
 
       var banner = document.getElementById('sgw-cookie-banner');
+      var backdrop = document.getElementById('sgw-cookie-backdrop');
       if (!banner) { return; }
-      if (!consent) { banner.removeAttribute('hidden'); }
+      if (!consent) {
+        banner.removeAttribute('hidden');
+        if (backdrop) backdrop.removeAttribute('hidden');
+      }
 
       var acceptBtn = document.getElementById('sgw-cookie-accept');
       var declineBtn = document.getElementById('sgw-cookie-decline');
       if (!acceptBtn || !declineBtn) { return; }
+
+      function hideBanner() {
+        banner.setAttribute('hidden', '');
+        if (backdrop) backdrop.setAttribute('hidden', '');
+      }
 
       acceptBtn.addEventListener('click', function () {
         try { localStorage.setItem('sgw_cookie_consent', 'granted'); } catch (e) {}
         window.sgwCookieConsent = 'granted';
         gtag('consent', 'update', {'analytics_storage': 'granted'});
         gtag('event', 'page_view');
-        banner.setAttribute('hidden', '');
+        hideBanner();
       });
 
       declineBtn.addEventListener('click', function () {
         try { localStorage.setItem('sgw_cookie_consent', 'denied'); } catch (e) {}
         window.sgwCookieConsent = 'denied';
-        banner.setAttribute('hidden', '');
+        hideBanner();
       });
     })();
-  </script>
   </script>
   {% endif %}
 {% endblock %}
