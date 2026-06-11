@@ -1008,7 +1008,17 @@ a.sgw-card:hover .sgw-card__arrow {
     background: #fff;
     font-family: 'Inter', sans-serif;
     overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
     transition: opacity 0.5s, transform 0.5s;
+}
+#sgw-cookie-banner.sgw-cookie-banner--visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+#sgw-cookie-banner.sgw-cookie-banner--hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 #sgw-cookie-banner[hidden] { display: none; }
 

@@ -149,11 +149,17 @@
     if (!hasConsent()) {
       banner.removeAttribute('hidden');
       if (backdrop) backdrop.classList.add('visible');
+      window.addEventListener('scroll', function showOnScroll() {
+        banner.classList.add('sgw-cookie-banner--visible');
+        window.removeEventListener('scroll', showOnScroll);
+      }, { passive: true });
     }
 
     function hideBanner() {
-      banner.setAttribute('hidden', '');
+      banner.classList.remove('sgw-cookie-banner--visible');
+      banner.classList.add('sgw-cookie-banner--hidden');
       if (backdrop) backdrop.classList.remove('visible');
+      setTimeout(function () { banner.setAttribute('hidden', ''); }, 500);
     }
 
     function showModal() {
