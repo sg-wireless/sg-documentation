@@ -104,7 +104,6 @@
    Software <software/index>
    Programming References <programming-references/index>
             MicroPython Libraries <micropython/index>
-   Custom Projects <custom-projects/index>
    Tutorials & Examples <tutorials/index>
    Contact <contact>
    License <license>

@@ -18,7 +18,7 @@ Make sure that you have set up the following software beforehand:
   `link <https://www.silabs.com/software-and-tools/usb-to-uart-bridge-vcp-drivers?tab=overview>`_
   (only required for Windows and Mac users)
 - **Microsoft Visual Studio Code with CtrlR plugin** --
-  :doc:`link <setup-computer>`
+  :doc:`link </software/setup-computer>`
 
 Last but not least, sign in to Ctrl `here <https://app.sgwireless.com/>`_ --
 create an account or log in, if you already have one.

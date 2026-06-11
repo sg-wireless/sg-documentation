@@ -143,7 +143,7 @@ Since Ctrl is integrated with SG Wireless TTN LoRaWAN, it will automatically reg
 
 3. This device activation information will be passed to the device when you :ref:`deploy the network profile <net-deploy>`. 
 
-If you wish to use your own LoRaWAN setup, you can use the programming resources on this page to configure the LoRa connection: :doc:`Network Interfaces </programming-references/index.html#network-interfaces>`
+If you wish to use your own LoRaWAN setup, you can use the programming resources on this page to configure the LoRa connection: :ref:`Network Interfaces <network-interfaces>`
 
 LoRa Connectivity Limitations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
