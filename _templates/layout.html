@@ -136,8 +136,8 @@
       } catch (e) {}
     }
 
-    function hasConsent() {
-      try { return localStorage.getItem(CONSENT_KEY) === 'granted'; } catch (e) { return false; }
+    function hasDecided() {
+      try { return localStorage.getItem(CONSENT_KEY) !== null; } catch (e) { return false; }
     }
 
     var banner   = document.getElementById('sgw-cookie-banner');
