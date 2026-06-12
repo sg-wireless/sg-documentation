@@ -146,7 +146,7 @@
     var toggle   = document.getElementById('sgw-analytics-toggle');
     if (!banner) { return; }
 
-    if (!hasConsent()) {
+    if (!hasDecided()) {
       banner.removeAttribute('hidden');
       if (backdrop) backdrop.classList.add('visible');
       window.addEventListener('scroll', function showOnScroll() {
