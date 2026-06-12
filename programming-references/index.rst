@@ -13,6 +13,8 @@ Application
    ctrl-client
    logs
 
+.. _network-interfaces:
+
 Network Interfaces
 ------------------
 .. toctree::

@@ -5,7 +5,7 @@ This guide shows how to run codes on SG Wireless devices through CtrlR.
 
 
 Sending Commands Through Visual Studio Terminal
-------------------------------
+-----------------------------------------------
 
 F1 smart module pre-installed MicroPython as operating system (OS), which equips with REPL. REPL stands for Read-Eval-Print Loop which is an Interactive Interpreter Mode that allows you to input code, execute it, and immediately see the results.
 
@@ -29,7 +29,7 @@ Let’s make sure it is working with the obligatory test (you don't need to type
 
 Once you type the code above, then press Enter and the following output should appear on screen:
 
-.. code-block:: python
+.. code-block:: none
 
       Hello F1!
 
@@ -76,7 +76,7 @@ A project is simply a folder containing your application code (typically main.py
               time.sleep(1)
 
 Running code on F1 Starter Kit before uploading
----------------------------------------
+------------------------------------------------
 
 
 .. image:: /_static/images/custom-projects/programming/qsg-img32-300x279.png
