@@ -1,10 +1,14 @@
 {# SG Wireless custom layout — matches docs.sgwireless.com visual style #}
 {% extends "!layout.html" %}
 
-{# GA4 Consent Mode v2 — enabled only when GA_MEASUREMENT_ID is set in the build environment #}
+{# Analytics loader support for GA4/gtag, GTM, and GA4 tag IDs. #}
 {% block extrahead %}
   {{ super() }}
-  {% if ga_measurement_id %}
+  {% set gtag_id = ga_measurement_id or ga4_tag_id %}
+  {% set gtm_id = gtm_container_id %}
+  {% set analytics_enabled = gtag_id or gtm_id %}
+
+  {% if analytics_enabled %}
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -19,14 +23,23 @@
       gtag('consent', 'update', {'analytics_storage': 'granted'});
     }
   </script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga_measurement_id }}"></script>
+
+  {% if gtm_id %}
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','{{ gtm_id }}');
+  </script>
+  {% endif %}
+
+  {% if gtag_id %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ gtag_id }}"></script>
   <script>
     gtag('js', new Date());
-    gtag('config', '{{ ga_measurement_id }}', { 'send_page_view': false });
+    gtag('config', '{{ gtag_id }}', { 'send_page_view': false });
     if (window.sgwCookieConsent === 'granted') {
       gtag('event', 'page_view');
     }
   </script>
+  {% endif %}
   {% endif %}
 {% endblock %}
 
@@ -63,7 +76,7 @@
 
 {% block footer %}
   {{ super() }}
-  {% if ga_measurement_id %}
+  {% if ga_measurement_id or ga4_tag_id or gtm_container_id %}
   <div id="sgw-cookie-backdrop"></div>
 
   <div id="sgw-cookie-banner" hidden role="region" aria-label="Cookie consent">
