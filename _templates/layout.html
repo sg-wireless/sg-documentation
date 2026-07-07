@@ -36,12 +36,12 @@
     });
 
     var sgwCookiePrefs = sgwReadConsentCookie() || sgwReadLegacyConsentPrefs();
-    if (sgwCookiePrefs && sgwCookiePrefs.analytical === true) {
+    if (sgwCookiePrefs && (sgwCookiePrefs.analytical === true || sgwCookiePrefs.marketing === true)) {
       gtag('consent', 'update', {
         'analytics_storage': 'granted',
-        'ad_storage': 'denied',
-        'ad_user_data': 'denied',
-        'ad_personalization': 'denied'
+        'ad_storage': sgwCookiePrefs.marketing === true ? 'granted' : 'denied',
+        'ad_user_data': sgwCookiePrefs.marketing === true ? 'granted' : 'denied',
+        'ad_personalization': sgwCookiePrefs.marketing === true ? 'granted' : 'denied'
       });
     }
   </script>
@@ -255,34 +255,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (modalBg) modalBg.classList.remove('visible');
     }
 
-    function applyConsent(analytics) {
+    function applyConsent(prefs) {
       if (typeof window.gtag !== 'function') { return; }
-      if (analytics) {
+      var normalizedPrefs = normalizePrefs(prefs) || { necessary: true, analytical: false, marketing: false };
+      if (normalizedPrefs.analytical) {
         window.gtag('consent', 'update', {
           'analytics_storage': 'granted',
-          'ad_storage': 'denied',
-          'ad_user_data': 'denied',
-          'ad_personalization': 'denied'
+          'ad_storage': normalizedPrefs.marketing ? 'granted' : 'denied',
+          'ad_user_data': normalizedPrefs.marketing ? 'granted' : 'denied',
+          'ad_personalization': normalizedPrefs.marketing ? 'granted' : 'denied'
         });
         window.gtag('event', 'page_view');
       } else {
         window.gtag('consent', 'update', {
           'analytics_storage': 'denied',
-          'ad_storage': 'denied',
-          'ad_user_data': 'denied',
-          'ad_personalization': 'denied'
+          'ad_storage': normalizedPrefs.marketing ? 'granted' : 'denied',
+          'ad_user_data': normalizedPrefs.marketing ? 'granted' : 'denied',
+          'ad_personalization': normalizedPrefs.marketing ? 'granted' : 'denied'
         });
       }
     }
 
     document.getElementById('sgw-cookie-accept').addEventListener('click', function () {
-      savePrefs({ necessary: true, analytical: true, marketing: true });
-      applyConsent(true);
+      var prefs = { necessary: true, analytical: true, marketing: true };
+      savePrefs(prefs);
+      applyConsent(prefs);
       hideBanner();
     });
 
     document.getElementById('sgw-cookie-decline').addEventListener('click', function () {
-      savePrefs({ necessary: true, analytical: false, marketing: false });
+      var prefs = { necessary: true, analytical: false, marketing: false };
+      savePrefs(prefs);
+      applyConsent(prefs);
       hideBanner();
     });
 
@@ -290,9 +294,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.getElementById('sgw-modal-close').addEventListener('click', hideModal);
 
     document.getElementById('sgw-modal-save').addEventListener('click', function () {
+      var currentPrefs = loadPrefs();
       var analytics = toggle ? toggle.checked : false;
-      savePrefs({ necessary: true, analytical: analytics, marketing: false });
-      applyConsent(analytics);
+      var prefs = {
+        necessary: true,
+        analytical: analytics,
+        marketing: currentPrefs ? currentPrefs.marketing === true : false
+      };
+      savePrefs(prefs);
+      applyConsent(prefs);
       hideModal();
       hideBanner();
     });
