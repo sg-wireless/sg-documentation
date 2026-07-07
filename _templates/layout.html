@@ -4,6 +4,12 @@
 {% block extrahead %}
   {{ super() }}
   <script>
+    function sgwReadConsentCookie() {
+      var match = document.cookie.match(/(?:^|; )cookieConsent=([^;]*)/);
+      if (!match) { return null; }
+      try { return JSON.parse(decodeURIComponent(match[1])); } catch (e) { return null; }
+    }
+
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     window.gtag = window.gtag || gtag;
@@ -16,9 +22,8 @@
       'wait_for_update': 500
     });
 
-    var sgwCookiePrefs = null;
-    try { sgwCookiePrefs = JSON.parse(localStorage.getItem('sgw_cookie_consent_data')) || null; } catch (e) { sgwCookiePrefs = null; }
-    if (sgwCookiePrefs && sgwCookiePrefs.analytics === true) {
+    var sgwCookiePrefs = sgwReadConsentCookie();
+    if (sgwCookiePrefs && sgwCookiePrefs.analytical === true) {
       gtag('consent', 'update', {
         'analytics_storage': 'granted',
         'ad_storage': 'denied',
@@ -131,22 +136,78 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <script>
   (function () {
-    var CONSENT_KEY = 'sgw_cookie_consent';
-    var CONSENT_DATA_KEY = 'sgw_cookie_consent_data';
+    var COOKIE_NAME = 'cookieConsent';
+    var LEGACY_CONSENT_KEY = 'sgw_cookie_consent';
+    var LEGACY_CONSENT_DATA_KEY = 'sgw_cookie_consent_data';
+    var COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
-    function loadPrefs() {
-      try { return JSON.parse(localStorage.getItem(CONSENT_DATA_KEY)) || null; } catch (e) { return null; }
+    function getCookie(name) {
+      var match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()\[\]\\/+^]/g, '\\$&') + '=([^;]*)'));
+      return match ? decodeURIComponent(match[1]) : null;
     }
 
-    function savePrefs(prefs) {
+    function loadConsentCookie() {
+      var raw = getCookie(COOKIE_NAME);
+      if (!raw) { return null; }
+      try { return JSON.parse(raw) || null; } catch (e) { return null; }
+    }
+
+    function normalizePrefs(prefs) {
+      if (!prefs || typeof prefs !== 'object') {
+        return null;
+      }
+      return {
+        necessary: prefs.necessary !== false,
+        analytical: prefs.analytical === true || prefs.analytics === true,
+        marketing: prefs.marketing === true
+      };
+    }
+
+    function saveConsentCookie(prefs) {
+      var normalizedPrefs = normalizePrefs(prefs);
+      var cookie = COOKIE_NAME + '=' + encodeURIComponent(JSON.stringify(normalizedPrefs))
+        + '; path=/'
+        + '; domain=.sgwireless.com'
+        + '; max-age=' + COOKIE_MAX_AGE
+        + '; SameSite=Lax';
+      if (window.location.protocol === 'https:') {
+        cookie += '; Secure';
+      }
+      document.cookie = cookie;
+    }
+
+    function clearLegacyLocalStorage() {
       try {
-        localStorage.setItem(CONSENT_DATA_KEY, JSON.stringify(prefs));
-        localStorage.setItem(CONSENT_KEY, 'granted');
+        localStorage.removeItem(LEGACY_CONSENT_KEY);
+        localStorage.removeItem(LEGACY_CONSENT_DATA_KEY);
       } catch (e) {}
     }
 
+    function loadLegacyPrefs() {
+      try { return normalizePrefs(JSON.parse(localStorage.getItem(LEGACY_CONSENT_DATA_KEY)) || null); } catch (e) { return null; }
+    }
+
+    function loadPrefs() {
+      var cookiePrefs = normalizePrefs(loadConsentCookie());
+      if (cookiePrefs) {
+        return cookiePrefs;
+      }
+      var legacyPrefs = loadLegacyPrefs();
+      if (legacyPrefs) {
+        saveConsentCookie(legacyPrefs);
+        clearLegacyLocalStorage();
+        return legacyPrefs;
+      }
+      return null;
+    }
+
+    function savePrefs(prefs) {
+      saveConsentCookie(prefs);
+      clearLegacyLocalStorage();
+    }
+
     function hasDecided() {
-      try { return localStorage.getItem(CONSENT_KEY) !== null; } catch (e) { return false; }
+      return loadPrefs() !== null;
     }
 
     var banner   = document.getElementById('sgw-cookie-banner');
@@ -173,7 +234,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     function showModal() {
       var prefs = loadPrefs();
-      if (toggle) toggle.checked = prefs ? prefs.analytics : false;
+      if (toggle) toggle.checked = prefs ? prefs.analytical : false;
       if (modalBg) modalBg.classList.add('visible');
     }
 
@@ -202,18 +263,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     document.getElementById('sgw-cookie-accept').addEventListener('click', function () {
-      savePrefs({ necessary: true, analytics: true });
-      window.sgwCookieConsent = 'granted';
+      savePrefs({ necessary: true, analytical: true, marketing: true });
       applyConsent(true);
       hideBanner();
     });
 
     document.getElementById('sgw-cookie-decline').addEventListener('click', function () {
-      try {
-        localStorage.setItem(CONSENT_KEY, 'denied');
-        localStorage.setItem(CONSENT_DATA_KEY, JSON.stringify({ necessary: true, analytics: false }));
-      } catch (e) {}
-      window.sgwCookieConsent = 'denied';
+      savePrefs({ necessary: true, analytical: false, marketing: false });
       hideBanner();
     });
 
@@ -222,8 +278,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     document.getElementById('sgw-modal-save').addEventListener('click', function () {
       var analytics = toggle ? toggle.checked : false;
-      savePrefs({ necessary: true, analytics: analytics });
-      window.sgwCookieConsent = 'granted';
+      savePrefs({ necessary: true, analytical: analytics, marketing: false });
       applyConsent(analytics);
       hideModal();
       hideBanner();
