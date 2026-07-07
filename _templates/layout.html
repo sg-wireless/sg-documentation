@@ -3,6 +3,16 @@
 
 {% block extrahead %}
   {{ super() }}
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      'event': 'default_consent',
+      'analytics_storage': 'denied',
+      'ad_storage': 'denied',
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied'
+    });
+  </script>
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -46,3 +56,92 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 {# Hide the default sidebar logo/search — we have the full-width header instead #}
 {% block sidebartitle %}{% endblock %}
+
+{% block footer %}
+  {{ super() }}
+  <div id="sgw-cookie-banner" hidden role="region" aria-label="Cookie consent">
+    <div class="sgw-cookie-banner__inner">
+      <div class="sgw-cookie-banner__text">
+        <h2>This website uses cookies</h2>
+        <p>We use cookies to improve your experience and to provide us with insight into how people use our website.</p>
+        <p>To find out more, read our <a href="https://sgwireless.com/cookies-policy/" target="_blank" rel="noopener noreferrer">cookies policy</a>.</p>
+      </div>
+      <div class="sgw-cookie-banner__actions">
+        <button id="sgw-cookie-accept" type="button" class="sgw-cookie-btn sgw-cookie-btn--primary">Accept</button>
+        <button id="sgw-cookie-reject" type="button" class="sgw-cookie-btn sgw-cookie-btn--outline">Reject</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var COOKIE_NAME = 'cookieConsent';
+    var COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
+    function getCookie(name) {
+      var match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()\[\]\\/+^]/g, '\\$&') + '=([^;]*)'));
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    function setCookie(name, value) {
+      document.cookie = name + '=' + encodeURIComponent(value) + '; path=/; max-age=' + COOKIE_MAX_AGE + '; domain=.sgwireless.com; SameSite=Lax';
+    }
+
+    function parseConsent(raw) {
+      if (!raw) {
+        return null;
+      }
+      try {
+        var parsed = JSON.parse(raw);
+        if (typeof parsed !== 'object' || parsed === null) {
+          return null;
+        }
+        return parsed;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function updateConsent(consent) {
+      var analyticsGranted = !!(consent && consent.analytical);
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'consent_update',
+        analytics_storage: analyticsGranted ? 'granted' : 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied'
+      });
+    }
+
+    var banner = document.getElementById('sgw-cookie-banner');
+    var acceptBtn = document.getElementById('sgw-cookie-accept');
+    var rejectBtn = document.getElementById('sgw-cookie-reject');
+    if (!banner || !acceptBtn || !rejectBtn) {
+      return;
+    }
+
+    var consent = parseConsent(getCookie(COOKIE_NAME));
+    if (consent && consent.necessary) {
+      updateConsent(consent);
+      return;
+    }
+
+    banner.removeAttribute('hidden');
+
+    acceptBtn.addEventListener('click', function () {
+      var nextConsent = { necessary: true, analytical: true, marketing: false };
+      setCookie(COOKIE_NAME, JSON.stringify(nextConsent));
+      updateConsent(nextConsent);
+      banner.setAttribute('hidden', '');
+    });
+
+    rejectBtn.addEventListener('click', function () {
+      var nextConsent = { necessary: true, analytical: false, marketing: false };
+      setCookie(COOKIE_NAME, JSON.stringify(nextConsent));
+      updateConsent(nextConsent);
+      banner.setAttribute('hidden', '');
+    });
+  })();
+  </script>
+{% endblock %}
