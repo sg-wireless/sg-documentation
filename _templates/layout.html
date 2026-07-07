@@ -5,7 +5,7 @@
   {{ super() }}
   <script>
     function sgwReadConsentCookie() {
-      var match = document.cookie.match(/(?:^|; )cookieConsent=([^;]*)/);
+      var match = document.cookie.match(/(?:^|;\s*)cookieConsent=([^;]*)/);
       if (!match) { return null; }
       try { return JSON.parse(decodeURIComponent(match[1])); } catch (e) { return null; }
     }
