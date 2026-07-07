@@ -1,50 +1,33 @@
 {# SG Wireless custom layout — matches docs.sgwireless.com visual style #}
 {% extends "!layout.html" %}
 
-{# Analytics loader support for GA4/gtag, GTM, and GA4 tag IDs. #}
 {% block extrahead %}
   {{ super() }}
-  {% set gtag_id = ga_measurement_id or ga4_tag_id %}
-  {% set gtm_id = gtm_container_id %}
-  {% set analytics_enabled = gtag_id or gtm_id %}
-
-  {% if analytics_enabled %}
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('consent', 'default', {
+    window.dataLayer.push({
+      'event': 'default_consent',
       'analytics_storage': 'denied',
-      'wait_for_update': 500
+      'ad_storage': 'denied',
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied'
     });
-
-    window.sgwCookieConsent = null;
-    try { window.sgwCookieConsent = localStorage.getItem('sgw_cookie_consent'); } catch (e) { window.sgwCookieConsent = null; }
-    if (window.sgwCookieConsent === 'granted') {
-      gtag('consent', 'update', {'analytics_storage': 'granted'});
-    }
   </script>
-
-  {% if gtm_id %}
-  <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','{{ gtm_id }}');
-  </script>
-  {% endif %}
-
-  {% if gtag_id %}
-  <script async src="https://www.googletagmanager.com/gtag/js?id={{ gtag_id }}"></script>
-  <script>
-    gtag('js', new Date());
-    gtag('config', '{{ gtag_id }}', { 'send_page_view': false });
-    if (window.sgwCookieConsent === 'granted') {
-      gtag('event', 'page_view');
-    }
-  </script>
-  {% endif %}
-  {% endif %}
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PWRR783T');</script>
+  <!-- End Google Tag Manager -->
 {% endblock %}
 
 {# Full-width header bar before the sidebar+content grid #}
 {% block extrabody %}
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PWRR783T"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 <div id="sgw-topbar">
   <div id="sgw-topbar-gradient"></div>
   <div id="sgw-topbar-header">
@@ -76,7 +59,6 @@
 
 {% block footer %}
   {{ super() }}
-  {% if ga_measurement_id or ga4_tag_id or gtm_container_id %}
   <div id="sgw-cookie-backdrop"></div>
 
   <div id="sgw-cookie-banner" hidden role="region" aria-label="Cookie consent">
@@ -230,5 +212,4 @@
     }
   })();
   </script>
-  {% endif %}
 {% endblock %}
