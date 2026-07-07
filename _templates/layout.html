@@ -4,10 +4,23 @@
 {% block extrahead %}
   {{ super() }}
   <script>
+    function sgwNormalizeConsentPrefs(prefs) {
+      if (!prefs || typeof prefs !== 'object') { return null; }
+      return {
+        necessary: prefs.necessary !== false,
+        analytical: prefs.analytical === true || prefs.analytics === true,
+        marketing: prefs.marketing === true
+      };
+    }
+
     function sgwReadConsentCookie() {
       var match = document.cookie.match(/(?:^|;\s*)cookieConsent=([^;]*)/);
       if (!match) { return null; }
-      try { return JSON.parse(decodeURIComponent(match[1])); } catch (e) { return null; }
+      try { return sgwNormalizeConsentPrefs(JSON.parse(decodeURIComponent(match[1]))); } catch (e) { return null; }
+    }
+
+    function sgwReadLegacyConsentPrefs() {
+      try { return sgwNormalizeConsentPrefs(JSON.parse(localStorage.getItem('sgw_cookie_consent_data')) || null); } catch (e) { return null; }
     }
 
     window.dataLayer = window.dataLayer || [];
@@ -22,7 +35,7 @@
       'wait_for_update': 500
     });
 
-    var sgwCookiePrefs = sgwReadConsentCookie();
+    var sgwCookiePrefs = sgwReadConsentCookie() || sgwReadLegacyConsentPrefs();
     if (sgwCookiePrefs && sgwCookiePrefs.analytical === true) {
       gtag('consent', 'update', {
         'analytics_storage': 'granted',
