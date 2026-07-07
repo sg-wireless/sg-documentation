@@ -16,9 +16,9 @@
       'wait_for_update': 500
     });
 
-    window.sgwCookieConsent = null;
-    try { window.sgwCookieConsent = localStorage.getItem('sgw_cookie_consent'); } catch (e) { window.sgwCookieConsent = null; }
-    if (window.sgwCookieConsent === 'granted') {
+    var sgwCookiePrefs = null;
+    try { sgwCookiePrefs = JSON.parse(localStorage.getItem('sgw_cookie_consent_data')) || null; } catch (e) { sgwCookiePrefs = null; }
+    if (sgwCookiePrefs && sgwCookiePrefs.analytics === true) {
       gtag('consent', 'update', {
         'analytics_storage': 'granted',
         'ad_storage': 'denied',
