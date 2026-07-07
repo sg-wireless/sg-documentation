@@ -166,14 +166,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function normalizePrefs(prefs) {
-      if (!prefs || typeof prefs !== 'object') {
-        return null;
-      }
-      return {
-        necessary: prefs.necessary !== false,
-        analytical: prefs.analytical === true || prefs.analytics === true,
-        marketing: prefs.marketing === true
-      };
+      return (typeof window.sgwNormalizeConsentPrefs === 'function')
+        ? window.sgwNormalizeConsentPrefs(prefs)
+        : null;
     }
 
     function saveConsentCookie(prefs) {
