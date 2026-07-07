@@ -179,8 +179,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     function saveConsentCookie(prefs) {
       var normalizedPrefs = normalizePrefs(prefs);
       if (!normalizedPrefs) { return; }
+      var hostname = window.location.hostname;
+      var domainAttr = (hostname === 'sgwireless.com' || hostname.endsWith('.sgwireless.com'))
+        ? '; domain=.sgwireless.com'
+        : '';
       var cookie = COOKIE_NAME + '=' + encodeURIComponent(JSON.stringify(normalizedPrefs))
-        + '; path=/' + (window.location.hostname.endsWith('sgwireless.com') ? '; domain=.sgwireless.com' : '')
+        + '; path=/' + domainAttr
         + '; max-age=' + COOKIE_MAX_AGE
         + '; SameSite=Lax';
       if (window.location.protocol === 'https:') {
