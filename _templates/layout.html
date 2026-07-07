@@ -59,89 +59,157 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 {% block footer %}
   {{ super() }}
+  <div id="sgw-cookie-backdrop"></div>
+
   <div id="sgw-cookie-banner" hidden role="region" aria-label="Cookie consent">
-    <div class="sgw-cookie-banner__inner">
-      <div class="sgw-cookie-banner__text">
-        <h2>This website uses cookies</h2>
-        <p>We use cookies to improve your experience and to provide us with insight into how people use our website.</p>
-        <p>To find out more, read our <a href="https://sgwireless.com/cookies-policy/" target="_blank" rel="noopener noreferrer">cookies policy</a>.</p>
+    <div class="sgw-cookie-inner">
+      <div class="sgw-cookie-content">
+        <div class="sgw-cookie-text-wrap">
+          <h2 class="sgw-cookie-heading">This website uses cookies</h2>
+          <p class="sgw-cookie-text">We use cookies to improve your experience and to provide us with insight into how people use our website</p>
+          <p class="sgw-cookie-text">To find out more, read our <a href="https://sgwireless.com/cookies-policy/" target="_blank" rel="noopener noreferrer">cookies policy</a></p>
+        </div>
+        <div class="sgw-cookie-btns">
+          <button id="sgw-cookie-accept" class="sgw-cookie-btn sgw-cookie-accept">Accept</button>
+          <button id="sgw-cookie-decline" class="sgw-cookie-btn sgw-cookie-outline">Reject</button>
+          <button id="sgw-cookie-manage" class="sgw-cookie-btn sgw-cookie-outline">Manage cookie preferences</button>
+        </div>
       </div>
-      <div class="sgw-cookie-banner__actions">
-        <button id="sgw-cookie-accept" type="button" class="sgw-cookie-btn sgw-cookie-btn--primary">Accept</button>
-        <button id="sgw-cookie-reject" type="button" class="sgw-cookie-btn sgw-cookie-btn--outline">Reject</button>
+    </div>
+  </div>
+
+  <div id="sgw-cookie-modal-bg" role="dialog" aria-label="Cookie preferences" aria-modal="true">
+    <div id="sgw-cookie-modal">
+      <button id="sgw-modal-close" class="sgw-modal-close-btn" aria-label="Close"></button>
+      <h2 class="sgw-modal-title">Cookie preferences</h2>
+      <p class="sgw-modal-intro">
+        Cookies are tiny pieces of data stored on your device which can enable certain website functionality and collect
+        information about how you use websites. To find out more, read our
+        <a href="https://sgwireless.com/cookies-policy/" target="_blank" rel="noopener noreferrer">cookies policy</a>.
+        You can manage which types of cookies to accept below.
+      </p>
+
+      <div class="sgw-toggle-wrap">
+        <label class="sgw-toggle-label">
+          <input type="checkbox" checked disabled>
+          <span class="sgw-toggle-track"></span>
+        </label>
+        <div class="sgw-toggle-info">
+          <p class="sgw-toggle-title">Strictly necessary cookies</p>
+          <p class="sgw-toggle-desc">These cookies are essential to the operation of this website and help provide basic functionality such as navigation and language support.</p>
+        </div>
       </div>
+
+      <div class="sgw-toggle-wrap">
+        <label class="sgw-toggle-label">
+          <input type="checkbox" id="sgw-analytics-toggle">
+          <span class="sgw-toggle-track"></span>
+        </label>
+        <div class="sgw-toggle-info">
+          <p class="sgw-toggle-title">Analytical cookies</p>
+          <p class="sgw-toggle-desc">These cookies help us improve the performance of this website by giving us anonymised information about how you interact with it.</p>
+        </div>
+      </div>
+
+      <button id="sgw-modal-save" class="sgw-modal-save-btn">Save preferences</button>
     </div>
   </div>
 
   <script>
   (function () {
-    var COOKIE_NAME = 'cookieConsent';
-    var COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+    var CONSENT_KEY = 'sgw_cookie_consent';
+    var CONSENT_DATA_KEY = 'sgw_cookie_consent_data';
 
-    function getCookie(name) {
-      var match = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()\[\]\\/+^]/g, '\\$&') + '=([^;]*)'));
-      return match ? decodeURIComponent(match[1]) : null;
+    function loadPrefs() {
+      try { return JSON.parse(localStorage.getItem(CONSENT_DATA_KEY)) || null; } catch (e) { return null; }
     }
 
-    function setCookie(name, value) {
-      document.cookie = name + '=' + encodeURIComponent(value) + '; path=/; max-age=' + COOKIE_MAX_AGE + '; domain=.sgwireless.com; SameSite=Lax';
-    }
-
-    function parseConsent(raw) {
-      if (!raw) {
-        return null;
-      }
+    function savePrefs(prefs) {
       try {
-        var parsed = JSON.parse(raw);
-        if (typeof parsed !== 'object' || parsed === null) {
-          return null;
-        }
-        return parsed;
-      } catch (e) {
-        return null;
+        localStorage.setItem(CONSENT_DATA_KEY, JSON.stringify(prefs));
+        localStorage.setItem(CONSENT_KEY, 'granted');
+      } catch (e) {}
+    }
+
+    function hasDecided() {
+      try { return localStorage.getItem(CONSENT_KEY) !== null; } catch (e) { return false; }
+    }
+
+    var banner   = document.getElementById('sgw-cookie-banner');
+    var backdrop = document.getElementById('sgw-cookie-backdrop');
+    var modalBg  = document.getElementById('sgw-cookie-modal-bg');
+    var toggle   = document.getElementById('sgw-analytics-toggle');
+    if (!banner) { return; }
+
+    if (!hasDecided()) {
+      banner.removeAttribute('hidden');
+      if (backdrop) backdrop.classList.add('visible');
+      window.addEventListener('scroll', function showOnScroll() {
+        banner.classList.add('sgw-cookie-banner--visible');
+        window.removeEventListener('scroll', showOnScroll);
+      }, { passive: true });
+    }
+
+    function hideBanner() {
+      banner.classList.remove('sgw-cookie-banner--visible');
+      banner.classList.add('sgw-cookie-banner--hidden');
+      if (backdrop) backdrop.classList.remove('visible');
+      setTimeout(function () { banner.setAttribute('hidden', ''); }, 500);
+    }
+
+    function showModal() {
+      var prefs = loadPrefs();
+      if (toggle) toggle.checked = prefs ? prefs.analytics : false;
+      if (modalBg) modalBg.classList.add('visible');
+    }
+
+    function hideModal() {
+      if (modalBg) modalBg.classList.remove('visible');
+    }
+
+    function applyConsent(analytics) {
+      if (typeof window.gtag !== 'function') { return; }
+      if (analytics) {
+        window.gtag('consent', 'update', {'analytics_storage': 'granted'});
+        window.gtag('event', 'page_view');
+      } else {
+        window.gtag('consent', 'update', {'analytics_storage': 'denied'});
       }
     }
 
-    function updateConsent(consent) {
-      var analyticsGranted = !!(consent && consent.analytical);
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: 'consent_update',
-        analytics_storage: analyticsGranted ? 'granted' : 'denied',
-        ad_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied'
+    document.getElementById('sgw-cookie-accept').addEventListener('click', function () {
+      savePrefs({ necessary: true, analytics: true });
+      window.sgwCookieConsent = 'granted';
+      applyConsent(true);
+      hideBanner();
+    });
+
+    document.getElementById('sgw-cookie-decline').addEventListener('click', function () {
+      try {
+        localStorage.setItem(CONSENT_KEY, 'denied');
+        localStorage.setItem(CONSENT_DATA_KEY, JSON.stringify({ necessary: true, analytics: false }));
+      } catch (e) {}
+      window.sgwCookieConsent = 'denied';
+      hideBanner();
+    });
+
+    document.getElementById('sgw-cookie-manage').addEventListener('click', showModal);
+    document.getElementById('sgw-modal-close').addEventListener('click', hideModal);
+
+    document.getElementById('sgw-modal-save').addEventListener('click', function () {
+      var analytics = toggle ? toggle.checked : false;
+      savePrefs({ necessary: true, analytics: analytics });
+      window.sgwCookieConsent = 'granted';
+      applyConsent(analytics);
+      hideModal();
+      hideBanner();
+    });
+
+    if (modalBg) {
+      modalBg.addEventListener('click', function (e) {
+        if (e.target === modalBg) { hideModal(); }
       });
     }
-
-    var banner = document.getElementById('sgw-cookie-banner');
-    var acceptBtn = document.getElementById('sgw-cookie-accept');
-    var rejectBtn = document.getElementById('sgw-cookie-reject');
-    if (!banner || !acceptBtn || !rejectBtn) {
-      return;
-    }
-
-    var consent = parseConsent(getCookie(COOKIE_NAME));
-    if (consent && consent.necessary) {
-      updateConsent(consent);
-      return;
-    }
-
-    banner.removeAttribute('hidden');
-
-    acceptBtn.addEventListener('click', function () {
-      var nextConsent = { necessary: true, analytical: true, marketing: false };
-      setCookie(COOKIE_NAME, JSON.stringify(nextConsent));
-      updateConsent(nextConsent);
-      banner.setAttribute('hidden', '');
-    });
-
-    rejectBtn.addEventListener('click', function () {
-      var nextConsent = { necessary: true, analytical: false, marketing: false };
-      setCookie(COOKIE_NAME, JSON.stringify(nextConsent));
-      updateConsent(nextConsent);
-      banner.setAttribute('hidden', '');
-    });
   })();
   </script>
 {% endblock %}
