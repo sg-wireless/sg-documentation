@@ -5,19 +5,6 @@
 import os
 import datetime
 
-
-def _env_id(name):
-    """Return a normalized analytics ID from the environment.
-
-    Treats empty strings and literal 'none'/'null'/'undefined' as disabled.
-    """
-    value = os.environ.get(name, "")
-    if value is None:
-        return ""
-
-    text = str(value).strip()
-    return "" if text.lower() in ("", "none", "null", "undefined") else text
-
 # -- Project information -------------------------------------------------------
 
 project = "SG Wireless"
@@ -90,11 +77,6 @@ html_context = {
     "versions": _all_versions,
     "latest_version": _latest_ver,
     "preview_versions": _preview_versions,
-    # Analytics env vars — set in Amplify to enable the corresponding loader.
-    # Treat literal 'none'/'null'/'undefined' as disabled.
-    "ga_measurement_id": _env_id("GA_MEASUREMENT_ID"),
-    "gtm_container_id": _env_id("GTM_CONTAINER_ID"),
-    "ga4_tag_id": _env_id("GA4_TAG_ID"),
 }
 
 # (sphinx-multiversion settings removed — see build_versions.sh)

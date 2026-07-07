@@ -1,50 +1,23 @@
 {# SG Wireless custom layout — matches docs.sgwireless.com visual style #}
 {% extends "!layout.html" %}
 
-{# Analytics loader support for GA4/gtag, GTM, and GA4 tag IDs. #}
 {% block extrahead %}
   {{ super() }}
-  {% set gtag_id = ga_measurement_id or ga4_tag_id %}
-  {% set gtm_id = gtm_container_id %}
-  {% set analytics_enabled = gtag_id or gtm_id %}
-
-  {% if analytics_enabled %}
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('consent', 'default', {
-      'analytics_storage': 'denied',
-      'wait_for_update': 500
-    });
-
-    window.sgwCookieConsent = null;
-    try { window.sgwCookieConsent = localStorage.getItem('sgw_cookie_consent'); } catch (e) { window.sgwCookieConsent = null; }
-    if (window.sgwCookieConsent === 'granted') {
-      gtag('consent', 'update', {'analytics_storage': 'granted'});
-    }
-  </script>
-
-  {% if gtm_id %}
-  <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','{{ gtm_id }}');
-  </script>
-  {% endif %}
-
-  {% if gtag_id %}
-  <script async src="https://www.googletagmanager.com/gtag/js?id={{ gtag_id }}"></script>
-  <script>
-    gtag('js', new Date());
-    gtag('config', '{{ gtag_id }}', { 'send_page_view': false });
-    if (window.sgwCookieConsent === 'granted') {
-      gtag('event', 'page_view');
-    }
-  </script>
-  {% endif %}
-  {% endif %}
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PWRR783T');</script>
+  <!-- End Google Tag Manager -->
 {% endblock %}
 
 {# Full-width header bar before the sidebar+content grid #}
 {% block extrabody %}
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PWRR783T"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 <div id="sgw-topbar">
   <div id="sgw-topbar-gradient"></div>
   <div id="sgw-topbar-header">
@@ -73,162 +46,3 @@
 
 {# Hide the default sidebar logo/search — we have the full-width header instead #}
 {% block sidebartitle %}{% endblock %}
-
-{% block footer %}
-  {{ super() }}
-  {% if ga_measurement_id or ga4_tag_id or gtm_container_id %}
-  <div id="sgw-cookie-backdrop"></div>
-
-  <div id="sgw-cookie-banner" hidden role="region" aria-label="Cookie consent">
-    <div class="sgw-cookie-inner">
-      <div class="sgw-cookie-content">
-        <div class="sgw-cookie-text-wrap">
-          <h2 class="sgw-cookie-heading">This website uses cookies</h2>
-          <p class="sgw-cookie-text">We use cookies to improve your experience and to provide us with insight into how people use our website</p>
-          <p class="sgw-cookie-text">To find out more, read our <a href="https://sgwireless.com/cookies-policy/" target="_blank" rel="noopener noreferrer">cookies policy</a></p>
-        </div>
-        <div class="sgw-cookie-btns">
-          <button id="sgw-cookie-accept" class="sgw-cookie-btn sgw-cookie-accept">Accept</button>
-          <button id="sgw-cookie-decline" class="sgw-cookie-btn sgw-cookie-outline">Reject</button>
-          <button id="sgw-cookie-manage" class="sgw-cookie-btn sgw-cookie-outline">Manage cookie preferences</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="sgw-cookie-modal-bg" role="dialog" aria-label="Cookie preferences" aria-modal="true">
-    <div id="sgw-cookie-modal">
-      <button id="sgw-modal-close" class="sgw-modal-close-btn" aria-label="Close"></button>
-      <h2 class="sgw-modal-title">Cookie preferences</h2>
-      <p class="sgw-modal-intro">
-        Cookies are tiny pieces of data stored on your device which can enable certain website functionality and collect
-        information about how you use websites. To find out more, read our
-        <a href="https://sgwireless.com/cookies-policy/" target="_blank" rel="noopener noreferrer">cookies policy</a>.
-        You can manage which types of cookies to accept below.
-      </p>
-
-      <div class="sgw-toggle-wrap">
-        <label class="sgw-toggle-label">
-          <input type="checkbox" checked disabled>
-          <span class="sgw-toggle-track"></span>
-        </label>
-        <div class="sgw-toggle-info">
-          <p class="sgw-toggle-title">Strictly necessary cookies</p>
-          <p class="sgw-toggle-desc">These cookies are essential to the operation of this website and help provide basic functionality such as navigation and language support.</p>
-        </div>
-      </div>
-
-      <div class="sgw-toggle-wrap">
-        <label class="sgw-toggle-label">
-          <input type="checkbox" id="sgw-analytics-toggle">
-          <span class="sgw-toggle-track"></span>
-        </label>
-        <div class="sgw-toggle-info">
-          <p class="sgw-toggle-title">Analytical cookies</p>
-          <p class="sgw-toggle-desc">These cookies help us improve the performance of this website by giving us anonymised information about how you interact with it.</p>
-        </div>
-      </div>
-
-      <button id="sgw-modal-save" class="sgw-modal-save-btn">Save preferences</button>
-    </div>
-  </div>
-
-  <script>
-  (function () {
-    var CONSENT_KEY = 'sgw_cookie_consent';
-    var CONSENT_DATA_KEY = 'sgw_cookie_consent_data';
-
-    function loadPrefs() {
-      try { return JSON.parse(localStorage.getItem(CONSENT_DATA_KEY)) || null; } catch (e) { return null; }
-    }
-
-    function savePrefs(prefs) {
-      try {
-        localStorage.setItem(CONSENT_DATA_KEY, JSON.stringify(prefs));
-        localStorage.setItem(CONSENT_KEY, 'granted');
-      } catch (e) {}
-    }
-
-    function hasDecided() {
-      try { return localStorage.getItem(CONSENT_KEY) !== null; } catch (e) { return false; }
-    }
-
-    var banner   = document.getElementById('sgw-cookie-banner');
-    var backdrop = document.getElementById('sgw-cookie-backdrop');
-    var modalBg  = document.getElementById('sgw-cookie-modal-bg');
-    var toggle   = document.getElementById('sgw-analytics-toggle');
-    if (!banner) { return; }
-
-    if (!hasDecided()) {
-      banner.removeAttribute('hidden');
-      if (backdrop) backdrop.classList.add('visible');
-      window.addEventListener('scroll', function showOnScroll() {
-        banner.classList.add('sgw-cookie-banner--visible');
-        window.removeEventListener('scroll', showOnScroll);
-      }, { passive: true });
-    }
-
-    function hideBanner() {
-      banner.classList.remove('sgw-cookie-banner--visible');
-      banner.classList.add('sgw-cookie-banner--hidden');
-      if (backdrop) backdrop.classList.remove('visible');
-      setTimeout(function () { banner.setAttribute('hidden', ''); }, 500);
-    }
-
-    function showModal() {
-      var prefs = loadPrefs();
-      if (toggle) toggle.checked = prefs ? prefs.analytics : false;
-      if (modalBg) modalBg.classList.add('visible');
-    }
-
-    function hideModal() {
-      if (modalBg) modalBg.classList.remove('visible');
-    }
-
-    function applyConsent(analytics) {
-      if (typeof window.gtag !== 'function') { return; }
-      if (analytics) {
-        window.gtag('consent', 'update', {'analytics_storage': 'granted'});
-        window.gtag('event', 'page_view');
-      } else {
-        window.gtag('consent', 'update', {'analytics_storage': 'denied'});
-      }
-    }
-
-    document.getElementById('sgw-cookie-accept').addEventListener('click', function () {
-      savePrefs({ necessary: true, analytics: true });
-      window.sgwCookieConsent = 'granted';
-      applyConsent(true);
-      hideBanner();
-    });
-
-    document.getElementById('sgw-cookie-decline').addEventListener('click', function () {
-      try {
-        localStorage.setItem(CONSENT_KEY, 'denied');
-        localStorage.setItem(CONSENT_DATA_KEY, JSON.stringify({ necessary: true, analytics: false }));
-      } catch (e) {}
-      window.sgwCookieConsent = 'denied';
-      hideBanner();
-    });
-
-    document.getElementById('sgw-cookie-manage').addEventListener('click', showModal);
-    document.getElementById('sgw-modal-close').addEventListener('click', hideModal);
-
-    document.getElementById('sgw-modal-save').addEventListener('click', function () {
-      var analytics = toggle ? toggle.checked : false;
-      savePrefs({ necessary: true, analytics: analytics });
-      window.sgwCookieConsent = 'granted';
-      applyConsent(analytics);
-      hideModal();
-      hideBanner();
-    });
-
-    if (modalBg) {
-      modalBg.addEventListener('click', function (e) {
-        if (e.target === modalBg) { hideModal(); }
-      });
-    }
-  })();
-  </script>
-  {% endif %}
-{% endblock %}
