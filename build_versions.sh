@@ -176,15 +176,19 @@ PY
 CURRENT_BRANCH="${AWS_BRANCH:-$(git -C "$SRCDIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo main)}"
 
 if [[ "$CURRENT_BRANCH" != "main" ]]; then
-    PREVIEW_TAG="preview"
+  PREVIEW_TAG="preview"
+  PREVIEW_VERSION="preview"
+  if [[ "$CURRENT_BRANCH" =~ ^release/(v[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+    PREVIEW_VERSION="${BASH_REMATCH[1]}"
+  fi
     echo "=== Preview build for branch '$CURRENT_BRANCH' (single version) ==="
 
     rm -rf "$OUTDIR"
     mkdir -p "$OUTDIR"
 
-    ALL_JSON="[\"$PREVIEW_TAG\"]"
+    ALL_JSON="[\"$PREVIEW_VERSION\"]"
 
-    SGW_CURRENT_VERSION="$PREVIEW_TAG" \
+    SGW_CURRENT_VERSION="$PREVIEW_VERSION" \
     SGW_ALL_VERSIONS="$ALL_JSON" \
     sphinx-build -b html -j auto "$SRCDIR" "$OUTDIR/$PREVIEW_TAG"
 

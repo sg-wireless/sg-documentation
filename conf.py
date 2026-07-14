@@ -39,6 +39,12 @@ _preview_versions_json = os.environ.get("SGW_PREVIEW_VERSIONS", "[]")
 _preview_versions = _json.loads(_preview_versions_json)
 _latest_ver = os.environ.get("SGW_LATEST_VERSION", _all_versions[0] if _all_versions else _current_ver)
 
+_title_base = "SG Wireless sg-sdk documentation"
+if _current_ver and _current_ver != "preview":
+    html_title = f"{_title_base} {_current_ver}"
+else:
+    html_title = _title_base
+
 templates_path = ["_templates"]
 exclude_patterns = ["_build", ".venv", "Thumbs.db", ".DS_Store", "README.md"]
 
