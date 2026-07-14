@@ -58,6 +58,18 @@
         return null;
       }
 
+      if (hostname === 'sgwireless.com' || /\.sgwireless\.com$/.test(hostname)) {
+        return '.sgwireless.com';
+      }
+
+      if (hostname === 'amplifyapp.com') {
+        return null;
+      }
+
+      if (/\.amplifyapp\.com$/.test(hostname) && parts.length >= 3) {
+        return '.' + parts.slice(-3).join('.');
+      }
+
       if (parts.length === 3 && parts[1].length <= 3 && parts[2].length === 2) {
         return '.' + hostname;
       }
