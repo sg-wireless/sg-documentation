@@ -25,10 +25,22 @@
       };
     }
 
+    function sgwReadCookieValue(name) {
+      var cookiePairs = document.cookie ? document.cookie.split(';') : [];
+      var value = null;
+      for (var i = 0; i < cookiePairs.length; i += 1) {
+        var pair = cookiePairs[i].trim();
+        if (pair.indexOf(name + '=') === 0) {
+          value = pair.substring(name.length + 1);
+        }
+      }
+      return value;
+    }
+
     function sgwReadConsentCookie() {
-      var match = document.cookie.match(/(?:^|;\s*)cookieConsent=([^;]*)/);
-      if (!match) { return null; }
-      try { return sgwNormalizeConsentPrefs(JSON.parse(decodeURIComponent(match[1]))); } catch (e) { return null; }
+      var value = sgwReadCookieValue('cookieConsent');
+      if (!value) { return null; }
+      try { return sgwNormalizeConsentPrefs(JSON.parse(decodeURIComponent(value))); } catch (e) { return null; }
     }
 
     function sgwReadLegacyConsentPrefs() {
@@ -227,7 +239,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function hasDecided() {
-      try { return document.cookie.match(/(?:^|;\s*)cookieConsent=/) !== null; } catch (e) { return false; }
+      try { return sgwReadCookieValue('cookieConsent') !== null; } catch (e) { return false; }
     }
 
     var banner   = document.getElementById('sgw-cookie-banner');
@@ -238,9 +250,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     var sgwCookiePrefs = null;
     try {
-      var match = document.cookie.match(/(?:^|;\s*)cookieConsent=([^;]*)/);
-      if (match) {
-        sgwCookiePrefs = normalizePrefs(JSON.parse(decodeURIComponent(match[1])));
+      var cookieValue = sgwReadCookieValue('cookieConsent');
+      if (cookieValue) {
+        sgwCookiePrefs = normalizePrefs(JSON.parse(decodeURIComponent(cookieValue)));
       }
     } catch (e) { sgwCookiePrefs = null; }
 
