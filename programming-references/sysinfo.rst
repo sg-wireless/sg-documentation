@@ -152,12 +152,16 @@ the following example
    >>> sysinfo.show_efuses()
    ============================= efuses for user data =============================
     - Layout Version             00
-    - LoRa MAC                   70 b3 d5 49 92 a6 92 0f
     - Serial Number              00 00 00 00 00 00
     - HW ID                      01 00 00
     - Project ID                 00 00 00
     - WiFi MAC                   7c 51 89 02 03 40
+    - LoRa DevEUI                70 b3 d5 49 92 a6 92 0f
    ================================================================================
+
+(``LoRa DevEUI`` only appears when the ``lora`` feature is enabled for the
+build; ``LoRa AppKey``/``LoRa NwkKey`` additionally appear when LoRa keys are
+provisioned on efuses.)
 
 ``sysinfo.show_flash()`` displays the flash storage information and the current
 deployed partition table as in the following example:

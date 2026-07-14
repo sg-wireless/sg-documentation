@@ -103,7 +103,8 @@
    Hardware <hardware/index>
    Software <software/index>
    Programming References <programming-references/index>
-            MicroPython Libraries <micropython/index>
+   MicroPython Libraries <micropython/index>
    Tutorials & Examples <tutorials/index>
+   Firmware Development <firmware-development>
    Contact <contact>
    License <license>

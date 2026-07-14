@@ -11,6 +11,8 @@ Application
    :maxdepth: 1
 
    ctrl-client
+   ftpd
+   telnetd
    logs
 
 .. _network-interfaces:
@@ -23,6 +25,7 @@ Network Interfaces
    lora
    lora-wan
    lora-raw
+   lora-lctt
    lora-callbacks
    lte
    lte-legacy

@@ -162,7 +162,7 @@ All keys are optional; defaults are shown in parentheses.
    - 
 
       - ``max_retries``
-      - 20
+      - 30
       - Total HTTP attempts, including the first.
    - 
 
@@ -178,7 +178,7 @@ All keys are optional; defaults are shown in parentheses.
    - 
 
       - ``timeout_ms``
-      - 60000
+      - 180000
       - Per-HTTP-request timeout (read / connect).
    - 
 
@@ -188,10 +188,11 @@ All keys are optional; defaults are shown in parentheses.
    - 
 
       - ``max_chunk_bytes``
-      - 0
-      - 0 = unlimited. Non-zero caps how much data is pulled per HTTP
-         connection; the next ``Range`` request resumes from where it left off.
-         Useful to defeat carrier NAT / PSM idle timeouts on long downloads.
+      - 131072
+      - Caps how much data is pulled per HTTP connection (default 128 KB); the
+         next ``Range`` request resumes from where it left off. Useful to
+         defeat carrier NAT / PSM idle timeouts on long downloads. Pass ``0``
+         for unlimited (single connection for the whole download).
 
 --------------
 
@@ -582,8 +583,7 @@ Troubleshooting
 Slow Downloads
 ~~~~~~~~~~~~~~
 
--  Increase HTTP buffer size (requires code modification)
--  Current: 128 bytes for fast flash writes
+-  Increase the ``rx_buffer_size`` option (default 4096, clamped 512–16384)
 -  Trade-off: Larger buffers = faster download but slower flash writes
 
 REPL Hangs During Blocking Mode
@@ -618,8 +618,9 @@ Architecture
 
 -  **Automatic partition selection**: Toggles between ota_0/ota_1
 -  **Built-in certificate bundle**: Support for common CA certificates
--  **Configurable HTTP timeout**: Default 30 seconds
--  **Efficient streaming**: 128-byte HTTP buffers for fast flash writes
+-  **Configurable HTTP timeout**: Default 180 seconds (``timeout_ms``)
+-  **Efficient streaming**: 4KB HTTP receive/flash-write buffer by default
+   (``rx_buffer_size``, configurable 512B–16KB)
 
 Progress Logging
 ~~~~~~~~~~~~~~~~
@@ -676,10 +677,11 @@ Future Enhancements
 -  ☒ Automatic firmware validation on boot
 -  ☒ Soft reset safety (clean OTA cancellation)
 -  ☒ Network connectivity detection
--  ☐ Resume interrupted downloads
+-  ☒ Resume interrupted downloads (HTTP ``Range`` resume, see "Resume
+   Behaviour" above)
+-  ☒ Configurable HTTP buffer size via API (``rx_buffer_size`` option)
 -  ☐ Delta/differential updates
 -  ☐ Custom progress callbacks
--  ☐ Configurable HTTP buffer size via API
 -  ☐ Multi-stage bootloader support
 
 See Also

@@ -588,19 +588,19 @@ enabled to read the SIM.
    else:
        print("No SIM card detected")
 
-.. _lteset_event_handlerhandler-event_maskevent_all-lockfalse:
+.. _lteset_event_handlercallback-eventsevent_all-lockfalse:
 
-lte.set_event_handler(handler, event_mask=EVENT_ALL, lock=False)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+lte.set_event_handler(callback, events=EVENT_ALL, lock=False)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Register a unified event handler for LTE modem events, providing structured
 event data with automatic parsing.
 
 **Parameters:**
 
--  ``handler`` (function): Event handler function that receives a dictionary,
+-  ``callback`` (function): Event handler function that receives a dictionary,
    or ``None`` to unregister
--  ``event_mask`` (int, optional): Bitmask of events to subscribe to. Default:
+-  ``events`` (int, optional): Bitmask of events to subscribe to. Default:
    ``lte.EVENT_ALL``
 -  ``lock`` (bool, optional): If ``True``, lock the event handler so it cannot
    be overridden until ``lte.deinit()`` is called. Attempting to set or
@@ -621,7 +621,7 @@ event data with automatic parsing.
 
 **Event Types:**
 
-1. **``lte.EVENT_REGISTRATION_STATUS`` (0x0001)** - Network registration
+1. **``lte.EVENT_REGISTRATION_STATUS`` (0x0002)** - Network registration
    changes
 
    -  ``stat`` (int): Registration status (0-10, 80)
@@ -641,36 +641,36 @@ event data with automatic parsing.
    -  ``active_time`` (str, optional): PSM active time
    -  ``periodic_tau`` (str, optional): PSM periodic TAU
 
-2. **``lte.EVENT_PPP_CONNECTED`` (0x0002)** - PPP connection established
+2. **``lte.EVENT_PPP_CONNECTED`` (0x0008)** - PPP connection established
 
-   -  ``ip`` (str): Assigned IP address
-   -  ``netmask`` (str): Network mask
-   -  ``gateway`` (str): Gateway address
-   -  ``dns1`` (str): Primary DNS server
+   -  ``ip`` (str, optional): Assigned IP address
+   -  ``netmask`` (str, optional): Network mask
+   -  ``gateway`` (str, optional): Gateway address
+   -  ``dns1`` (str, optional): Primary DNS server
    -  ``dns2`` (str, optional): Secondary DNS server
 
-3. **``lte.EVENT_PPP_DISCONNECTED`` (0x0004)** - PPP connection lost
+3. **``lte.EVENT_PPP_DISCONNECTED`` (0x0010)** - PPP connection lost
 
-4. **``lte.EVENT_MODEM_CRASH`` (0x0008)** - Modem crash detected
+4. **``lte.EVENT_MODEM_CRASH`` (0x0020)** - Modem crash detected
 
    -  ``break_count`` (int): Number of break signals received
 
-5. **``lte.EVENT_MODEM_RESET`` (0x0010)** - Modem was reset
+5. **``lte.EVENT_MODEM_RESET`` (0x0040)** - Modem was reset
 
    -  ``user_initiated`` (bool): Whether reset was user-initiated
    -  ``reason`` (str, optional): Reset reason
 
-6. **``lte.EVENT_SIGNAL_QUALITY`` (0x0020)** - Signal strength update
+6. **``lte.EVENT_SIGNAL_QUALITY`` (0x0080)** - Signal strength update
 
    -  ``rssi`` (int): Raw RSSI value (0-31, 99=unknown)
    -  ``rssi_dbm`` (int): RSSI in dBm (-113 to -51, -999=unknown)
    -  ``ber`` (int): Bit Error Rate (0-7, 99=unknown)
 
-7. **``lte.EVENT_URC`` (0x0040)** - Unsolicited response code (raw AT response)
+7. **``lte.EVENT_URC`` (0x0001)** - Unsolicited response code (raw AT response)
 
    -  ``data`` (str): The raw URC string
 
-8. **``lte.EVENT_ERROR`` (0x0080)** - Error occurred
+8. **``lte.EVENT_ERROR`` (0x0100)** - Error occurred
 
    -  ``error_code`` (int): Error code
    -  ``message`` (str, optional): Error message
@@ -780,15 +780,15 @@ Event Type Constants
 
 Event type constants for use with ``lte.set_event_handler()``:
 
--  ``lte.EVENT_REGISTRATION_STATUS`` (0x0001): Network registration status
+-  ``lte.EVENT_URC`` (0x0001): Raw unsolicited response code
+-  ``lte.EVENT_REGISTRATION_STATUS`` (0x0002): Network registration status
    changes
--  ``lte.EVENT_PPP_CONNECTED`` (0x0002): PPP connection established
--  ``lte.EVENT_PPP_DISCONNECTED`` (0x0004): PPP connection lost
--  ``lte.EVENT_MODEM_CRASH`` (0x0008): Modem crash detected
--  ``lte.EVENT_MODEM_RESET`` (0x0010): Modem reset occurred
--  ``lte.EVENT_SIGNAL_QUALITY`` (0x0020): Signal strength update
--  ``lte.EVENT_URC`` (0x0040): Raw unsolicited response code
--  ``lte.EVENT_ERROR`` (0x0080): Error occurred
+-  ``lte.EVENT_PPP_CONNECTED`` (0x0008): PPP connection established
+-  ``lte.EVENT_PPP_DISCONNECTED`` (0x0010): PPP connection lost
+-  ``lte.EVENT_MODEM_CRASH`` (0x0020): Modem crash detected
+-  ``lte.EVENT_MODEM_RESET`` (0x0040): Modem reset occurred
+-  ``lte.EVENT_SIGNAL_QUALITY`` (0x0080): Signal strength update
+-  ``lte.EVENT_ERROR`` (0x0100): Error occurred
 -  ``lte.EVENT_ALL`` (0xFFFF): Subscribe to all events
 
 **Example:**

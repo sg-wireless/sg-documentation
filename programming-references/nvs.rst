@@ -165,7 +165,10 @@ Examples
 NVS Key-Value Operations
 ------------------------
 
-``nvs_if.set()`` stores or updates a key-value pair in NVS storage.
+``nvs_if.set()`` **updates** an existing key's value in NVS storage — it does
+**not** create new keys. Use ``nvs_if.add()`` to create a key for the first
+time. All four positional arguments are required (no keyword args, no optional
+``partition``).
 
 .. _function-signature-2:
 
@@ -174,27 +177,27 @@ Function Signature
 
 .. code:: BNF
 
-   nvs_if.set( key, value, namespace, partition=<name> )
+   nvs_if.set( partition, namespace, key, value )
 
 .. _parameters-2:
 
 Parameters
 ~~~~~~~~~~
 
--  ``key`` (str) - The key name
--  ``value`` - The value to store (bytes, int, or str, depending on intended
-   type)
--  ``namespace`` (str) - The namespace in which to store the key
--  ``partition`` (str, optional) - The NVS partition name. If omitted, uses the
-   default "nvs" partition
+-  ``partition`` (str) - The NVS partition name
+-  ``namespace`` (str) - The namespace containing the key
+-  ``key`` (str) - The key name (must already exist)
+-  ``value`` - The new value (bytes, int, or str). The value's stored NVS type
+   is inferred from the *existing* entry, not from the Python type passed in.
 
 .. _return-value-1:
 
 Return Value
 ~~~~~~~~~~~~
 
--  **True** if the operation was successful
--  **False** if the operation failed
+-  **True** if the key existed and was updated successfully
+-  **False** if the key does not exist yet, the partition/namespace/key are
+   invalid, or the write failed
 
 .. _examples-2:
 
@@ -205,22 +208,20 @@ Examples
 
    import nvs_if
 
-   # Store an integer value
-   nvs_if.set(key="counter", value=42, namespace="app")
+   # Update an existing key (must have been created first with nvs_if.add())
+   nvs_if.set("nvs", "app", "counter", 42)
 
-   # Store a string value
-   nvs_if.set(key="ssid", value="WiFiNetwork", namespace="config")
+   # Update a string value
+   nvs_if.set("nvs", "config", "ssid", "WiFiNetwork")
 
-   # Store binary data (BLOB)
-   nvs_if.set(key="data", value=b"\x01\x02\x03\x04", namespace="app")
+   # Update binary data (BLOB)
+   nvs_if.set("nvs", "app", "data", b"\x01\x02\x03\x04")
 
-   # Store in a specific partition
-   nvs_if.set(key="setting", value=100, namespace="app", partition="nvs")
+Creating New Keys
+~~~~~~~~~~~~~~~~~
 
-Reading Values
-~~~~~~~~~~~~~~
-
-``nvs_if.get()`` retrieves a stored value from NVS storage.
+``nvs_if.add()`` **creates** a new key-value pair — it fails (``False``) if the
+key already exists. Use ``nvs_if.set()`` to update it afterwards.
 
 .. _function-signature-3:
 
@@ -229,26 +230,26 @@ Function Signature
 
 .. code:: BNF
 
-   nvs_if.get( key, namespace, partition=<name>, default=None )
+   nvs_if.add( partition, namespace, key, value )
 
 .. _parameters-3:
 
 Parameters
 ~~~~~~~~~~
 
--  ``key`` (str) - The key name to retrieve
--  ``namespace`` (str) - The namespace containing the key
--  ``partition`` (str, optional) - The NVS partition name. If omitted, searches
-   the default "nvs" partition
--  ``default`` (optional) - Value to return if the key is not found. If not
-   specified and key doesn't exist, raises an exception.
+-  ``partition`` (str) - The NVS partition name
+-  ``namespace`` (str) - The namespace in which to store the key
+-  ``key`` (str) - The key name (must not already exist)
+-  ``value`` - The value to store (bytes, int, or str, depending on intended
+   type)
 
 .. _return-value-2:
 
 Return Value
 ~~~~~~~~~~~~
 
-The stored value, or the default value if the key doesn't exist.
+-  **True** if the key was created successfully
+-  **False** if the key already exists, or the operation failed
 
 .. _examples-3:
 
@@ -259,12 +260,103 @@ Examples
 
    import nvs_if
 
+   # Create a new integer key
+   nvs_if.add("nvs", "app", "counter", 42)
+
+   # Create a new string key
+   nvs_if.add("nvs", "config", "ssid", "WiFiNetwork")
+
+   # Create a new BLOB key
+   nvs_if.add("nvs", "app", "data", b"\x01\x02\x03\x04")
+
+Reading Values
+~~~~~~~~~~~~~~
+
+``nvs_if.get()`` retrieves a stored value from NVS storage. All three
+positional arguments are required (no keyword args, no ``default`` param).
+
+.. _function-signature-4:
+
+Function Signature
+~~~~~~~~~~~~~~~~~~
+
+.. code:: BNF
+
+   nvs_if.get( partition, namespace, key )
+
+.. _parameters-4:
+
+Parameters
+~~~~~~~~~~
+
+-  ``partition`` (str) - The NVS partition name
+-  ``namespace`` (str) - The namespace containing the key
+-  ``key`` (str) - The key name to retrieve
+
+.. _return-value-3:
+
+Return Value
+~~~~~~~~~~~~
+
+The stored value, or ``None`` if the key doesn't exist (no exception is
+raised).
+
+.. _examples-4:
+
+Examples
+~~~~~~~~
+
+.. code:: python
+
+   import nvs_if
+
    # Retrieve a value
-   counter = nvs_if.get(key="counter", namespace="app")
+   counter = nvs_if.get("nvs", "app", "counter")
    print(f"Counter: {counter}")
 
-   # Retrieve with a default value
-   ssid = nvs_if.get(key="ssid", namespace="config", default="DefaultSSID")
+   # Retrieve with a manual fallback (no built-in default= parameter)
+   ssid = nvs_if.get("nvs", "config", "ssid")
+   if ssid is None:
+       ssid = "DefaultSSID"
 
-   # Retrieve from a specific partition
-   setting = nvs_if.get(key="setting", namespace="app", partition="nvs")
+Deleting Keys
+~~~~~~~~~~~~~
+
+``nvs_if.delete()`` removes a key from NVS storage.
+
+.. _function-signature-5:
+
+Function Signature
+~~~~~~~~~~~~~~~~~~
+
+.. code:: BNF
+
+   nvs_if.delete( partition, namespace, key )
+
+.. _parameters-5:
+
+Parameters
+~~~~~~~~~~
+
+-  ``partition`` (str) - The NVS partition name
+-  ``namespace`` (str) - The namespace containing the key
+-  ``key`` (str) - The key name to delete
+
+.. _return-value-4:
+
+Return Value
+~~~~~~~~~~~~
+
+-  **True** if the key was deleted successfully
+-  **False** if the key doesn't exist or the operation failed
+
+.. _examples-5:
+
+Examples
+~~~~~~~~
+
+.. code:: python
+
+   import nvs_if
+
+   nvs_if.delete("nvs", "app", "counter")

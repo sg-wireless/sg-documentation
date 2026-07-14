@@ -9,9 +9,10 @@ frontend:
           if command -v apt-get >/dev/null 2>&1; then
             export DEBIAN_FRONTEND=noninteractive
             sudo apt-get update
-            sudo apt-get install -y --no-install-recommends latexmk texlive-xetex texlive-luatex texlive-latex-extra texlive-latex-recommended fonts-freefont-ttf fontconfig curl unzip
+            sudo apt-get install -y --no-install-recommends latexmk texlive-xetex texlive-luatex texlive-latex-extra texlive-latex-recommended fonts-freefont-ttf fontconfig unzip
           elif command -v yum >/dev/null 2>&1; then
-            sudo yum install -y texlive-xetex texlive-luatex texlive-latex texlive-cmap fontconfig curl unzip
+            sudo yum install -y texlive-xetex texlive-luatex texlive-latex texlive-cmap fontconfig unzip
+            sudo yum install -y texlive-collection-latexextra || sudo yum install -y texlive-wrapfig || true
             sudo yum install -y texlive-xetex-bin texlive-luatex-bin texlive-bin texlive-texlive.infra || true
             sudo yum install -y gnu-free-serif-fonts gnu-free-sans-fonts gnu-free-mono-fonts || true
             sudo yum install -y latexmk || true
@@ -49,13 +50,21 @@ frontend:
           if ! fc-list | grep -qi "FreeSerif"; then
             mkdir -p "$HOME/.local/share/fonts/freefont"
             TMP_FREEFONT_DIR="$(mktemp -d)"
-            if curl -fsSL -o "$TMP_FREEFONT_DIR/freefont.zip" https://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.zip; then
-              unzip "$TMP_FREEFONT_DIR/freefont.zip" -d "$TMP_FREEFONT_DIR"
-              find "$TMP_FREEFONT_DIR" -type f -name '*.ttf' -exec cp -f {} "$HOME/.local/share/fonts/freefont/" \;
-              fc-cache -f "$HOME/.local/share/fonts/freefont"
-            else
-              echo "ERROR: Failed to download GNU FreeFont package"
-              exit 1
+            FREEFONT_OK=0
+            for font_url in \
+              "https://ftpmirror.gnu.org/freefont/freefont-ttf-20120503.zip" \
+              "https://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.zip"
+            do
+              if curl --retry 3 --retry-delay 2 --retry-connrefused -fsSL -o "$TMP_FREEFONT_DIR/freefont.zip" "$font_url"; then
+                unzip "$TMP_FREEFONT_DIR/freefont.zip" -d "$TMP_FREEFONT_DIR"
+                find "$TMP_FREEFONT_DIR" -type f -name '*.ttf' -exec cp -f {} "$HOME/.local/share/fonts/freefont/" \;
+                fc-cache -f "$HOME/.local/share/fonts/freefont"
+                FREEFONT_OK=1
+                break
+              fi
+            done
+            if [ "$FREEFONT_OK" -ne 1 ]; then
+              echo "WARNING: Failed to download GNU FreeFont package; continuing with system fonts"
             fi
           fi
         - fc-list | grep -Ei "FreeSerif|FreeSans|FreeMono" | head -20

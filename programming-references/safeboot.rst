@@ -114,7 +114,7 @@ declare the following APIs:
    reading it, every time for both triggering modes whether by software reset
    of by the hardware safeboot button.
 
--  ``bootif_state_set()`` this function gets the current boot state of the
+-  ``bootif_state_get()`` this function gets the current boot state of the
    system, it is usually called from the application to know whether the system
    boots in normal or safeboot to take the proper action.
 

@@ -5,301 +5,126 @@ Contents
 --------
 
 -  Introduction
--  PCAL6408A Features
 -  MicroPython Interface
--  Complete Example
--  C/C++ Interface
+-  C Interface
 -  Hardware Connection
--  Troubleshooting
--  Register Map
 
 Introduction
 ------------
 
-The IO Expander interface provides access to the PCAL6408A 8-bit I2C GPIO
-expander available on SGW3501-F1-StarterKit boards. This component extends the
-available GPIO pins and provides interrupt-capable I/O expansion.
-
-I2C Bridge Architecture
-~~~~~~~~~~~~~~~~~~~~~~~
-
-The IO expander implementation uses MicroPython I2C Bridge architecture for
-ESP-IDF v5.4+ compatibility:
-
--  **Driver**: PCAL6408A 8-bit I2C GPIO expander
--  **Bridge**: ``mp_i2c_bridge`` component provides C interface to MicroPython
-   I2C
--  **Benefits**: Unified I2C management, modern ESP-IDF compatibility,
-   future-proof
-
-Implementation Details
-~~~~~~~~~~~~~~~~~~~~~~
-
--  **Device Address**: 0x20 (7-bit I2C address)
--  **I2C Pins**: SCL=20, SDA=21 (configurable)
--  **Frequency**: 100kHz I2C bus frequency
--  **Integration**: Uses ``ioexp_mp.c`` with I2C bridge for MicroPython builds
-
-PCAL6408A Features
-------------------
-
--  8-bit I2C-bus GPIO with interrupt and weak pull-up
--  5V tolerant inputs
--  Polarity inversion register
--  Low current consumption
--  Interrupt output for pin change detection
--  Compatible with standard GPIO operations
+This component wraps the PCAL6408A GPIO expander chip on the F1 board to
+control the **power/reset lines of onboard chips** — LoRa, LTE, and the secure
+element. It is **not** a generic GPIO-expander API; there is no per-pin
+``read``/``write``/``set_direction`` surface exposed. Each controlled signal
+has its own dedicated function.
 
 MicroPython Interface
 ---------------------
 
-Initialization
-~~~~~~~~~~~~~~
-
 .. code:: python
 
    import ioexp
 
-   # Initialize the IO expander
-   ioexp.init()
+.. _ioexpinit:
 
-Pin Configuration
+``ioexp.init()``
+~~~~~~~~~~~~~~~~
+
+Initialize the io-expander interfacing component. Hardware resources for each
+signal are brought up on demand by the specific control functions below.
+
+.. _ioexpreset:
+
+``ioexp.reset()``
 ~~~~~~~~~~~~~~~~~
 
-.. code:: python
+Reset the io-expander driver. Causes all previously initialized signals to be
+lost — for debugging only.
 
-   # Set pin direction (1 = input, 0 = output)
-   ioexp.set_direction(pin_number, direction)
+.. _ioexpstats:
 
-   # Example: Set pin 0 as output, pin 1 as input
-   ioexp.set_direction(0, 0)  # Output
-   ioexp.set_direction(1, 1)  # Input
+``ioexp.stats()``
+~~~~~~~~~~~~~~~~~
 
-Digital I/O Operations
-~~~~~~~~~~~~~~~~~~~~~~
+Print the status of the signals currently tracked by the io-expander.
 
-.. code:: python
-
-   # Write to output pin
-   ioexp.write_pin(pin_number, value)
-
-   # Example: Set pin 0 high
-   ioexp.write_pin(0, 1)
-
-   # Read from input pin
-   value = ioexp.read_pin(pin_number)
-
-   # Example: Read pin 1 state
-   state = ioexp.read_pin(1)
-   print(f"Pin 1 state: {state}")
-
-Port Operations
-~~~~~~~~~~~~~~~
+LoRa chip power control (requires the ``lora`` feature)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
-   # Write entire 8-bit port at once
-   ioexp.write_port(0b10101010)  # Set pins 1,3,5,7 high
+   ioexp.lora_power_on()          # power on the LoRa chip
+   ioexp.lora_power_off()         # power off the LoRa chip
+   ioexp.lora_power()             # -> bool: current power status
+   ioexp.lora_power(True)         # power on
+   ioexp.lora_power(False)        # power off
+   ioexp.lora_reset()             # send a reset pulse to the LoRa chip
 
-   # Read entire port
-   port_state = ioexp.read_port()
-   print(f"Port state: 0x{port_state:02X}")
-
-Pull-up Configuration
-~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: python
-
-   # Enable/disable weak pull-up resistors
-   ioexp.set_pullup(pin_number, enable)
-
-   # Example: Enable pull-up on pin 2
-   ioexp.set_pullup(2, 1)
-
-Polarity Inversion
-~~~~~~~~~~~~~~~~~~
+LTE chip power control (requires the ``lte`` feature)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
-   # Configure polarity inversion
-   ioexp.set_polarity(pin_number, inverted)
+   ioexp.lte_power_on()
+   ioexp.lte_power_off()
+   ioexp.lte_power()              # -> bool: current power status
+   ioexp.lte_power(True)
+   ioexp.lte_power(False)
+   ioexp.lte_reset()              # send a reset pulse to the LTE chip
 
-   # Example: Invert polarity on pin 3
-   ioexp.set_polarity(3, 1)
-
-Complete Example
-----------------
+Secure element power control (requires the ``secure-element`` feature)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
-   import ioexp
-   import time
+   ioexp.secure_chip_on()
+   ioexp.secure_chip_off()
+   ioexp.secure_chip_power()      # -> bool: current power status
+   ioexp.secure_chip_power(True)
+   ioexp.secure_chip_power(False)
 
-   # Initialize the IO expander
-   ioexp.init()
+.. _ioexpopen_drainbool:
 
-   # Configure pins: 0-3 as outputs, 4-7 as inputs with pull-ups
-   for pin in range(4):
-       ioexp.set_direction(pin, 0)  # Output
-       
-   for pin in range(4, 8):
-       ioexp.set_direction(pin, 1)  # Input
-       ioexp.set_pullup(pin, 1)     # Enable pull-up
+``ioexp.open_drain(bool)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   # Blink LEDs on output pins
-   while True:
-       # Set outputs high
-       for pin in range(4):
-           ioexp.write_pin(pin, 1)
-       
-       # Read and display input states
-       for pin in range(4, 8):
-           state = ioexp.read_pin(pin)
-           print(f"Input pin {pin}: {state}")
-       
-       time.sleep(0.5)
-       
-       # Set outputs low
-       for pin in range(4):
-           ioexp.write_pin(pin, 0)
-       
-       time.sleep(0.5)
+Configure the PCAL6408A's output stage as open-drain (``True``) or push-pull
+(``False``).
 
-C/C++ Interface
----------------
+C Interface
+-----------
 
-For native C/C++ applications, the same functionality is available through the
-header interface:
+``ioexp.h`` (``src/platforms/F1/comps/ioexp-if/ioexp.h``):
 
 .. code:: c
 
-   #include "ioexp.h"
+   void ioexp_init(void);
+   void ioexp_reset(void);
+   void ioexp_stats(void);
 
-   // Initialize
-   esp_err_t err = ioexp_init();
+   // LoRa chip controls
+   void ioexp_lora_chip_power_on(void);
+   void ioexp_lora_chip_power_off(void);
+   bool ioexp_lora_chip_power_status(void);
+   void ioexp_lora_chip_reset(void);
+   void ioexp_lora_chip_set_int_signal_callback(ioexp_callback_t cb);
+   bool ioexp_lora_chip_read_int_pin(void);
+   void ioexp_lora_chip_set_busy_signal_callback(ioexp_callback_t cb);
+   bool ioexp_lora_chip_is_busy(void);
 
-   // Configure pin direction
-   ioexp_set_direction(0, IOEXP_OUTPUT);
-   ioexp_set_direction(4, IOEXP_INPUT);
+   // LTE chip controls
+   void ioexp_lte_chip_power_on(void);
+   void ioexp_lte_chip_power_off(void);
+   bool ioexp_lte_chip_power_status(void);
+   void ioexp_lte_chip_reset(void);
+   void ioexp_lte_chip_set_ring_signal_callback(ioexp_callback_t cb);
 
-   // Digital operations
-   ioexp_write_pin(0, 1);  // Set pin 0 high
-   int state = ioexp_read_pin(4);  // Read pin 4
+   // Secure element controls, MicroPython I2C fusion hooks, etc. — see ioexp.h
 
 Hardware Connection
 -------------------
 
-The PCAL6408A is typically connected as follows on SGW3501-F1-StarterKit:
-
--  **VCC**: 3.3V power supply
--  **GND**: Ground
--  **SCL**: I2C clock line (GPIO 20)
--  **SDA**: I2C data line (GPIO 21)
--  **INT**: Interrupt output (optional, board-dependent)
--  **ADDR**: Address select pin (determines I2C address)
-
-Troubleshooting
----------------
-
-Common Issues
-~~~~~~~~~~~~~
-
-1. **I2C Communication Errors**
-
-   -  Verify I2C connections (SCL, SDA, power, ground)
-   -  Check I2C address (0x20 default)
-   -  Ensure proper pull-up resistors on I2C lines
-
-2. **Pin State Issues**
-
-   -  Verify pin direction configuration
-   -  Check for polarity inversion settings
-   -  Ensure proper voltage levels (5V tolerance)
-
-3. **Initialization Failures**
-
-   -  Confirm device presence with I2C scan
-   -  Verify power supply stability
-   -  Check for I2C bus conflicts
-
-Debug Commands
-~~~~~~~~~~~~~~
-
-.. code:: python
-
-   # Test I2C communication
-   import machine
-   i2c = machine.I2C(0, scl=20, sda=21)
-   devices = i2c.scan()
-   print(f"I2C devices found: {[hex(d) for d in devices]}")
-
-   # Expected output should include 0x20 for PCAL6408A
-
-Register Map
-------------
-
-For advanced users, the PCAL6408A register map:
-
-.. list-table::
-   :header-rows: 1
-
-   - 
-
-      - Register
-      - Address
-      - Function
-   - 
-
-      - Input Port
-      - 0x00
-      - Read input levels
-   - 
-
-      - Output Port
-      - 0x01
-      - Write output levels
-   - 
-
-      - Polarity Inversion
-      - 0x02
-      - Configure input polarity
-   - 
-
-      - Configuration
-      - 0x03
-      - Set pin direction
-   - 
-
-      - Output Drive Strength
-      - 0x40
-      - Configure drive strength
-   - 
-
-      - Input Latch
-      - 0x42
-      - Input latch control
-   - 
-
-      - Pull-up/Pull-down Enable
-      - 0x43
-      - Pull resistor enable
-   - 
-
-      - Pull-up/Pull-down Select
-      - 0x44
-      - Pull resistor direction
-   - 
-
-      - Interrupt Mask
-      - 0x45
-      - Interrupt enable
-   - 
-
-      - Interrupt Status
-      - 0x46
-      - Interrupt status
-   - 
-
-      - Output Port Configuration
-      - 0x4F
-      - Output port configuration
+The PCAL6408A is accessed over I2C via the shared ``mp_i2c_bridge`` (see
+`mp_i2c_bridge/README.md <../../../../comps/mp_i2c_bridge/README.md>`__), which
+is hardcoded to **SCL=GPIO7, SDA=GPIO8** at 100kHz (``ioexp_mp.c``:
+``mp_i2c_bridge_init(7, 8, 100000)``).

@@ -20,7 +20,9 @@ Usage:
     # specify custom sg-sdk path
     python3 tools/sync_sdk_docs.py --sdk-path /path/to/sg-sdk
 
-Each module name corresponds to the RST filename in programming-references/ (without extension).
+By default, each module name corresponds to the RST filename in
+programming-references/ (without extension). Some modules can define a custom
+target path.
 """
 
 import argparse
@@ -37,7 +39,10 @@ SOURCE_MAP = {
     "lora-wan":       "src/comps/lora/docs/lora-wan.md",
     "lora-raw":       "src/comps/lora/docs/lora-raw.md",
     "lora-callbacks": "src/comps/lora/docs/lora-callback.md",
+    "lora-lctt":      "src/comps/lora/docs/lora-lctt.md",
     "ctrl-client":    "src/comps/ctrl-client/docs/user-api.md",
+    "ftpd":           "src/platforms/F1/comps/ftp-server/ftpd.md",
+    "telnetd":        "src/platforms/F1/comps/telnet-server/telnetd.md",
     "rgbled":         "src/platforms/F1/comps/rgbled-if/rgbled.md",
     "lte":            "src/platforms/F1/comps/lte/modlte.md",
     "lte-legacy":     "src/platforms/F1/comps/lte/lte_main.md",
@@ -51,6 +56,12 @@ SOURCE_MAP = {
     "sysinfo":        "src/platforms/F1/comps/sys-info/sysinfo.md",
     "sys-inspect":    "src/platforms/F1/comps/sys-inspect-if/docs/sys_inspect.md",
     "safeboot":       "src/platforms/F1/bootloader_components/boot-if/docs/safeboot.md",
+    "firmware-development": "QuickStart.md",
+}
+
+# Module targets that do not belong to programming-references/
+TARGET_MAP = {
+    "firmware-development": "firmware-development.rst",
 }
 
 # ── Markdown → RST converter (pandoc-based) ────────────────────────────────
@@ -122,7 +133,8 @@ def sync_module(module, sdk_path, docs_path, dry_run=False, show_diff=False):
 
     md_rel = SOURCE_MAP[module]
     md_path = os.path.join(sdk_path, md_rel)
-    rst_path = os.path.join(docs_path, "programming-references", f"{module}.rst")
+    target_rel = TARGET_MAP.get(module, os.path.join("programming-references", f"{module}.rst"))
+    rst_path = os.path.join(docs_path, target_rel)
 
     if not os.path.isfile(md_path):
         return False, f"  SKIP {module}: source not found: {md_rel}"
@@ -139,7 +151,7 @@ def sync_module(module, sdk_path, docs_path, dry_run=False, show_diff=False):
             old_rst = f.read()
 
     if old_rst == new_rst:
-        return False, f"  OK   {module}: up to date"
+        return False, f"  OK   {module}: up to date ({target_rel})"
 
     if show_diff:
         diff = difflib.unified_diff(
@@ -157,9 +169,9 @@ def sync_module(module, sdk_path, docs_path, dry_run=False, show_diff=False):
     if not dry_run:
         with open(rst_path, "w") as f:
             f.write(new_rst)
-        return True, f"  SYNC {module}: updated programming-references/{module}.rst"
+        return True, f"  SYNC {module}: updated {target_rel}"
     else:
-        return True, f"  WOULD {module}: programming-references/{module}.rst needs update"
+        return True, f"  WOULD {module}: {target_rel} needs update"
 
 
 def main():
@@ -208,7 +220,8 @@ def main():
         for mod, md_rel in sorted(SOURCE_MAP.items()):
             md_full = os.path.join(sdk_path, md_rel)
             exists = "✓" if os.path.isfile(md_full) else "✗"
-            print(f"  {exists} {mod:20s} ← {md_rel}")
+            target_rel = TARGET_MAP.get(mod, os.path.join("programming-references", f"{mod}.rst"))
+            print(f"  {exists} {mod:20s} ← {md_rel}  ->  {target_rel}")
         return
 
     if not os.path.isdir(sdk_path):

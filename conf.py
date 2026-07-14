@@ -112,6 +112,15 @@ latex_documents = [
 latex_elements = {
     "papersize": "a4paper",
     "pointsize": "11pt",
+    # Some minimal TeX distributions used in CI do not include fncychap.
+    # Disabling it keeps chapter headings standard and avoids hard failures.
+    "fncychap": "",
+    # Avoid external GNU FreeFont dependency in CI; Latin Modern ships with TeX Live.
+    "fontpkg": r"""
+\setmainfont{Latin Modern Roman}
+\setsansfont{Latin Modern Sans}
+\setmonofont{Latin Modern Mono}
+""",
     # Use openany so chapters can start on any page (even or odd).
     # Without this the default "manual" class uses openright, inserting
     # a blank page whenever a chapter would fall on an even page.

@@ -557,7 +557,7 @@ The default column layout:
 
       - OS context
       - ``os_info``
-      - 12
+      - 14
       - Core ID and task name (e.g. ``1:mp_task``)
    - 
 
@@ -691,7 +691,7 @@ All options are under the ``SDK_LOG_LIB_ENABLE`` menu.
       - OS context
       - ``SDK_LOG_LIB_HEADER_OS_CONTEXT_INFO`` (y)
       - ``..._OS_CONTEXT_INFO_WIDTH``
-      - 12
+      - 14
    - 
 
       - File name
