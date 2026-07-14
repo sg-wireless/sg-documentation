@@ -58,10 +58,6 @@
         return null;
       }
 
-      if (hostname === 'sgwireless.com' || /\.sgwireless\.com$/.test(hostname)) {
-        return '.sgwireless.com';
-      }
-
       if (hostname === 'amplifyapp.com') {
         return null;
       }
@@ -70,15 +66,7 @@
         return '.' + parts.slice(-3).join('.');
       }
 
-      if (parts.length === 3 && parts[1].length <= 3 && parts[2].length === 2) {
-        return '.' + hostname;
-      }
-
-      if (parts.length === 2) {
-        return '.' + hostname;
-      }
-
-      return '.' + parts.slice(1).join('.');
+      return '.' + parts.slice(-2).join('.');
     }
 
     function sgwWriteConsentCookie(prefs) {
