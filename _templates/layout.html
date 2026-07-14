@@ -1,6 +1,107 @@
 {# SG Wireless custom layout — matches docs.sgwireless.com visual style #}
 {% extends "!layout.html" %}
 
+{% block extrahead %}
+  {{ super() }}
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = window.gtag || gtag;
+
+    gtag('consent', 'default', {
+      'analytics_storage': 'denied',
+      'ad_storage': 'denied',
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied',
+      'wait_for_update': 500
+    });
+
+    function sgwNormalizeConsentPrefs(prefs) {
+      if (!prefs || typeof prefs !== 'object') { return null; }
+      return {
+        necessary: prefs.necessary !== false,
+        analytical: prefs.analytical === true || prefs.analytics === true,
+        marketing: prefs.marketing === true
+      };
+    }
+
+    function sgwReadCookieValue(name) {
+      var cookiePairs = document.cookie ? document.cookie.split(';') : [];
+      var value = null;
+      for (var i = 0; i < cookiePairs.length; i += 1) {
+        var pair = cookiePairs[i].trim();
+        if (pair.indexOf(name + '=') === 0) {
+          value = pair.substring(name.length + 1);
+        }
+      }
+      return value;
+    }
+
+    function sgwReadConsentCookie() {
+      var value = sgwReadCookieValue('cookieConsent');
+      if (!value) { return null; }
+      try { return sgwNormalizeConsentPrefs(JSON.parse(decodeURIComponent(value))); } catch (e) { return null; }
+    }
+
+    function sgwReadLegacyConsentPrefs() {
+      try { return sgwNormalizeConsentPrefs(JSON.parse(localStorage.getItem('sgw_cookie_consent_data')) || null); } catch (e) { return null; }
+    }
+
+    function sgwWriteConsentCookie(prefs) {
+      var cookieParts = [
+        'cookieConsent=' + encodeURIComponent(JSON.stringify(prefs)),
+        'Domain=.sgwireless.com',
+        'Path=/',
+        'Max-Age=31536000',
+        'SameSite=Lax'
+      ];
+      if (window.location.protocol === 'https:') {
+        cookieParts.push('Secure');
+      }
+      document.cookie = cookieParts.join('; ');
+    }
+
+    function sgwClearLegacyConsent() {
+      try {
+        localStorage.removeItem('sgw_cookie_consent');
+        localStorage.removeItem('sgw_cookie_consent_data');
+      } catch (e) {}
+    }
+
+    function sgwStoreConsent(prefs) {
+      sgwWriteConsentCookie(prefs);
+      sgwClearLegacyConsent();
+    }
+
+    function sgwHasTrackingConsent(prefs) {
+      return !!prefs && (prefs.analytical === true || prefs.marketing === true);
+    }
+
+    var sgwCookiePrefs = sgwReadConsentCookie();
+    if (!sgwCookiePrefs) {
+      sgwCookiePrefs = sgwReadLegacyConsentPrefs();
+      if (sgwCookiePrefs) {
+        sgwStoreConsent(sgwCookiePrefs);
+      }
+    }
+    if (sgwHasTrackingConsent(sgwCookiePrefs)) {
+      gtag('consent', 'update', {
+        'analytics_storage': 'granted',
+        'ad_storage': sgwCookiePrefs.marketing === true ? 'granted' : 'denied',
+        'ad_user_data': sgwCookiePrefs.marketing === true ? 'granted' : 'denied',
+        'ad_personalization': sgwCookiePrefs.marketing === true ? 'granted' : 'denied'
+      });
+    }
+  </script>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PWRR783T');</script>
+  <!-- End Google Tag Manager -->
+{% endblock %}
+
 {# Full-width header bar before the sidebar+content grid #}
 {% block extrabody %}
 <div id="sgw-topbar">
@@ -34,4 +135,221 @@
 
 {% block footer %}
   {{ super() }}
+  <div id="sgw-cookie-backdrop"></div>
+
+  <div id="sgw-cookie-banner" hidden role="region" aria-label="Cookie consent">
+    <div class="sgw-cookie-inner">
+      <div class="sgw-cookie-content">
+        <div class="sgw-cookie-text-wrap">
+          <h2 class="sgw-cookie-heading">This website uses cookies</h2>
+          <p class="sgw-cookie-text">We use cookies to improve your experience and to provide us with insight into how people use our website</p>
+          <p class="sgw-cookie-text">To find out more, read our <a href="https://sgwireless.com/cookies-policy/" target="_blank" rel="noopener noreferrer">cookies policy</a></p>
+        </div>
+        <div class="sgw-cookie-btns">
+          <button id="sgw-cookie-accept" class="sgw-cookie-btn sgw-cookie-accept">Accept</button>
+          <button id="sgw-cookie-decline" class="sgw-cookie-btn sgw-cookie-outline">Reject</button>
+          <button id="sgw-cookie-manage" class="sgw-cookie-btn sgw-cookie-outline">Manage cookie preferences</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sgw-cookie-modal-bg" role="dialog" aria-label="Cookie preferences" aria-modal="true">
+    <div id="sgw-cookie-modal">
+      <button id="sgw-modal-close" class="sgw-modal-close-btn" aria-label="Close"></button>
+      <h2 class="sgw-modal-title">Cookie preferences</h2>
+      <p class="sgw-modal-intro">
+        Cookies are tiny pieces of data stored on your device which can enable certain website functionality and collect
+        information about how you use websites. To find out more, read our
+        <a href="https://sgwireless.com/cookies-policy/" target="_blank" rel="noopener noreferrer">cookies policy</a>.
+        You can manage which types of cookies to accept below.
+      </p>
+
+      <div class="sgw-toggle-wrap">
+        <label class="sgw-toggle-label">
+          <input type="checkbox" checked disabled>
+          <span class="sgw-toggle-track"></span>
+        </label>
+        <div class="sgw-toggle-info">
+          <p class="sgw-toggle-title">Strictly necessary cookies</p>
+          <p class="sgw-toggle-desc">These cookies are essential to the operation of this website and help provide basic functionality such as navigation and language support.</p>
+        </div>
+      </div>
+
+      <div class="sgw-toggle-wrap">
+        <label class="sgw-toggle-label">
+          <input type="checkbox" id="sgw-analytics-toggle">
+          <span class="sgw-toggle-track"></span>
+        </label>
+        <div class="sgw-toggle-info">
+          <p class="sgw-toggle-title">Analytical cookies</p>
+          <p class="sgw-toggle-desc">These cookies help us improve the performance of this website by giving us anonymised information about how you interact with it.</p>
+        </div>
+      </div>
+
+      <button id="sgw-modal-save" class="sgw-modal-save-btn">Save preferences</button>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    function normalizePrefs(prefs) {
+      if (!prefs || typeof prefs !== 'object') { return null; }
+      return {
+        necessary: prefs.necessary !== false,
+        analytical: prefs.analytical === true || prefs.analytics === true,
+        marketing: prefs.marketing === true
+      };
+    }
+
+    function loadLegacyPrefs() {
+      try { return normalizePrefs(JSON.parse(localStorage.getItem('sgw_cookie_consent_data')) || null); } catch (e) { return null; }
+    }
+
+    function readCookieValue(name) {
+      var cookiePairs = document.cookie ? document.cookie.split(';') : [];
+      var value = null;
+      for (var i = 0; i < cookiePairs.length; i += 1) {
+        var pair = cookiePairs[i].trim();
+        if (pair.indexOf(name + '=') === 0) {
+          value = pair.substring(name.length + 1);
+        }
+      }
+      return value;
+    }
+
+    function writeConsentCookie(prefs) {
+      var cookieParts = [
+        'cookieConsent=' + encodeURIComponent(JSON.stringify(prefs)),
+        'Domain=.sgwireless.com',
+        'Path=/',
+        'Max-Age=31536000',
+        'SameSite=Lax'
+      ];
+      if (window.location.protocol === 'https:') {
+        cookieParts.push('Secure');
+      }
+      document.cookie = cookieParts.join('; ');
+    }
+
+    function clearLegacyPrefs() {
+      try {
+        localStorage.removeItem('sgw_cookie_consent');
+        localStorage.removeItem('sgw_cookie_consent_data');
+      } catch (e) {}
+    }
+
+    function persistConsent(prefs) {
+      writeConsentCookie(prefs);
+      clearLegacyPrefs();
+    }
+
+    function hasDecided() {
+      try { return readCookieValue('cookieConsent') !== null; } catch (e) { return false; }
+    }
+
+    var banner   = document.getElementById('sgw-cookie-banner');
+    var backdrop = document.getElementById('sgw-cookie-backdrop');
+    var modalBg  = document.getElementById('sgw-cookie-modal-bg');
+    var toggle   = document.getElementById('sgw-analytics-toggle');
+    if (!banner) { return; }
+
+    var sgwCookiePrefs = null;
+    try {
+      var cookieValue = readCookieValue('cookieConsent');
+      if (cookieValue) {
+        sgwCookiePrefs = normalizePrefs(JSON.parse(decodeURIComponent(cookieValue)));
+      }
+    } catch (e) { sgwCookiePrefs = null; }
+
+    if (!sgwCookiePrefs) {
+      sgwCookiePrefs = loadLegacyPrefs();
+      if (sgwCookiePrefs) {
+        persistConsent(sgwCookiePrefs);
+      }
+    }
+
+    if (!hasDecided()) {
+      banner.removeAttribute('hidden');
+      if (backdrop) backdrop.classList.add('visible');
+      window.addEventListener('scroll', function showOnScroll() {
+        banner.classList.add('sgw-cookie-banner--visible');
+        window.removeEventListener('scroll', showOnScroll);
+      }, { passive: true });
+    }
+
+    function hideBanner() {
+      banner.classList.remove('sgw-cookie-banner--visible');
+      banner.classList.add('sgw-cookie-banner--hidden');
+      if (backdrop) backdrop.classList.remove('visible');
+      setTimeout(function () { banner.setAttribute('hidden', ''); }, 500);
+    }
+
+    function showModal() {
+      if (toggle) toggle.checked = sgwCookiePrefs ? sgwCookiePrefs.analytical : false;
+      if (modalBg) modalBg.classList.add('visible');
+    }
+
+    function hideModal() {
+      if (modalBg) modalBg.classList.remove('visible');
+    }
+
+    function applyConsent(analytics) {
+      if (typeof window.gtag !== 'function') { return; }
+      if (analytics) {
+        window.gtag('consent', 'update', {
+          'analytics_storage': 'granted',
+          'ad_storage': 'denied',
+          'ad_user_data': 'denied',
+          'ad_personalization': 'denied'
+        });
+        window.gtag('event', 'page_view');
+      } else {
+        window.gtag('consent', 'update', {
+          'analytics_storage': 'denied',
+          'ad_storage': 'denied',
+          'ad_user_data': 'denied',
+          'ad_personalization': 'denied'
+        });
+      }
+    }
+
+    document.getElementById('sgw-cookie-accept').addEventListener('click', function () {
+      var prefs = { necessary: true, analytical: true, marketing: true };
+      persistConsent(prefs);
+      sgwCookiePrefs = prefs;
+      window.sgwCookieConsent = 'granted';
+      applyConsent(true);
+      hideBanner();
+    });
+
+    document.getElementById('sgw-cookie-decline').addEventListener('click', function () {
+      var prefs = { necessary: true, analytical: false, marketing: false };
+      persistConsent(prefs);
+      sgwCookiePrefs = prefs;
+      window.sgwCookieConsent = 'denied';
+      hideBanner();
+    });
+
+    document.getElementById('sgw-cookie-manage').addEventListener('click', showModal);
+    document.getElementById('sgw-modal-close').addEventListener('click', hideModal);
+
+    document.getElementById('sgw-modal-save').addEventListener('click', function () {
+      var analytics = toggle ? toggle.checked : false;
+      var prefs = { necessary: true, analytical: analytics, marketing: analytics };
+      persistConsent(prefs);
+      sgwCookiePrefs = prefs;
+      window.sgwCookieConsent = 'granted';
+      applyConsent(analytics);
+      hideModal();
+      hideBanner();
+    });
+
+    if (modalBg) {
+      modalBg.addEventListener('click', function (e) {
+        if (e.target === modalBg) { hideModal(); }
+      });
+    }
+  })();
+  </script>
 {% endblock %}
