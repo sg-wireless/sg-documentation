@@ -269,13 +269,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       }
     }
 
+    function revealBanner() {
+      banner.classList.add('sgw-cookie-banner--visible');
+    }
+
     if (!hasDecided()) {
       banner.removeAttribute('hidden');
       if (backdrop) backdrop.classList.add('visible');
-      window.addEventListener('scroll', function showOnScroll() {
-        banner.classList.add('sgw-cookie-banner--visible');
-        window.removeEventListener('scroll', showOnScroll);
-      }, { passive: true });
+      if (document.documentElement.scrollHeight <= window.innerHeight) {
+        revealBanner();
+      } else {
+        window.addEventListener('scroll', function showOnScroll() {
+          revealBanner();
+          window.removeEventListener('scroll', showOnScroll);
+        }, { passive: true });
+      }
     }
 
     function hideBanner() {
