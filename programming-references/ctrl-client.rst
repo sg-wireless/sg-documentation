@@ -420,7 +420,7 @@ You can define and use a custom logging component:
 
    print_debug(5, "Something happened", component=DEBUG_COMPONENT)
 
-   ctrl.send_field(255, "An ERROR occured!")
+   ctrl.send_field(255, "An ERROR occurred!")
 
 .. _logging--debugging:
 
