@@ -109,26 +109,32 @@ handler This is the real micropython function to be called when a LoRa event occ
 
 .. code-block:: python
 
-   def lora_generic_callback(event, evt_data):
+   def lora_generic_callback(context):
+     # the handler receives a single context dict. 'event' is always present,
+     # the remaining keys depend on the event: 'data', 'RSSI' and 'SNR' on a
+     # receive (plus 'port', 'DR' and 'dl_frame_counter' in lora-wan), and
+     # 'msg_id' on a lora-wan tx outcome.
+     event = context.get('event')
+   
      # --- lora raw case
      if lora.mode() == lora._mode.RAW:
    
          if event == lora._event.EVENT_RX_DONE:
-             # evt_data is a byte array object containing the received data
-             print('received data: {}'.format(evt_data))
+             # context['data'] is a byte array holding the received data
+             print('received data: {}'.format(context.get('data')))
              pass
-         elif event == lora._event.EVENT_RX_FAIL:     # evt_data is None
+         elif event == lora._event.EVENT_RX_FAIL:
              pass
-         elif event == lora._event.EVENT_RX_TIMEOUT:  # evt_data is None
+         elif event == lora._event.EVENT_RX_TIMEOUT:
              pass
-         elif event == lora._event.EVENT_TX_DONE:     # evt_data is None
+         elif event == lora._event.EVENT_TX_DONE:
              pass
          elif event == lora._event.EVENT_TX_CONFIRM:
              # unexpected event in lora-raw
              pass
-         elif event == lora._event.EVENT_TX_FAILED:   # evt_data is None
+         elif event == lora._event.EVENT_TX_FAILED:
              pass
-         elif event == lora._event.EVENT_TX_TIMEOUT:  # evt_data is None
+         elif event == lora._event.EVENT_TX_TIMEOUT:
              pass
          else:
              print('error: unknown error')
@@ -136,9 +142,12 @@ handler This is the real micropython function to be called when a LoRa event occ
      # --- lora wan case
      elif lora.mode() == lora._mode.WAN:
    
+         # the message id provided in the tx request
+         msg_id = context.get('msg_id')
+   
          if event == lora._event.EVENT_RX_DONE:
-             # evt_data is a byte array object containing the received data
-             print('received data: {}'.format(evt_data))
+             # context['data'] is a byte array holding the received data
+             print('received data: {}'.format(context.get('data')))
              pass
          elif event == lora._event.EVENT_RX_FAIL:
              # unexpected event in lora-wan
@@ -147,20 +156,16 @@ handler This is the real micropython function to be called when a LoRa event occ
              # unexpected event in lora-wan
              pass
          elif event == lora._event.EVENT_TX_DONE:
-             # evt_data is an integer holding the message id provided in tx req
-             print("message ID {} has transmitted successfully".format(evt_data))
+             print("message ID {} has transmitted successfully".format(msg_id))
              pass
          elif event == lora._event.EVENT_TX_CONFIRM:
-             # evt_data is an integer holding the message id provided in tx req
-             print("message ID {} has been confirmed".format(evt_data))
+             print("message ID {} has been confirmed".format(msg_id))
              pass
          elif event == lora._event.EVENT_TX_FAILED:
-             # evt_data is an integer holding the message id provided in tx req
-             print("message ID {} is not transmitted".format(evt_data))
+             print("message ID {} is not transmitted".format(msg_id))
              pass
          elif event == lora._event.EVENT_TX_TIMEOUT:
-             # evt_data is an integer holding the message id provided in tx req
-             print("message ID {} tx timeout".format(evt_data))
+             print("message ID {} tx timeout".format(msg_id))
              pass
          else:
              print('error: unknown error')
@@ -192,19 +197,21 @@ Example LoRa-RAW
        return 'unknown'
    
    # any event callback
-   def lora_raw_callback(event, event_data):
+   def lora_raw_callback(context):
        print('lora-raw event: {} with data: {}'.format(
-           get_class_const_name(lora._event, event), event_data))
+           get_class_const_name(lora._event, context['event']), context))
        pass
    
-   def lora_raw_callback_rx_done(event, event_data):
+   def lora_raw_callback_rx_done(context):
+       event = context.get('event')
        if event != lora._event.EVENT_RX_DONE:
            print("unexpected event in this callback")
            return
-       print('lora-raw received data: {}'.format(event_data))
+       print('lora-raw received data: {}'.format(context.get('data')))
        pass
    
-   def lora_raw_callback_timeout(event, event_data):
+   def lora_raw_callback_timeout(context):
+       event = context.get('event')
        if event != lora._event.EVENT_RX_TIMEOUT and \
                event != lora._event.EVENT_TX_TIMEOUT:
            print("unexpected event in this callback")
@@ -258,24 +265,29 @@ Example LoRa-WAN
                return k
        return 'unknown'
    
-   def lora_wan_callback(event, event_data):
+   def lora_wan_callback(context):
+       event = context.get('event')
        print('lora-wan event: {} with data: {}'.format(
-           get_class_const_name(lora._event, event), event_data))
+           get_class_const_name(lora._event, event), context))
        pass
    
-   def lora_wan_callback_port_1_any(event, event_data):
+   def lora_wan_callback_port_1_any(context):
+       event = context.get('event')
        print('lora-wan port 1 event: {} with data: {}'.format(
-           get_class_const_name(lora._event, event), event_data))
+           get_class_const_name(lora._event, event), context))
        pass
    
-   def lora_wan_callback_port_1_tx_confirm(event, event_data):
+   def lora_wan_callback_port_1_tx_confirm(context):
+       event = context.get('event')
        if event != lora._event.EVENT_TX_CONFIRM:
            print("unexpected event in this callback")
            return
-       print('lora-wan port 1 tx confirm on message id : {}'.format(event_data))
+       print('lora-wan port 1 tx confirm on message id : {}'.format(
+           context.get('msg_id')))
        pass
    
-   def lora_wan_callback_port_2_timeout(event, event_data):
+   def lora_wan_callback_port_2_timeout(context):
+       event = context.get('event')
        if event != lora._event.EVENT_RX_TIMEOUT and \
                event != lora._event.EVENT_TX_TIMEOUT:
            print("unexpected event in this callback")

@@ -267,16 +267,16 @@ Example:
                return 'EVENT_RX_FAIL'
        return '--UNKNOWN-EVENT--'
    
-   def cb_on_any(event, evt_data):
-       print('(  cb_on_any   )--> event: ' + get_evt_str(event))
-       if evt_data != None:
-           print(evt_data)
+   # the handler receives a single context dict: 'event' is always present,
+   # the remaining keys depend on the event.
+   def cb_on_any(context):
+       print('(  cb_on_any   )--> event: ' + get_evt_str(context['event']))
+       print(context)
        pass
    
-   def cb_on_port_1(event, evt_data):
-       print('( cb_on_port_1 )--> event: ' + get_evt_str(event))
-       if evt_data != None:
-           print(evt_data)
+   def cb_on_port_1(context):
+       print('( cb_on_port_1 )--> event: ' + get_evt_str(context['event']))
+       print(context)
        pass
    
    port_1_triggers = lora._event.EVENT_RX_DONE | lora._event.EVENT_TX_DONE
