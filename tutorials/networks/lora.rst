@@ -151,29 +151,20 @@ you should see a data packet arrive in your LoRaWAN application containing
    lora.port_open(1)
 
    # attach required callback
-   def get_event_str(event):
-       if event == lora._event.EVENT_TX_CONFIRM:
-           return 'EVENT_TX_CONFIRM'
-       elif event == lora._event.EVENT_TX_DONE:
-           return 'EVENT_TX_DONE'
-       elif event == lora._event.EVENT_TX_TIMEOUT:
-           return 'EVENT_TX_TIMEOUT'
-       elif event == lora._event.EVENT_TX_FAILED:
-           return 'EVENT_TX_FAILED'
-       elif event == lora._event.EVENT_RX_DONE:
-           return 'EVENT_RX_DONE'
-       elif event == lora._event.EVENT_RX_TIMEOUT:
-           return 'EVENT_RX_TIMEOUT'
-       elif event == lora._event.EVENT_RX_FAIL:
-           return 'EVENT_RX_FAIL'
-       else:
-           return 'UNKNOWN'
+   # the handler takes a single context dict: 'event' is always present, and
+   # the rest of the keys depend on the event -- 'data', 'RSSI', 'SNR', 'port',
+   # 'DR' and 'dl_frame_counter' on a receive, 'msg_id' on a tx outcome.
+   def lora_callback(context):
+       def get_class_const_name(__class, __const):
+           for k,v in __class.__dict__.items():
+               if v == __const:
+                   return k
+           return 'unknown'
+       print('lora event: {} with-context: {}'.format(
+           get_class_const_name(lora._event, context['event']), context))
+       pass
 
-   def port_any_cb(event, evt_data):
-       print('lora event [ {} ] --> data: {}'
-           .format(get_event_str(event), evt_data))
-
-   lora.callback(handler=port_any_cb)
+   lora.callback( handler = lora_callback )
 
    # start duty cycle
    lora.duty_set(10000)
@@ -258,29 +249,20 @@ you should see a data packet arrive in your LoRaWAN application containing
    lora.port_open(1)
 
    # attach required callback
-   def get_event_str(event):
-       if event == lora._event.EVENT_TX_CONFIRM:
-           return 'EVENT_TX_CONFIRM'
-       elif event == lora._event.EVENT_TX_DONE:
-           return 'EVENT_TX_DONE'
-       elif event == lora._event.EVENT_TX_TIMEOUT:
-           return 'EVENT_TX_TIMEOUT'
-       elif event == lora._event.EVENT_TX_FAILED:
-           return 'EVENT_TX_FAILED'
-       elif event == lora._event.EVENT_RX_DONE:
-           return 'EVENT_RX_DONE'
-       elif event == lora._event.EVENT_RX_TIMEOUT:
-           return 'EVENT_RX_TIMEOUT'
-       elif event == lora._event.EVENT_RX_FAIL:
-           return 'EVENT_RX_FAIL'
-       else:
-           return 'UNKNOWN'
+   # the handler takes a single context dict: 'event' is always present, and
+   # the rest of the keys depend on the event -- 'data', 'RSSI', 'SNR', 'port',
+   # 'DR' and 'dl_frame_counter' on a receive, 'msg_id' on a tx outcome.
+   def lora_callback(context):
+       def get_class_const_name(__class, __const):
+           for k,v in __class.__dict__.items():
+               if v == __const:
+                   return k
+           return 'unknown'
+       print('lora event: {} with-context: {}'.format(
+           get_class_const_name(lora._event, context['event']), context))
+       pass
 
-   def port_any_cb(event, evt_data):
-       print('lora event [ {} ] --> data: {}'
-           .format(get_event_str(event), evt_data))
-
-   lora.callback(handler=port_any_cb)
+   lora.callback( handler = lora_callback )
 
    # start duty cycle
    lora.duty_set(10000)
@@ -389,29 +371,20 @@ waiting for a packet that will never arrive.
    lora.port_open(1)
 
    # attach required callback
-   def get_event_str(event):
-       if event == lora._event.EVENT_TX_CONFIRM:
-           return 'EVENT_TX_CONFIRM'
-       elif event == lora._event.EVENT_TX_DONE:
-           return 'EVENT_TX_DONE'
-       elif event == lora._event.EVENT_TX_TIMEOUT:
-           return 'EVENT_TX_TIMEOUT'
-       elif event == lora._event.EVENT_TX_FAILED:
-           return 'EVENT_TX_FAILED'
-       elif event == lora._event.EVENT_RX_DONE:
-           return 'EVENT_RX_DONE'
-       elif event == lora._event.EVENT_RX_TIMEOUT:
-           return 'EVENT_RX_TIMEOUT'
-       elif event == lora._event.EVENT_RX_FAIL:
-           return 'EVENT_RX_FAIL'
-       else:
-           return 'UNKNOWN'
+   # the handler takes a single context dict: 'event' is always present, and
+   # the rest of the keys depend on the event -- 'data', 'RSSI', 'SNR', 'port',
+   # 'DR' and 'dl_frame_counter' on a receive, 'msg_id' on a tx outcome.
+   def lora_callback(context):
+       def get_class_const_name(__class, __const):
+           for k,v in __class.__dict__.items():
+               if v == __const:
+                   return k
+           return 'unknown'
+       print('lora event: {} with-context: {}'.format(
+           get_class_const_name(lora._event, context['event']), context))
+       pass
 
-   def port_any_cb(event, evt_data):
-       print('lora event [ {} ] --> data: {}'
-           .format(get_event_str(event), evt_data))
-
-   lora.callback(handler=port_any_cb)
+   lora.callback( handler = lora_callback )
 
    # start duty cycle
    lora.duty_set(10000)
@@ -494,29 +467,20 @@ waiting for a packet that will never arrive.
    lora.port_open(1)
 
    # attach required callback
-   def get_event_str(event):
-       if event == lora._event.EVENT_TX_CONFIRM:
-           return 'EVENT_TX_CONFIRM'
-       elif event == lora._event.EVENT_TX_DONE:
-           return 'EVENT_TX_DONE'
-       elif event == lora._event.EVENT_TX_TIMEOUT:
-           return 'EVENT_TX_TIMEOUT'
-       elif event == lora._event.EVENT_TX_FAILED:
-           return 'EVENT_TX_FAILED'
-       elif event == lora._event.EVENT_RX_DONE:
-           return 'EVENT_RX_DONE'
-       elif event == lora._event.EVENT_RX_TIMEOUT:
-           return 'EVENT_RX_TIMEOUT'
-       elif event == lora._event.EVENT_RX_FAIL:
-           return 'EVENT_RX_FAIL'
-       else:
-           return 'UNKNOWN'
+   # the handler takes a single context dict: 'event' is always present, and
+   # the rest of the keys depend on the event -- 'data', 'RSSI', 'SNR', 'port',
+   # 'DR' and 'dl_frame_counter' on a receive, 'msg_id' on a tx outcome.
+   def lora_callback(context):
+       def get_class_const_name(__class, __const):
+           for k,v in __class.__dict__.items():
+               if v == __const:
+                   return k
+           return 'unknown'
+       print('lora event: {} with-context: {}'.format(
+           get_class_const_name(lora._event, context['event']), context))
+       pass
 
-   def port_any_cb(event, evt_data):
-       print('lora event [ {} ] --> data: {}'
-           .format(get_event_str(event), evt_data))
-
-   lora.callback(handler=port_any_cb)
+   lora.callback( handler = lora_callback )
 
    # start duty cycle
    lora.duty_set(10000)
@@ -585,9 +549,9 @@ received on both sides.
        lora.mode(lora._mode.RAW)
 
    # define the callback
-   def lora_callback(event, bytes):
-       if event == lora._event.EVENT_RX_DONE:
-           print(bytes)
+   def lora_callback(context):
+       if context['event'] == lora._event.EVENT_RX_DONE:
+           print(context['data'])
        pass
    lora.callback(handler=lora_callback)
 
