@@ -4,10 +4,10 @@ IO Expander Interface (PCAL6408A)
 Contents
 --------
 
--  Introduction
--  MicroPython Interface
--  C Interface
--  Hardware Connection
+- Introduction
+- MicroPython Interface
+- C Interface
+- Hardware Connection
 
 Introduction
 ------------

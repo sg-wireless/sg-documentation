@@ -26,28 +26,28 @@ lte.\__init\_\_([carrier='standard’, cid=1, mode=None, baudrate=115200, debug=
 
 This method is used to set up the LTE subsystem. Optionally specify
 
--  ``carrier name``. The currently available options are:
+- ``carrier name``. The currently available options are:
 
-   -  ``'att'``
-   -  ``'verizon'``
-   -  ``'standard'``
-   -  ``'docomo'``
-   -  ``'kddi'``
-   -  ``'telstra'``
-   -  ``'tmo'``
-   -  ``'verizon-no-roaming'``
-   -  ``'3gpp-conformance'``
+  - ``'att'``
+  - ``'verizon'``
+  - ``'standard'``
+  - ``'docomo'``
+  - ``'kddi'``
+  - ``'telstra'``
+  - ``'tmo'``
+  - ``'verizon-no-roaming'``
+  - ``'3gpp-conformance'``
 
--  ``cid`` is the connection id. Most operators use cid=1 except Verizon which
-   uses cid=3 when using a Verizon issued SIM card
+- ``cid`` is the connection id. Most operators use cid=1 except Verizon which
+  uses cid=3 when using a Verizon issued SIM card
 
--  ``mode`` is LTE.CATM1 or LTE.NBIOT. If not specified, modem will use current
-   setting
+- ``mode`` is LTE.CATM1 or LTE.NBIOT. If not specified, modem will use current
+  setting
 
--  ``baudrate`` is the speed with which the modem is operating. Default is
-   115200bps
+- ``baudrate`` is the speed with which the modem is operating. Default is
+  115200bps
 
--  ``debug``. True or False, display additional debugging output
+- ``debug``. True or False, display additional debugging output
 
 .. _ltedeinitresetfalse:
 
@@ -66,22 +66,22 @@ lte.attach([apn=None, type='IP', cid=None, band=None, bands=None])
 Enable radio functionality and attach to the LTE network authorised by the
 inserted SIM card. Optionally specify:
 
--  ``band`` : to scan for networks. If no band (or ``None``) is specified, the
-   currently configured bands will be scanned (this is persistent through
-   resetting the modem). The possible values for the band are:
-   ``1,2,3,4,5,8,12,13,17,18,19,20,25,26,28,66 or 71``.
--  ``bands`` : a tuple of mutiple band entries (see band above). **Note**: When
-   using the new C-based LTE driver, ``bands`` must be a list of **integers**
-   (e.g., ``[1, 3, 8]``), not strings. The legacy Python-based LTE.py driver
-   accepted either format, but the new driver requires strict typing.
--  ``apn`` : Specify the APN (Access point Name).
--  ``cid`` : connection ID, see ``LTE.\_\_init()\_\_`` and ``LTE.connect()``.
-   when the ID is set here it will be remembered when doing connect so no need
-   to specify again
--  ``type`` : PDP context type either ``IP`` or ``IPV4V6``. These are options
-   to specify PDP type 'Packet Data protocol' either IP [Internet Protocol] or
-   IPV4V6 [Internet Protocol version 4 and version 6] , that depend on what the
-   Network supports.
+- ``band`` : to scan for networks. If no band (or ``None``) is specified, the
+  currently configured bands will be scanned (this is persistent through
+  resetting the modem). The possible values for the band are:
+  ``1,2,3,4,5,8,12,13,17,18,19,20,25,26,28,66 or 71``.
+- ``bands`` : a tuple of mutiple band entries (see band above). **Note**: When
+  using the new C-based LTE driver, ``bands`` must be a list of **integers**
+  (e.g., ``[1, 3, 8]``), not strings. The legacy Python-based LTE.py driver
+  accepted either format, but the new driver requires strict typing.
+- ``apn`` : Specify the APN (Access point Name).
+- ``cid`` : connection ID, see ``LTE.\_\_init()\_\_`` and ``LTE.connect()``.
+  when the ID is set here it will be remembered when doing connect so no need
+  to specify again
+- ``type`` : PDP context type either ``IP`` or ``IPV4V6``. These are options to
+  specify PDP type 'Packet Data protocol' either IP [Internet Protocol] or
+  IPV4V6 [Internet Protocol version 4 and version 6] , that depend on what the
+  Network supports.
 
 **Migration Note**: If migrating from the legacy LTE.py driver, ensure band
 values are converted to integers:
@@ -129,7 +129,7 @@ lte.connect([cid=None])
 Start a data session and obtain and IP address. Optionally specify a CID
 (Connection ID) for the data session. The arguments are:
 
--  ``cid``: connection ID, see ``LTE.\_\_init()\_\_`` and ``LTE.attach()``.
+- ``cid``: connection ID, see ``LTE.\_\_init()\_\_`` and ``LTE.attach()``.
 
 .. _lteisconnected:
 
@@ -174,15 +174,15 @@ Example:
 
 Optionally the response can be parsed for pretty printing:
 
--  ``timeout`` : specify the timeout milliseconds the esp32 chip will wait
-   after the AT command to receive the response. -1 means wait forever
--  ``wait_ok_error`` : wait for the modem to respond with OK or ERROR after
-   sending the command. Not all commands return OK or ERROR which means the
-   command might be waiting forever. Some commands such as ``AT+SQNINS`` run
-   longer than the maximum timeout, and setting ``wait_ok_error=True`` is
-   required to get the results
--  ``check_error`` : Will check if an error occured and raise an exception.
-   Helpful in scripts that should abort if an error occurs.
+- ``timeout`` : specify the timeout milliseconds the esp32 chip will wait after
+  the AT command to receive the response. -1 means wait forever
+- ``wait_ok_error`` : wait for the modem to respond with OK or ERROR after
+  sending the command. Not all commands return OK or ERROR which means the
+  command might be waiting forever. Some commands such as ``AT+SQNINS`` run
+  longer than the maximum timeout, and setting ``wait_ok_error=True`` is
+  required to get the results
+- ``check_error`` : Will check if an error occured and raise an exception.
+  Helpful in scripts that should abort if an error occurs.
 
 .. _ltereset:
 
@@ -308,6 +308,6 @@ number). This function will check if a SIM card is present.
 Constants
 ---------
 
--  ``LTE.CATM1`` : For use in CATM1 mode
+- ``LTE.CATM1`` : For use in CATM1 mode
 
--  ``LTE.NBIOT`` : For use in NBIOT mode
+- ``LTE.NBIOT`` : For use in NBIOT mode

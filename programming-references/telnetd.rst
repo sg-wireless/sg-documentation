@@ -4,10 +4,10 @@ Telnet Server
 Contents
 --------
 
--  Introduction
--  Using with CTRL (recommended)
--  Standalone ``telnetd`` module
--  C API
+- Introduction
+- Using with CTRL (recommended)
+- Standalone ``telnetd`` module
+- C API
 
 Introduction
 ------------
@@ -71,46 +71,34 @@ Full signature. All keyword arguments are optional.
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Argument
-      - Type
-      - Default
-      - Description
-   - 
-
-      - ``enable``
-      - ``bool``
-      - —
-      - ``True`` to start, ``False`` to stop
-   - 
-
-      - ``save_persistent``
-      - ``bool``
-      - ``False``
-      - Persist the config so the server auto-starts on the next qualifying
-         connect
-   - 
-
-      - ``username``
-      - ``str``
-      - ``None``
-      - Login username; ``None`` leaves the current value unchanged. Only
-         relevant when ``password`` is also set — a username without a password
-         is not a supported combination
-   - 
-
-      - ``password``
-      - ``str``
-      - ``None``
-      - Login password; ``None`` leaves the current value unchanged (no
-         password required)
-   - 
-
-      - ``start_lte``
-      - ``bool``
-      - ``False``
-      - Also auto-start on LTE-M connections (default: WiFi only)
+   * - Argument
+     - Type
+     - Default
+     - Description
+   * - ``enable``
+     - ``bool``
+     - —
+     - ``True`` to start, ``False`` to stop
+   * - ``save_persistent``
+     - ``bool``
+     - ``False``
+     - Persist the config so the server auto-starts on the next qualifying
+       connect
+   * - ``username``
+     - ``str``
+     - ``None``
+     - Login username; ``None`` leaves the current value unchanged. Only
+       relevant when ``password`` is also set — a username without a password
+       is not a supported combination
+   * - ``password``
+     - ``str``
+     - ``None``
+     - Login password; ``None`` leaves the current value unchanged (no password
+       required)
+   * - ``start_lte``
+     - ``bool``
+     - ``False``
+     - Also auto-start on LTE-M connections (default: WiFi only)
 
 .. code:: python
 
@@ -163,10 +151,10 @@ directly to start the server independently of the CTRL connection state.
 
 Start the Telnet server.
 
--  ``password`` — optional login password (string). Omit for no authentication.
--  ``username`` — optional login username (string). Only relevant when
-   ``password`` is also set — adds a "Login as:" prompt before "Password:".
-   Omit for no username prompt.
+- ``password`` — optional login password (string). Omit for no authentication.
+- ``username`` — optional login username (string). Only relevant when
+  ``password`` is also set — adds a "Login as:" prompt before "Password:". Omit
+  for no username prompt.
 
 .. code:: python
 
@@ -215,39 +203,29 @@ The low-level C API is declared in ``inc/sg_telnetd.h``.
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Field
-      - Type
-      - Default
-      - Description
-   - 
-
-      - ``port``
-      - ``uint16_t``
-      - ``23``
-      - TCP listen port
-   - 
-
-      - ``username``
-      - ``const char *``
-      - ``NULL``
-      - Login username; ``NULL``/``""`` skips the ``Login as:`` prompt. Only
-         relevant when ``password`` is also set — a username without a password
-         is not a supported combination
-   - 
-
-      - ``password``
-      - ``const char *``
-      - ``NULL``
-      - Login password; ``NULL`` = no authentication required
-   - 
-
-      - ``client_cb``
-      - ``sg_telnetd_client_fn_t``
-      - ``NULL``
-      - Native C build only: called with the accepted socket fd for each
-         connection; ``NULL`` uses a built-in echo handler
+   * - Field
+     - Type
+     - Default
+     - Description
+   * - ``port``
+     - ``uint16_t``
+     - ``23``
+     - TCP listen port
+   * - ``username``
+     - ``const char *``
+     - ``NULL``
+     - Login username; ``NULL``/``""`` skips the ``Login as:`` prompt. Only
+       relevant when ``password`` is also set — a username without a password
+       is not a supported combination
+   * - ``password``
+     - ``const char *``
+     - ``NULL``
+     - Login password; ``NULL`` = no authentication required
+   * - ``client_cb``
+     - ``sg_telnetd_client_fn_t``
+     - ``NULL``
+     - Native C build only: called with the accepted socket fd for each
+       connection; ``NULL`` uses a built-in echo handler
 
 Pass ``NULL`` for ``cfg`` to use all defaults (REPL attachment in MicroPython
 builds, echo handler in native C builds).

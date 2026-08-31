@@ -4,22 +4,22 @@ Logging Library
 Contents
 --------
 
--  Introduction
--  Architecture
--  C API — Subsystem and Component Definitions
--  C API — Logging Macros
--  C API — Color Macros
--  C API — Filtering Functions
--  C API — Dynamic Registration
--  MicroPython API — ``logs`` Module
--  MicroPython API — Registration
--  MicroPython API — Logging Functions
--  MicroPython API — Filtering
--  Log Output Format
--  Kconfig Options
--  Capacity Limits
--  Example — C Component
--  Example — MicroPython
+- Introduction
+- Architecture
+- C API — Subsystem and Component Definitions
+- C API — Logging Macros
+- C API — Color Macros
+- C API — Filtering Functions
+- C API — Dynamic Registration
+- MicroPython API — ``logs`` Module
+- MicroPython API — Registration
+- MicroPython API — Logging Functions
+- MicroPython API — Filtering
+- Log Output Format
+- Kconfig Options
+- Capacity Limits
+- Example — C Component
+- Example — MicroPython
 
 Introduction
 ------------
@@ -31,17 +31,17 @@ type, OS context, source location, subsystem, component, and message fields.
 
 Key features:
 
--  **Structured output** — fixed-width columns with configurable widths
--  **Compile-time definitions** — subsystems and components defined via macros,
-   enabling per-module compile-time gating
--  **Runtime filtering** — enable/disable output by subsystem, component, log
-   type, or header column at runtime
--  **Terminal coloring** — ANSI color support with per-subsystem and
-   per-component colors
--  **Dynamic registration** — MicroPython code can register subsystems and
-   components at runtime and produce log output identical to native C logs
--  **Soft-reset safe** — dynamic registrations are cleared on MicroPython soft
-   reset, allowing clean re-registration
+- **Structured output** — fixed-width columns with configurable widths
+- **Compile-time definitions** — subsystems and components defined via macros,
+  enabling per-module compile-time gating
+- **Runtime filtering** — enable/disable output by subsystem, component, log
+  type, or header column at runtime
+- **Terminal coloring** — ANSI color support with per-subsystem and
+  per-component colors
+- **Dynamic registration** — MicroPython code can register subsystems and
+  components at runtime and produce log output identical to native C logs
+- **Soft-reset safe** — dynamic registrations are cleared on MicroPython soft
+  reset, allowing clean re-registration
 
 Architecture
 ------------
@@ -88,36 +88,26 @@ header:
 Subsystems and components are defined (typically once per compilation unit)
 using the following macros:
 
--  ``__log_subsystem_def(name, color, compile_flag, on)`` — define a subsystem.
+- ``__log_subsystem_def(name, color, compile_flag, on)`` — define a subsystem.
 
-   .. list-table::
-      :header-rows: 1
+  .. list-table::
+     :header-rows: 1
 
-      - 
+     * - Parameter
+       - Description
+     * - ``name``
+       - Subsystem identifier (used as a C token)
+     * - ``color``
+       - Color identifier: ``default``, ``red``, ``green``, ``yellow``,
+         ``blue``, ``purple``, ``cyan``, ``white``, ``black``
+     * - ``compile_flag``
+       - ``1`` to compile log calls, ``0`` to strip them at compile time
+     * - ``on``
+       - ``1`` to enable output at startup, ``0`` to start disabled
 
-         - Parameter
-         - Description
-      - 
-
-         - ``name``
-         - Subsystem identifier (used as a C token)
-      - 
-
-         - ``color``
-         - Color identifier: ``default``, ``red``, ``green``, ``yellow``,
-            ``blue``, ``purple``, ``cyan``, ``white``, ``black``
-      - 
-
-         - ``compile_flag``
-         - ``1`` to compile log calls, ``0`` to strip them at compile time
-      - 
-
-         - ``on``
-         - ``1`` to enable output at startup, ``0`` to start disabled
-
--  ``__log_component_def(subsystem, name, color, compile_flag, on)`` — define a
-   component under an existing subsystem. Same parameters as above, with an
-   additional ``subsystem`` parameter naming the parent.
+- ``__log_component_def(subsystem, name, color, compile_flag, on)`` — define a
+  component under an existing subsystem. Same parameters as above, with an
+  additional ``subsystem`` parameter naming the parent.
 
 .. code:: c
 
@@ -140,51 +130,33 @@ flag and runtime filter state of the current subsystem and component.
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Macro
-      - Log Type
-      - Description
-   - 
-
-      - ``__log_info(fmt, ...)``
-      - info
-      - General status and progress
-   - 
-
-      - ``__log_debug(fmt, ...)``
-      - debug
-      - Detailed tracing information
-   - 
-
-      - ``__log_warn(fmt, ...)``
-      - warn
-      - Recoverable issues, unusual conditions
-   - 
-
-      - ``__log_error(fmt, ...)``
-      - error
-      - Error conditions and failures
-   - 
-
-      - ``__log_output(fmt, ...)``
-      - output
-      - Direct standard output (no header)
-   - 
-
-      - ``__log_printf(fmt, ...)``
-      - printf
-      - Continuation of a previous log line
-   - 
-
-      - ``__log_assert(cond, fmt, ...)``
-      - assert
-      - Fatal assertion (triggers crash if ``cond`` is false)
-   - 
-
-      - ``__log_ptr(ptr)``
-      - debug
-      - Convenience: logs ``"pointer: name = 0xADDR"``
+   * - Macro
+     - Log Type
+     - Description
+   * - ``__log_info(fmt, ...)``
+     - info
+     - General status and progress
+   * - ``__log_debug(fmt, ...)``
+     - debug
+     - Detailed tracing information
+   * - ``__log_warn(fmt, ...)``
+     - warn
+     - Recoverable issues, unusual conditions
+   * - ``__log_error(fmt, ...)``
+     - error
+     - Error conditions and failures
+   * - ``__log_output(fmt, ...)``
+     - output
+     - Direct standard output (no header)
+   * - ``__log_printf(fmt, ...)``
+     - printf
+     - Continuation of a previous log line
+   * - ``__log_assert(cond, fmt, ...)``
+     - assert
+     - Fatal assertion (triggers crash if ``cond`` is false)
+   * - ``__log_ptr(ptr)``
+     - debug
+     - Convenience: logs ``"pointer: name = 0xADDR"``
 
 .. code:: c
 
@@ -205,46 +177,26 @@ when ``SDK_LOG_LIB_TERMINAL_COLORING_ENABLE`` is disabled.
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Macro
-      - Color
-   - 
-
-      - ``__red__``
-      - Red
-   - 
-
-      - ``__green__``
-      - Green
-   - 
-
-      - ``__yellow__``
-      - Yellow
-   - 
-
-      - ``__blue__``
-      - Blue
-   - 
-
-      - ``__purple__``
-      - Purple
-   - 
-
-      - ``__cyan__``
-      - Cyan
-   - 
-
-      - ``__white__``
-      - White
-   - 
-
-      - ``__black__``
-      - Black
-   - 
-
-      - ``__default__``
-      - Terminal default
+   * - Macro
+     - Color
+   * - ``__red__``
+     - Red
+   * - ``__green__``
+     - Green
+   * - ``__yellow__``
+     - Yellow
+   * - ``__blue__``
+     - Blue
+   * - ``__purple__``
+     - Purple
+   * - ``__cyan__``
+     - Cyan
+   * - ``__white__``
+     - White
+   * - ``__black__``
+     - Black
+   * - ``__default__``
+     - Terminal default
 
 .. code:: c
 
@@ -263,37 +215,37 @@ C API — Filtering Functions
 All filtering functions work on both static (compile-time) and dynamic
 (runtime) registrations.
 
--  ``void log_filter_subsystem(name, state, silent)`` — enable (``true``) or
-   disable (``false``) all output from a subsystem. When ``silent`` is
-   ``false``, a confirmation message is logged.
+- ``void log_filter_subsystem(name, state, silent)`` — enable (``true``) or
+  disable (``false``) all output from a subsystem. When ``silent`` is
+  ``false``, a confirmation message is logged.
 
--  ``void log_filter_component(subsys_name, comp_name, state, silent)`` —
-   enable or disable a specific component.
+- ``void log_filter_component(subsys_name, comp_name, state, silent)`` — enable
+  or disable a specific component.
 
--  ``void log_filter_type(type_name, state, silent)`` — enable or disable a log
-   type globally (e.g., ``"debug"``, ``"info"``).
+- ``void log_filter_type(type_name, state, silent)`` — enable or disable a log
+  type globally (e.g., ``"debug"``, ``"info"``).
 
--  ``void log_filter_header(column_name, state, silent)`` — show or hide a
-   header column (e.g., ``"timestamp"``, ``"func_name"``).
+- ``void log_filter_header(column_name, state, silent)`` — show or hide a
+  header column (e.g., ``"timestamp"``, ``"func_name"``).
 
--  ``void log_filter_header_reorder(name, new_order)`` — change the display
-   order of a header column.
+- ``void log_filter_header_reorder(name, new_order)`` — change the display
+  order of a header column.
 
--  ``void log_filter_list_stats()`` — print the current filter state for all
-   subsystems, components, log types, and header columns.
+- ``void log_filter_list_stats()`` — print the current filter state for all
+  subsystems, components, log types, and header columns.
 
--  ``bool log_filter_subsystem_get_state(name)`` — query the current enable
-   state of a subsystem.
+- ``bool log_filter_subsystem_get_state(name)`` — query the current enable
+  state of a subsystem.
 
--  ``bool log_filter_component_get_state(subsys_name, comp_name)`` — query the
-   current enable state of a component.
+- ``bool log_filter_component_get_state(subsys_name, comp_name)`` — query the
+  current enable state of a component.
 
--  ``void log_filter_save_state(p_state, new_state)`` — save the current filter
-   state for a subsystem/component pair and set a new state. Useful for
-   temporarily enabling output around a specific operation.
+- ``void log_filter_save_state(p_state, new_state)`` — save the current filter
+  state for a subsystem/component pair and set a new state. Useful for
+  temporarily enabling output around a specific operation.
 
--  ``void log_filter_restore_state(p_state)`` — restore a previously saved
-   filter state.
+- ``void log_filter_restore_state(p_state)`` — restore a previously saved
+  filter state.
 
 .. _c-api--dynamic-registration:
 
@@ -303,20 +255,19 @@ C API — Dynamic Registration
 These functions are the C-level API backing the MicroPython ``logs`` module.
 They can also be called directly from C code that needs runtime registration.
 
--  ``int log_register_subsystem(name, color_name, enabled, silent)`` — register
-   a dynamic subsystem. Returns ``0`` on success, ``-1`` if the name is a
-   duplicate, clashes with a static subsystem, or the registry is full.
+- ``int log_register_subsystem(name, color_name, enabled, silent)`` — register
+  a dynamic subsystem. Returns ``0`` on success, ``-1`` if the name is a
+  duplicate, clashes with a static subsystem, or the registry is full.
 
--  ``int log_register_component(subsys_name, comp_name, color_name, enabled, silent)``
-   — register a dynamic component under an existing dynamic subsystem. Returns
-   ``0`` on success, ``-1`` on failure.
+- ``int log_register_component(subsys_name, comp_name, color_name, enabled, silent)``
+  — register a dynamic component under an existing dynamic subsystem. Returns
+  ``0`` on success, ``-1`` on failure.
 
--  ``void log_dynamic_message(subsys_name, comp_name, p_type_info, msg)`` —
-   push a message through the log pipeline using dynamic subsystem/component
-   names.
+- ``void log_dynamic_message(subsys_name, comp_name, p_type_info, msg)`` — push
+  a message through the log pipeline using dynamic subsystem/component names.
 
--  ``void log_dynamic_registry_clear()`` — clear all dynamic registrations.
-   Called automatically on MicroPython soft reset to allow re-registration.
+- ``void log_dynamic_registry_clear()`` — clear all dynamic registrations.
+  Called automatically on MicroPython soft reset to allow re-registration.
 
 .. _micropython-api--logs-module:
 
@@ -338,92 +289,70 @@ MicroPython API — Registration
 
 Before logging, at least one subsystem and one component must be registered.
 
--  ``logs.register_subsystem(name, *, color='default', enabled=True, silent=True)``
+- ``logs.register_subsystem(name, *, color='default', enabled=True, silent=True)``
 
-   Register a new dynamic subsystem.
+  Register a new dynamic subsystem.
 
-   .. list-table::
-      :header-rows: 1
+  .. list-table::
+     :header-rows: 1
 
-      - 
+     * - Parameter
+       - Type
+       - Default
+       - Description
+     * - ``name``
+       - str
+       - *(required)*
+       - Subsystem name (max 23 characters)
+     * - ``color``
+       - str
+       - ``'default'``
+       - Display color for the subsystem column
+     * - ``enabled``
+       - bool
+       - ``True``
+       - Whether the subsystem starts enabled
+     * - ``silent``
+       - bool
+       - ``True``
+       - If ``False``, logs a registration confirmation
 
-         - Parameter
-         - Type
-         - Default
-         - Description
-      - 
+  Raises ``ValueError`` if the registry is full or the name is a duplicate.
 
-         - ``name``
-         - str
-         - *(required)*
-         - Subsystem name (max 23 characters)
-      - 
+- ``logs.register_component(subsystem, component, *, color='default', enabled=True, silent=True)``
 
-         - ``color``
-         - str
-         - ``'default'``
-         - Display color for the subsystem column
-      - 
+  Register a dynamic component under an existing subsystem.
 
-         - ``enabled``
-         - bool
-         - ``True``
-         - Whether the subsystem starts enabled
-      - 
+  .. list-table::
+     :header-rows: 1
 
-         - ``silent``
-         - bool
-         - ``True``
-         - If ``False``, logs a registration confirmation
+     * - Parameter
+       - Type
+       - Default
+       - Description
+     * - ``subsystem``
+       - str
+       - *(required)*
+       - Parent subsystem name (must exist)
+     * - ``component``
+       - str
+       - *(required)*
+       - Component name (max 23 characters)
+     * - ``color``
+       - str
+       - ``'default'``
+       - Display color for the component column
+     * - ``enabled``
+       - bool
+       - ``True``
+       - Whether the component starts enabled
+     * - ``silent``
+       - bool
+       - ``True``
+       - If ``False``, logs a registration confirmation
 
-   Raises ``ValueError`` if the registry is full or the name is a duplicate.
-
--  ``logs.register_component(subsystem, component, *, color='default', enabled=True, silent=True)``
-
-   Register a dynamic component under an existing subsystem.
-
-   .. list-table::
-      :header-rows: 1
-
-      - 
-
-         - Parameter
-         - Type
-         - Default
-         - Description
-      - 
-
-         - ``subsystem``
-         - str
-         - *(required)*
-         - Parent subsystem name (must exist)
-      - 
-
-         - ``component``
-         - str
-         - *(required)*
-         - Component name (max 23 characters)
-      - 
-
-         - ``color``
-         - str
-         - ``'default'``
-         - Display color for the component column
-      - 
-
-         - ``enabled``
-         - bool
-         - ``True``
-         - Whether the component starts enabled
-      - 
-
-         - ``silent``
-         - bool
-         - ``True``
-         - If ``False``, logs a registration confirmation
-
-   Raises ``ValueError`` if the subsystem is not found or the component is a
-   duplicate.
+  Raises ``ValueError`` if the subsystem is not found or the component is a
+  duplicate.
 
 .. _micropython-api--logging-functions:
 
@@ -439,36 +368,24 @@ All logging functions share the same signature:
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Function
-      - Log Type
-      - Typical Use
-   - 
-
-      - ``logs.info(subsystem, component, message)``
-      - info
-      - General status and progress
-   - 
-
-      - ``logs.debug(subsystem, component, message)``
-      - debug
-      - Detailed tracing information
-   - 
-
-      - ``logs.warn(subsystem, component, message)``
-      - warn
-      - Recoverable issues
-   - 
-
-      - ``logs.error(subsystem, component, message)``
-      - error
-      - Error conditions and failures
-   - 
-
-      - ``logs.output(subsystem, component, message)``
-      - output
-      - Direct output (no log-type decoration)
+   * - Function
+     - Log Type
+     - Typical Use
+   * - ``logs.info(subsystem, component, message)``
+     - info
+     - General status and progress
+   * - ``logs.debug(subsystem, component, message)``
+     - debug
+     - Detailed tracing information
+   * - ``logs.warn(subsystem, component, message)``
+     - warn
+     - Recoverable issues
+   * - ``logs.error(subsystem, component, message)``
+     - error
+     - Error conditions and failures
+   * - ``logs.output(subsystem, component, message)``
+     - output
+     - Direct output (no log-type decoration)
 
 All three arguments are required strings. The subsystem and component must have
 been previously registered.
@@ -486,26 +403,26 @@ been previously registered.
 MicroPython API — Filtering
 ---------------------------
 
--  ``logs.filter_subsystem(subsystem, state, *, silent=False)`` — enable or
-   disable a subsystem. Works on both static and dynamic subsystems.
+- ``logs.filter_subsystem(subsystem, state, *, silent=False)`` — enable or
+  disable a subsystem. Works on both static and dynamic subsystems.
 
--  ``logs.filter_component(subsystem, component, state, *, silent=False)`` —
-   enable or disable a specific component.
+- ``logs.filter_component(subsystem, component, state, *, silent=False)`` —
+  enable or disable a specific component.
 
--  ``logs.filter_header(header_item, state, *, silent=False)`` — show or hide a
-   header column. Valid names: ``"timestamp"``, ``"log_type"``, ``"os_info"``,
-   ``"subsystem"``, ``"component"``, ``"filename"``, ``"line_num"``,
-   ``"func_name"``.
+- ``logs.filter_header(header_item, state, *, silent=False)`` — show or hide a
+  header column. Valid names: ``"timestamp"``, ``"log_type"``, ``"os_info"``,
+  ``"subsystem"``, ``"component"``, ``"filename"``, ``"line_num"``,
+  ``"func_name"``.
 
--  ``logs.filter_log_type(log_type, state, *, silent=False)`` — enable or
-   disable a log type globally. Valid names: ``"info"``, ``"debug"``,
-   ``"warn"``, ``"error"``, ``"output"``, ``"printf"``, ``"assert"``.
+- ``logs.filter_log_type(log_type, state, *, silent=False)`` — enable or
+  disable a log type globally. Valid names: ``"info"``, ``"debug"``,
+  ``"warn"``, ``"error"``, ``"output"``, ``"printf"``, ``"assert"``.
 
--  ``logs.header_reorder(header_item, new_order)`` — change the display
-   position of a header column.
+- ``logs.header_reorder(header_item, new_order)`` — change the display position
+  of a header column.
 
--  ``logs.filter_stats()`` — print the current filter state for all subsystems,
-   components, types, and header columns.
+- ``logs.filter_stats()`` — print the current filter state for all subsystems,
+  components, types, and header columns.
 
 .. code:: python
 
@@ -535,54 +452,38 @@ The default column layout:
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Column
-      - Header Name
-      - Default Width
-      - Description
-   - 
-
-      - Timestamp
-      - ``timestamp``
-      - 13
-      - Time since boot ``HHH:MM:SS-mmm``
-   - 
-
-      - Log type
-      - ``log_type``
-      - 8
-      - ``info``, ``debug``, ``warn``, ``error``, ``output``
-   - 
-
-      - OS context
-      - ``os_info``
-      - 14
-      - Core ID and task name (e.g. ``1:mp_task``)
-   - 
-
-      - Function
-      - ``func_name``
-      - 15
-      - Source function name (C) or ``mpy`` (Python)
-   - 
-
-      - Subsystem
-      - ``subsystem``
-      - 9
-      - Registered subsystem name
-   - 
-
-      - Component
-      - ``component``
-      - 13
-      - Registered component name
-   - 
-
-      - Message
-      - —
-      - —
-      - The log message text
+   * - Column
+     - Header Name
+     - Default Width
+     - Description
+   * - Timestamp
+     - ``timestamp``
+     - 13
+     - Time since boot ``HHH:MM:SS-mmm``
+   * - Log type
+     - ``log_type``
+     - 8
+     - ``info``, ``debug``, ``warn``, ``error``, ``output``
+   * - OS context
+     - ``os_info``
+     - 14
+     - Core ID and task name (e.g. ``1:mp_task``)
+   * - Function
+     - ``func_name``
+     - 15
+     - Source function name (C) or ``mpy`` (Python)
+   * - Subsystem
+     - ``subsystem``
+     - 9
+     - Registered subsystem name
+   * - Component
+     - ``component``
+     - 13
+     - Registered component name
+   * - Message
+     - —
+     - —
+     - The log message text
 
 Columns can be enabled/disabled, reordered, and resized via Kconfig and runtime
 filter APIs. The ``filename`` and ``line_num`` columns are disabled by default.
@@ -595,133 +496,87 @@ All options are under the ``SDK_LOG_LIB_ENABLE`` menu.
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Option
-      - Default
-      - Description
-   - 
-
-      - ``SDK_LOG_LIB_ENABLE``
-      - y
-      - Master enable for the logging library
-   - 
-
-      - ``SDK_LOG_LIB_MEMORY_BUFFER_SIZE_KB``
-      - 4
-      - Internal buffer size in KB
-   - 
-
-      - ``SDK_LOG_LIB_TERMINAL_COLORING_ENABLE``
-      - y
-      - ANSI color output
-   - 
-
-      - ``SDK_LOG_LIB_MPY_CMOD_ENABLE``
-      - y
-      - Enable MicroPython ``logs`` module
+   * - Option
+     - Default
+     - Description
+   * - ``SDK_LOG_LIB_ENABLE``
+     - y
+     - Master enable for the logging library
+   * - ``SDK_LOG_LIB_MEMORY_BUFFER_SIZE_KB``
+     - 4
+     - Internal buffer size in KB
+   * - ``SDK_LOG_LIB_TERMINAL_COLORING_ENABLE``
+     - y
+     - ANSI color output
+   * - ``SDK_LOG_LIB_MPY_CMOD_ENABLE``
+     - y
+     - Enable MicroPython ``logs`` module
 
 **Log types** — each can be individually compiled in or out:
 
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Option
-      - Default
-   - 
-
-      - ``SDK_LOG_LIB_TYPE_INFO``
-      - y
-   - 
-
-      - ``SDK_LOG_LIB_TYPE_DEBUG``
-      - y
-   - 
-
-      - ``SDK_LOG_LIB_TYPE_WARN``
-      - y
-   - 
-
-      - ``SDK_LOG_LIB_TYPE_ERROR``
-      - y
-   - 
-
-      - ``SDK_LOG_LIB_TYPE_PRINTF``
-      - y
-   - 
-
-      - ``SDK_LOG_LIB_TYPE_ASSERT``
-      - y
-   - 
-
-      - ``SDK_LOG_LIB_TYPE_MEM_DUMP``
-      - y
-   - 
-
-      - ``SDK_LOG_LIB_TYPE_ENFORCE``
-      - y
+   * - Option
+     - Default
+   * - ``SDK_LOG_LIB_TYPE_INFO``
+     - y
+   * - ``SDK_LOG_LIB_TYPE_DEBUG``
+     - y
+   * - ``SDK_LOG_LIB_TYPE_WARN``
+     - y
+   * - ``SDK_LOG_LIB_TYPE_ERROR``
+     - y
+   * - ``SDK_LOG_LIB_TYPE_PRINTF``
+     - y
+   * - ``SDK_LOG_LIB_TYPE_ASSERT``
+     - y
+   * - ``SDK_LOG_LIB_TYPE_MEM_DUMP``
+     - y
+   * - ``SDK_LOG_LIB_TYPE_ENFORCE``
+     - y
 
 **Header fields** — each can be enabled/disabled and has a configurable width:
 
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Field
-      - Enable Option
-      - Width Option
-      - Default Width
-   - 
-
-      - Timestamp
-      - ``SDK_LOG_LIB_HEADER_TIMESTAMP`` (y)
-      - ``..._TIMESTAMP_WIDTH``
-      - 13
-   - 
-
-      - Log type
-      - ``SDK_LOG_LIB_HEADER_LOG_TYPE`` (y)
-      - ``..._LOG_TYPE_WIDTH``
-      - 8
-   - 
-
-      - OS context
-      - ``SDK_LOG_LIB_HEADER_OS_CONTEXT_INFO`` (y)
-      - ``..._OS_CONTEXT_INFO_WIDTH``
-      - 14
-   - 
-
-      - File name
-      - ``SDK_LOG_LIB_HEADER_FILENAME`` (n)
-      - ``..._FILENAME_WIDTH``
-      - 12
-   - 
-
-      - Line number
-      - ``SDK_LOG_LIB_HEADER_LINE_NUM`` (n)
-      - ``..._LINE_NUM_WIDTH``
-      - 6
-   - 
-
-      - Function
-      - ``SDK_LOG_LIB_HEADER_FUNC_NAME`` (y)
-      - ``..._FUNC_NAME_WIDTH``
-      - 15
-   - 
-
-      - Subsystem
-      - ``SDK_LOG_LIB_HEADER_SUBSYSTEM`` (y)
-      - ``..._SUBSYSTEM_WIDTH``
-      - 9
-   - 
-
-      - Component
-      - ``SDK_LOG_LIB_HEADER_COMPONENT`` (y)
-      - ``..._COMPONENT_WIDTH``
-      - 13
+   * - Field
+     - Enable Option
+     - Width Option
+     - Default Width
+   * - Timestamp
+     - ``SDK_LOG_LIB_HEADER_TIMESTAMP`` (y)
+     - ``..._TIMESTAMP_WIDTH``
+     - 13
+   * - Log type
+     - ``SDK_LOG_LIB_HEADER_LOG_TYPE`` (y)
+     - ``..._LOG_TYPE_WIDTH``
+     - 8
+   * - OS context
+     - ``SDK_LOG_LIB_HEADER_OS_CONTEXT_INFO`` (y)
+     - ``..._OS_CONTEXT_INFO_WIDTH``
+     - 14
+   * - File name
+     - ``SDK_LOG_LIB_HEADER_FILENAME`` (n)
+     - ``..._FILENAME_WIDTH``
+     - 12
+   * - Line number
+     - ``SDK_LOG_LIB_HEADER_LINE_NUM`` (n)
+     - ``..._LINE_NUM_WIDTH``
+     - 6
+   * - Function
+     - ``SDK_LOG_LIB_HEADER_FUNC_NAME`` (y)
+     - ``..._FUNC_NAME_WIDTH``
+     - 15
+   * - Subsystem
+     - ``SDK_LOG_LIB_HEADER_SUBSYSTEM`` (y)
+     - ``..._SUBSYSTEM_WIDTH``
+     - 9
+   * - Component
+     - ``SDK_LOG_LIB_HEADER_COMPONENT`` (y)
+     - ``..._COMPONENT_WIDTH``
+     - 13
 
 Line wrapping is optionally enabled with
 ``SDK_LOG_LIB_TOTAL_LINE_WRAPPING_ENABLE`` (default: off) and
@@ -735,22 +590,14 @@ Capacity Limits
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Resource
-      - Limit
-   - 
-
-      - Dynamic subsystems
-      - 8
-   - 
-
-      - Dynamic components (shared across all subsystems)
-      - 32
-   - 
-
-      - Name length
-      - 23 characters
+   * - Resource
+     - Limit
+   * - Dynamic subsystems
+     - 8
+   * - Dynamic components (shared across all subsystems)
+     - 32
+   * - Name length
+     - 23 characters
 
 These limits are separate from compile-time static subsystems and components,
 which have no practical limit beyond available flash.

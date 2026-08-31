@@ -4,10 +4,10 @@ Non-Volatile Storage (NVS) Interface
 Contents
 --------
 
--  Introduction
--  NVS Statistics
--  NVS Query
--  NVS Key-Value Operations
+- Introduction
+- NVS Statistics
+- NVS Query
+- NVS Key-Value Operations
 
 Introduction
 ------------
@@ -40,12 +40,12 @@ Function Signature
 Parameters
 ~~~~~~~~~~
 
--  ``dump_blobs`` (bool, default: False) - If True, displays hexadecimal
-   content of BLOB entries in addition to their size.
--  ``partition`` (str, optional) - Filter output to a specific NVS partition
-   (e.g., "nvs"). If omitted, all partitions are displayed.
--  ``namespace`` (str, optional) - Filter output to a specific namespace within
-   the partition(s).
+- ``dump_blobs`` (bool, default: False) - If True, displays hexadecimal content
+  of BLOB entries in addition to their size.
+- ``partition`` (str, optional) - Filter output to a specific NVS partition
+  (e.g., "nvs"). If omitted, all partitions are displayed.
+- ``namespace`` (str, optional) - Filter output to a specific namespace within
+  the partition(s).
 
 Output Format
 ~~~~~~~~~~~~~
@@ -53,17 +53,16 @@ Output Format
 The output displays all key-value pairs organized by partition and namespace,
 with the following information for each entry:
 
--  **namespace** - The namespace the key belongs to
--  **key** - The key name
--  **type** - The data type (U8, I32, STR, BLOB, etc.)
--  **val** - The current value or size (for BLOBs)
+- **namespace** - The namespace the key belongs to
+- **key** - The key name
+- **type** - The data type (U8, I32, STR, BLOB, etc.)
+- **val** - The current value or size (for BLOBs)
 
 At the end of each partition, a summary is displayed showing:
 
--  **partition size** - Total capacity of the NVS partition in bytes
--  **used entries** - Number of entries currently used / total available
-   entries
--  **free** - Percentage of available free space
+- **partition size** - Total capacity of the NVS partition in bytes
+- **used entries** - Number of entries currently used / total available entries
+- **free** - Percentage of available free space
 
 Examples
 ~~~~~~~~
@@ -127,17 +126,17 @@ Function Signature
 Parameters
 ~~~~~~~~~~
 
--  ``key`` (str) - The key name to check for existence. If None, checks for
-   namespace existence only.
--  ``namespace`` (str) - The namespace in which to search.
--  ``partition`` (str, optional) - The NVS partition name. If omitted, searches
-   the default "nvs" partition.
+- ``key`` (str) - The key name to check for existence. If None, checks for
+  namespace existence only.
+- ``namespace`` (str) - The namespace in which to search.
+- ``partition`` (str, optional) - The NVS partition name. If omitted, searches
+  the default "nvs" partition.
 
 Return Value
 ~~~~~~~~~~~~
 
--  **True** if the key (or namespace) exists
--  **False** if the key (or namespace) does not exist
+- **True** if the key (or namespace) exists
+- **False** if the key (or namespace) does not exist
 
 .. _examples-1:
 
@@ -184,20 +183,20 @@ Function Signature
 Parameters
 ~~~~~~~~~~
 
--  ``partition`` (str) - The NVS partition name
--  ``namespace`` (str) - The namespace containing the key
--  ``key`` (str) - The key name (must already exist)
--  ``value`` - The new value (bytes, int, or str). The value's stored NVS type
-   is inferred from the *existing* entry, not from the Python type passed in.
+- ``partition`` (str) - The NVS partition name
+- ``namespace`` (str) - The namespace containing the key
+- ``key`` (str) - The key name (must already exist)
+- ``value`` - The new value (bytes, int, or str). The value's stored NVS type
+  is inferred from the *existing* entry, not from the Python type passed in.
 
 .. _return-value-1:
 
 Return Value
 ~~~~~~~~~~~~
 
--  **True** if the key existed and was updated successfully
--  **False** if the key does not exist yet, the partition/namespace/key are
-   invalid, or the write failed
+- **True** if the key existed and was updated successfully
+- **False** if the key does not exist yet, the partition/namespace/key are
+  invalid, or the write failed
 
 .. _examples-2:
 
@@ -237,19 +236,19 @@ Function Signature
 Parameters
 ~~~~~~~~~~
 
--  ``partition`` (str) - The NVS partition name
--  ``namespace`` (str) - The namespace in which to store the key
--  ``key`` (str) - The key name (must not already exist)
--  ``value`` - The value to store (bytes, int, or str, depending on intended
-   type)
+- ``partition`` (str) - The NVS partition name
+- ``namespace`` (str) - The namespace in which to store the key
+- ``key`` (str) - The key name (must not already exist)
+- ``value`` - The value to store (bytes, int, or str, depending on intended
+  type)
 
 .. _return-value-2:
 
 Return Value
 ~~~~~~~~~~~~
 
--  **True** if the key was created successfully
--  **False** if the key already exists, or the operation failed
+- **True** if the key was created successfully
+- **False** if the key already exists, or the operation failed
 
 .. _examples-3:
 
@@ -289,9 +288,9 @@ Function Signature
 Parameters
 ~~~~~~~~~~
 
--  ``partition`` (str) - The NVS partition name
--  ``namespace`` (str) - The namespace containing the key
--  ``key`` (str) - The key name to retrieve
+- ``partition`` (str) - The NVS partition name
+- ``namespace`` (str) - The namespace containing the key
+- ``key`` (str) - The key name to retrieve
 
 .. _return-value-3:
 
@@ -338,17 +337,17 @@ Function Signature
 Parameters
 ~~~~~~~~~~
 
--  ``partition`` (str) - The NVS partition name
--  ``namespace`` (str) - The namespace containing the key
--  ``key`` (str) - The key name to delete
+- ``partition`` (str) - The NVS partition name
+- ``namespace`` (str) - The namespace containing the key
+- ``key`` (str) - The key name to delete
 
 .. _return-value-4:
 
 Return Value
 ~~~~~~~~~~~~
 
--  **True** if the key was deleted successfully
--  **False** if the key doesn't exist or the operation failed
+- **True** if the key was deleted successfully
+- **False** if the key doesn't exist or the operation failed
 
 .. _examples-5:
 

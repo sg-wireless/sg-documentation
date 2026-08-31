@@ -4,10 +4,10 @@ System Information
 Contents
 --------
 
--  Introduction
--  Board Information
--  version Information
--  Other Information
+- Introduction
+- Board Information
+- version Information
+- Other Information
 
 Introduction
 ------------
@@ -21,15 +21,15 @@ Board Information
 ``sysinfo.board()`` This method used to get the board related information. It
 returns a dict object with the following keyword fields:
 
--  ``full_name`` a complete name for the board comrising the OEM module name,
-   part number and the shield name if available.
--  ``platform`` a platform name of the used OEM module.
--  ``module_name`` the used OEM module name such as ``F1``, ``F1-C``, ``F1-L``,
-   ...
--  ``module_number`` the corresponding part number of the module such as:
-   ``SGW3201``, ``SGW3501``, ...
--  ``shield`` the used shield for the OEM module. such as ``StarterKit``. If
-   the shield is not available, it will be ``OEM``.
+- ``full_name`` a complete name for the board comrising the OEM module name,
+  part number and the shield name if available.
+- ``platform`` a platform name of the used OEM module.
+- ``module_name`` the used OEM module name such as ``F1``, ``F1-C``, ``F1-L``,
+  ...
+- ``module_number`` the corresponding part number of the module such as:
+  ``SGW3201``, ``SGW3501``, ...
+- ``shield`` the used shield for the OEM module. such as ``StarterKit``. If the
+  shield is not available, it will be ``OEM``.
 
 Example
 
@@ -82,23 +82,23 @@ It returns a dict object with the following keyword fields:
 build_date='2024.04.18', build_time='07:30', custom='dirty', release='v0.1.0',
 build='v0.1.0-1-0b532043-20240418-dirty')
 
--  ``major`` an integer containing the version major number.
--  ``minor`` an integer containing the version minor number.
--  ``patch`` an integer containing the version patch number.
--  ``git_delta`` an integer containing the number of commits between the base
-   release git commit and the current build git commit.
--  ``git_tag`` a string representing the build git commit short hash(8
-   characters).
--  ``build_date`` a string representing the date of this build in format
-   (yyyy.mm.dd).
--  ``build_time`` a string representing the time of this build in format
-   (hh:mm).
--  ``custom`` a string containing a user given custom string in the build
-   command or it contains ``dirty`` word if no provided custom version string
-   in the build command and the build source has uncommitted changes.
-   Otherwise, it is empty.
--  ``release`` contains the base release version of this build.
--  ``build`` contains the complete build version of this build.
+- ``major`` an integer containing the version major number.
+- ``minor`` an integer containing the version minor number.
+- ``patch`` an integer containing the version patch number.
+- ``git_delta`` an integer containing the number of commits between the base
+  release git commit and the current build git commit.
+- ``git_tag`` a string representing the build git commit short hash(8
+  characters).
+- ``build_date`` a string representing the date of this build in format
+  (yyyy.mm.dd).
+- ``build_time`` a string representing the time of this build in format
+  (hh:mm).
+- ``custom`` a string containing a user given custom string in the build
+  command or it contains ``dirty`` word if no provided custom version string in
+  the build command and the build source has uncommitted changes. Otherwise, it
+  is empty.
+- ``release`` contains the base release version of this build.
+- ``build`` contains the complete build version of this build.
 
 Example
 

@@ -8,23 +8,23 @@ SG SDK QuickStart
 
 Start here and complete the ESP-IDF v5.5 prerequisite/setup steps:
 
--  https://docs.espressif.com/projects/esp-idf/en/release-v5.5/esp32s3/get-started/linux-macos-setup.html#get-started-prerequisites
+- https://docs.espressif.com/projects/esp-idf/en/release-v5.5/esp32s3/get-started/linux-macos-setup.html#get-started-prerequisites
 
 Important for SG SDK:
 
--  Only **Step 1 (Get Started Prerequisites)** is required.
--  **Step 2 (Get ESP-IDF)** and any further ESP-IDF setup steps are not
-   required for this workflow.
--  ``fw_builder.sh`` handles the SDK-managed ESP-IDF checkout/setup during the
-   build flow.
+- Only **Step 1 (Get Started Prerequisites)** is required.
+- **Step 2 (Get ESP-IDF)** and any further ESP-IDF setup steps are not required
+  for this workflow.
+- ``fw_builder.sh`` handles the SDK-managed ESP-IDF checkout/setup during the
+  build flow.
 
 Windows note:
 
--  Use WSL2 with Ubuntu, then follow the Linux instructions.
--  For VS Code, use the Remote - WSL extension so all builds run inside WSL2.
--  To flash your device in WSL2, a tool like
-   (wsl-usb-manager)[https://github.com/nickbeth/wsl-usb-manager] or
-   (wsl-usb-gui)[https://gitlab.com/alelec/wsl-usb-gui] is useful.
+- Use WSL2 with Ubuntu, then follow the Linux instructions.
+- For VS Code, use the Remote - WSL extension so all builds run inside WSL2.
+- To flash your device in WSL2, a tool like
+  (wsl-usb-manager)[https://github.com/nickbeth/wsl-usb-manager] or
+  (wsl-usb-gui)[https://gitlab.com/alelec/wsl-usb-gui] is useful.
 
 .. _2-clone-the-repository:
 
@@ -84,10 +84,10 @@ If ``variant`` is omitted, MicroPython is the default.
 
 ``mpremote`` is useful for:
 
--  File copy to/from device
--  REPL access
--  Running scripts
--  Installing packages with ``mip``
+- File copy to/from device
+- REPL access
+- Running scripts
+- Installing packages with ``mip``
 
 Installation: Via pip / pipx: Use ``pip install mpremote`` or
 ``pipx install mpremote`` Via package manager: On Ubuntu use:
@@ -115,7 +115,7 @@ on the command line as shown below.
 
 ``ctrl_client_c`` is native-only (C API), configured through:
 
--  ``examples/ctrl_client_c/board_config.toml``
+- ``examples/ctrl_client_c/board_config.toml``
 
 Build and flash:
 
@@ -128,8 +128,8 @@ Build and flash:
 
 Activation token notes:
 
--  The platform gives ``ctrl.activate("<base64-token>")``, copy only
-   ``<base64-token>`` into ``ACTIVATION_TOKEN``.
+- The platform gives ``ctrl.activate("<base64-token>")``, copy only
+  ``<base64-token>`` into ``ACTIVATION_TOKEN``.
 
 See `examples/ctrl_client_c/README.md <examples/ctrl_client_c/README.md>`__ for
 a complete token conversion snippet and full example details.

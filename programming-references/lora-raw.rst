@@ -7,46 +7,26 @@ Available LoRa RAW APIs Summary
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - API Call
-      - Brief description
-   - 
-
-      - ``lora.stats()``
-      - displays the current stats of lora RAW
-   - 
-
-      - ``lora.radio_params()``
-      - set one or more radio parameter
-   - 
-
-      - ``lora.callback()``
-      - set a user level callback
-   - 
-
-      - ``lora.send()``
-      - transmit a given data over LoRa
-   - 
-
-      - ``lora.recv()``
-      - open a timed-out rx window to listen to any incoming data
-   - 
-
-      - ``lora.recv_cont_start()``
-      - switch to continuous rx mode
-   - 
-
-      - ``lora.recv_cont_stop()``
-      - close the continuous rx mode
-   - 
-
-      - ``lora.tx_continuous_wave_start()``
-      - start tx continuous wave operation
-   - 
-
-      - ``lora.tx_continuous_wave_stop()``
-      - stops tx continuous wave operation
+   * - API Call
+     - Brief description
+   * - ``lora.stats()``
+     - displays the current stats of lora RAW
+   * - ``lora.radio_params()``
+     - set one or more radio parameter
+   * - ``lora.callback()``
+     - set a user level callback
+   * - ``lora.send()``
+     - transmit a given data over LoRa
+   * - ``lora.recv()``
+     - open a timed-out rx window to listen to any incoming data
+   * - ``lora.recv_cont_start()``
+     - switch to continuous rx mode
+   * - ``lora.recv_cont_stop()``
+     - close the continuous rx mode
+   * - ``lora.tx_continuous_wave_start()``
+     - start tx continuous wave operation
+   * - ``lora.tx_continuous_wave_stop()``
+     - stops tx continuous wave operation
 
 LoRa Raw Settings
 ~~~~~~~~~~~~~~~~~
@@ -86,45 +66,43 @@ will experience something like this:
 
 Here is the meaning of each displayed parameter:
 
--  **``regional params``**: The parameters corresponding to the current region
+- **``regional params``**: The parameters corresponding to the current region
 
-   -  ``region``: The region in which the device will operate.
-   -  ``frequency``, ``freq_khz`` or ``freq_mhz``: The required frequency in
-      **Hz**, **KHz** or **MHz** respectively.
+  - ``region``: The region in which the device will operate.
+  - ``frequency``, ``freq_khz`` or ``freq_mhz``: The required frequency in
+    **Hz**, **KHz** or **MHz** respectively.
 
--  **``modulation params``**: The current modulation parameters which are;
-   spreading-factor ``sf``, ``bandwidth`` and ``coding_rate``
+- **``modulation params``**: The current modulation parameters which are;
+  spreading-factor ``sf``, ``bandwidth`` and ``coding_rate``
 
--  **``packet params``**: parameters related to the packet data constraints
-   such as ``preamble`` length, current maximum ``payload`` size, and if the
-   ``crc_on`` is applied to the payload or not
+- **``packet params``**: parameters related to the packet data constraints such
+  as ``preamble`` length, current maximum ``payload`` size, and if the
+  ``crc_on`` is applied to the payload or not
 
--  **``lora tranceiver``**: shows the current info about the current used
-   tranceiver such as the ``chip`` used and the maximum ``tx_power`` it can
-   produce.
+- **``lora tranceiver``**: shows the current info about the current used
+  tranceiver such as the ``chip`` used and the maximum ``tx_power`` it can
+  produce.
 
--  **``tx params``**: the current tx settings;
+- **``tx params``**: the current tx settings;
 
-   -  the current desired ``tx_power`` including the antenna gain
-   -  the ``antenna_gain``; should be set according to the current HW
-      prescribed antenna gain to be taken into consideration while determining
-      the chip output tx power
-   -  the ``tx_power_eff`` which is the actual effective chip output power
-      after subtracting the antenna gain from the desired ``tx_power``
-   -  ``tx_timeout`` the time-out of sending a message; it should be sufficient
-      enough according to the time on air required for the current modulation
-      parameters.
-   -  ``tx_iq`` indicates whether inverted IQ polarity feature is enabled or
-      not
+  - the current desired ``tx_power`` including the antenna gain
+  - the ``antenna_gain``; should be set according to the current HW prescribed
+    antenna gain to be taken into consideration while determining the chip
+    output tx power
+  - the ``tx_power_eff`` which is the actual effective chip output power after
+    subtracting the antenna gain from the desired ``tx_power``
+  - ``tx_timeout`` the time-out of sending a message; it should be sufficient
+    enough according to the time on air required for the current modulation
+    parameters.
+  - ``tx_iq`` indicates whether inverted IQ polarity feature is enabled or not
 
--  **``rx params``**: the current rx settings;
+- **``rx params``**: the current rx settings;
 
-   -  ``rx_timeout`` the rx window time in non continuous reception
-   -  ``rx_iq`` indicates whether inverted IQ polarity feature is enabled or
-      not
-   -  ``public_network`` if ``True``, the radio uses the public LoRaWAN sync
-      word (``0x3444``), allowing reception of packets from LoRaWAN nodes. If
-      ``False`` (default), the private LoRa sync word (``0x1424``) is used.
+  - ``rx_timeout`` the rx window time in non continuous reception
+  - ``rx_iq`` indicates whether inverted IQ polarity feature is enabled or not
+  - ``public_network`` if ``True``, the radio uses the public LoRaWAN sync word
+    (``0x3444``), allowing reception of packets from LoRaWAN nodes. If
+    ``False`` (default), the private LoRa sync word (``0x1424``) is used.
 
 To reset all parameters to the region defaults, provide ``reset_all`` flag
 like:
@@ -253,9 +231,9 @@ Examples:
    Note: The lora interface provides some class constants for some radio
    parameters:
 
-   -  ``lora._bw``: contains all supported band width values
-   -  ``lora._cr``: contains all supported coding rate values
-   -  ``lora._region``: contains all supported regions values
+   - ``lora._bw``: contains all supported band width values
+   - ``lora._cr``: contains all supported coding rate values
+   - ``lora._region``: contains all supported regions values
 
    .. code:: python
 
@@ -328,12 +306,12 @@ Send (TX) Data
 
 To send a specific data message, it takes the following parameters:
 
--  ``message``: it is the normal data buffer, it could be a normal string or
-   byte array
--  ``timeout``: it is an optional argument to specify the tx operation deadline
-   the default timeout will be the radio ``tx_timeout`` parameter
--  ``sync``: it is an optional argument to perform this operation synchronously
-   or asynchronously (default: ``sync=False``)
+- ``message``: it is the normal data buffer, it could be a normal string or
+  byte array
+- ``timeout``: it is an optional argument to specify the tx operation deadline
+  the default timeout will be the radio ``tx_timeout`` parameter
+- ``sync``: it is an optional argument to perform this operation synchronously
+  or asynchronously (default: ``sync=False``)
 
 Examples
 
@@ -354,14 +332,14 @@ Receive (RX) Data
 
 To receive a data and it takes the following parameters:
 
--  ``timeout``: it is an optional argument to specify the tx operation deadline
-   the default timeout will be the radio ``rx_timeout`` parameter
--  ``sync``: it is an optional argument to perform this operation synchronously
-   or asynchronously (default: ``sync=True``)
+- ``timeout``: it is an optional argument to specify the tx operation deadline
+  the default timeout will be the radio ``rx_timeout`` parameter
+- ``sync``: it is an optional argument to perform this operation synchronously
+  or asynchronously (default: ``sync=True``)
 
-   -  ``sync`` the function will return the received message
-   -  ``async`` the received message will be returned in the RX event in the
-      callback
+  - ``sync`` the function will return the received message
+  - ``async`` the received message will be returned in the RX event in the
+    callback
 
 Example:
 
@@ -400,9 +378,9 @@ Sets the radio tranciver to continuous transmission mode for testing.
 The tx continuous wave mode does not use the normal parameters set by the
 ``lora.radio_params()`` method, but instead it uses the following parameters
 
--  ``tx_power`` the required tx power during the test
--  ``frequency`` the required test frequency in Hz (default: 868 MHz)
--  ``timeout`` an optional timeout in milliseconds (default: 10 seconds)
+- ``tx_power`` the required tx power during the test
+- ``frequency`` the required test frequency in Hz (default: 868 MHz)
+- ``timeout`` an optional timeout in milliseconds (default: 10 seconds)
 
 ..
 

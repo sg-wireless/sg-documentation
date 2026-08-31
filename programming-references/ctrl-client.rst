@@ -11,15 +11,15 @@ If you want to disable that automatic startup, set
 Contents
 --------
 
--  Sending Fields
--  Configuration
--  Connection
--  Callbacks and Events
--  Servers
--  Security
--  Miscellaneous
--  Examples
--  Logging & Debugging
+- Sending Fields
+- Configuration
+- Connection
+- Callbacks and Events
+- Servers
+- Security
+- Miscellaneous
+- Examples
+- Logging & Debugging
 
 Fields
 ------
@@ -31,17 +31,17 @@ ctrl.send_field(pin, value, [ts=0])
 
 Send a field value to CTRL. Arguments are:
 
--  ``pin``: The pin/field number in CTRL. Can be any integer value.
--  ``value``: The value to send. Supported types are ``int``, ``float``, and
-   ``str``.
--  ``ts``: Optional. Unix timestamp in seconds. If omitted or set to ``0``, the
-   server will use the current time — *unless* the message ends up buffered in
-   the offline send-queue (see ``ctrl.message_queue()``), in which case the
-   device's own clock time at the moment of the call is used instead, so a
-   reading taken while offline keeps its real timestamp rather than being
-   stamped with whenever it's finally sent. This substitution only happens when
-   the device's clock is actually set (e.g. after NTP sync); otherwise it falls
-   back to the original "let the server decide" behavior.
+- ``pin``: The pin/field number in CTRL. Can be any integer value.
+- ``value``: The value to send. Supported types are ``int``, ``float``, and
+  ``str``.
+- ``ts``: Optional. Unix timestamp in seconds. If omitted or set to ``0``, the
+  server will use the current time — *unless* the message ends up buffered in
+  the offline send-queue (see ``ctrl.message_queue()``), in which case the
+  device's own clock time at the moment of the call is used instead, so a
+  reading taken while offline keeps its real timestamp rather than being
+  stamped with whenever it's finally sent. This substitution only happens when
+  the device's clock is actually set (e.g. after NTP sync); otherwise it falls
+  back to the original "let the server decide" behavior.
 
 .. _ctrlsend_field_mapmap-timestamp0:
 
@@ -52,10 +52,10 @@ Send multiple field values to CTRL in a single message.
 
 Arguments are:
 
--  ``map``: Either a list/tuple of ``[pin, value]`` pairs or a dict of
-   ``{pin: value}`` entries.
--  ``timestamp``: Optional. Unix timestamp in seconds. Same offline-queue
-   timestamp behavior as ``ctrl.send_field()`` above.
+- ``map``: Either a list/tuple of ``[pin, value]`` pairs or a dict of
+  ``{pin: value}`` entries.
+- ``timestamp``: Optional. Unix timestamp in seconds. Same offline-queue
+  timestamp behavior as ``ctrl.send_field()`` above.
 
 .. _ctrlsend_ping:
 
@@ -93,18 +93,17 @@ Initialize the CTRL client.
 
 Arguments:
 
--  ``token``: Optional activation token. If supplied, the token is parsed,
-   stored, and used for the initial connection.
--  ``ssl_verify``: Optional. Explicitly override SSL certificate verification
-   for this call.
--  ``silent_fail``: Optional. If ``True``, initialization returns silently when
-   no stored configuration is present.
--  ``background``: Optional. If ``True``, the connection runs in a background
-   task and ``ctrl.init()`` returns immediately. If omitted, uses the
-   ``ctrl.async_mode()`` persistent default. If another
-   connect/reload/reconnect operation (including the SDK's own automatic
-   reconnect) is already in progress, raises ``OSError`` immediately instead of
-   starting a second one.
+- ``token``: Optional activation token. If supplied, the token is parsed,
+  stored, and used for the initial connection.
+- ``ssl_verify``: Optional. Explicitly override SSL certificate verification
+  for this call.
+- ``silent_fail``: Optional. If ``True``, initialization returns silently when
+  no stored configuration is present.
+- ``background``: Optional. If ``True``, the connection runs in a background
+  task and ``ctrl.init()`` returns immediately. If omitted, uses the
+  ``ctrl.async_mode()`` persistent default. If another connect/reload/reconnect
+  operation (including the SDK's own automatic reconnect) is already in
+  progress, raises ``OSError`` immediately instead of starting a second one.
 
 .. _ctrlactivatetoken:
 
@@ -147,10 +146,10 @@ Update an existing configuration entry.
 
 Additional options:
 
--  ``permanent``: If ``True``, persist the new value to the active
-   configuration backend.
--  ``silent``: Suppress console output when saving.
--  ``reconnect``: Trigger a reconnect after updating the configuration.
+- ``permanent``: If ``True``, persist the new value to the active configuration
+  backend.
+- ``silent``: Suppress console output when saving.
+- ``reconnect``: Trigger a reconnect after updating the configuration.
 
 .. _ctrlset_configkeynone-valuenone-permanenttrue-silentfalse-reconnectfalse:
 
@@ -180,8 +179,8 @@ ctrl.cfg_store([mode])
 
 Select the configuration backend.
 
--  ``0``: use NVS
--  ``1``: use the file-backed ``ctrl_config.json`` path
+- ``0``: use NVS
+- ``1``: use the file-backed ``ctrl_config.json`` path
 
 .. _ctrlasync_modeenabled:
 
@@ -309,10 +308,10 @@ ctrl.get_network_type()
 
 Return the active network type as an integer:
 
--  ``ctrl.NET_WIFI`` = ``0``
--  ``ctrl.NET_LTE`` = ``1``
--  ``ctrl.NET_LORA`` = ``2``
--  ``ctrl.NET_SIGFOX`` = ``3``
+- ``ctrl.NET_WIFI`` = ``0``
+- ``ctrl.NET_LTE`` = ``1``
+- ``ctrl.NET_LORA`` = ``2``
+- ``ctrl.NET_SIGFOX`` = ``3``
 
 --------------
 
@@ -327,12 +326,12 @@ ctrl.callback(type, fn)
 Register a Python callback for a message category. The supported callback types
 are:
 
--  ``ctrl.CB_USER`` (0)
--  ``ctrl.CB_FCOTA`` (1)
--  ``ctrl.CB_CAPT`` (2)
--  ``ctrl.CB_ZTP`` (3)
--  ``ctrl.CB_CTRL`` (4)
--  ``ctrl.CB_ALL`` (254)
+- ``ctrl.CB_USER`` (0)
+- ``ctrl.CB_FCOTA`` (1)
+- ``ctrl.CB_CAPT`` (2)
+- ``ctrl.CB_ZTP`` (3)
+- ``ctrl.CB_CTRL`` (4)
+- ``ctrl.CB_ALL`` (254)
 
 The callback signature is:
 
@@ -363,10 +362,10 @@ ctrl.CB\_\* and ctrl.EV\_\* constants
 
 The module exports constants for callback and event handling:
 
--  ``ctrl.CB_USER``, ``ctrl.CB_FCOTA``, ``ctrl.CB_CAPT``, ``ctrl.CB_ZTP``,
-   ``ctrl.CB_CTRL``, ``ctrl.CB_ALL``
--  ``ctrl.EV_CONNECTED``, ``ctrl.EV_DISCONNECTED``, ``ctrl.EV_MSG``
--  ``ctrl.NET_WIFI``, ``ctrl.NET_LTE``, ``ctrl.NET_LORA``, ``ctrl.NET_SIGFOX``
+- ``ctrl.CB_USER``, ``ctrl.CB_FCOTA``, ``ctrl.CB_CAPT``, ``ctrl.CB_ZTP``,
+  ``ctrl.CB_CTRL``, ``ctrl.CB_ALL``
+- ``ctrl.EV_CONNECTED``, ``ctrl.EV_DISCONNECTED``, ``ctrl.EV_MSG``
+- ``ctrl.NET_WIFI``, ``ctrl.NET_LTE``, ``ctrl.NET_LORA``, ``ctrl.NET_SIGFOX``
 
 --------------
 
@@ -385,21 +384,21 @@ ctrl.ftpd([enable, save_persistent=False, username=None, password=None, root_pat
 
 Query or control the FTP server.
 
--  Called with no arguments: returns ``True`` if the FTP server is currently
-   running, ``False`` otherwise.
--  ``enable`` (``bool``): ``True`` to start the server, ``False`` to stop it.
--  ``save_persistent`` (``bool``): when ``True``, the supplied config is saved
-   to the active config backend so the server auto-starts on the next
-   qualifying connect.
--  ``username`` (``str``): FTP login username. ``None`` leaves the stored value
-   unchanged.
--  ``password`` (``str``): FTP login password. ``None`` leaves the stored value
-   unchanged.
--  ``root_path`` (``str``): VFS path exposed as the FTP root (e.g.
-   ``'/flash'``). ``None`` leaves the stored value unchanged.
--  ``start_lte`` (``bool``): when ``True``, also auto-start on LTE-M
-   connections (default ``False`` — WiFi only, because most LTE-M providers
-   block inbound connections without a static/VPN-routed SIM).
+- Called with no arguments: returns ``True`` if the FTP server is currently
+  running, ``False`` otherwise.
+- ``enable`` (``bool``): ``True`` to start the server, ``False`` to stop it.
+- ``save_persistent`` (``bool``): when ``True``, the supplied config is saved
+  to the active config backend so the server auto-starts on the next qualifying
+  connect.
+- ``username`` (``str``): FTP login username. ``None`` leaves the stored value
+  unchanged.
+- ``password`` (``str``): FTP login password. ``None`` leaves the stored value
+  unchanged.
+- ``root_path`` (``str``): VFS path exposed as the FTP root (e.g.
+  ``'/flash'``). ``None`` leaves the stored value unchanged.
+- ``start_lte`` (``bool``): when ``True``, also auto-start on LTE-M connections
+  (default ``False`` — WiFi only, because most LTE-M providers block inbound
+  connections without a static/VPN-routed SIM).
 
 .. code:: python
 
@@ -427,20 +426,20 @@ Query or control the Telnet server. When running, a Telnet client connecting to
 the device receives a full interactive MicroPython REPL (``>>>`` prompt) via
 ``os.dupterm()``.
 
--  Called with no arguments: returns ``True`` if the Telnet server is currently
-   running, ``False`` otherwise.
--  ``enable`` (``bool``): ``True`` to start the server, ``False`` to stop it.
--  ``save_persistent`` (``bool``): when ``True``, the supplied config is saved
-   to the active config backend so the server auto-starts on the next
-   qualifying connect.
--  ``username`` (``str``): login username. ``None`` leaves the stored value
-   unchanged. Only relevant when ``password`` is also set — adds a
-   ``Login as:`` prompt before ``Password:``; a username without a password is
-   not a supported combination.
--  ``password`` (``str``): login password. ``None`` means no authentication is
-   required.
--  ``start_lte`` (``bool``): when ``True``, also auto-start on LTE-M
-   connections (default ``False``).
+- Called with no arguments: returns ``True`` if the Telnet server is currently
+  running, ``False`` otherwise.
+- ``enable`` (``bool``): ``True`` to start the server, ``False`` to stop it.
+- ``save_persistent`` (``bool``): when ``True``, the supplied config is saved
+  to the active config backend so the server auto-starts on the next qualifying
+  connect.
+- ``username`` (``str``): login username. ``None`` leaves the stored value
+  unchanged. Only relevant when ``password`` is also set — adds a ``Login as:``
+  prompt before ``Password:``; a username without a password is not a supported
+  combination.
+- ``password`` (``str``): login password. ``None`` means no authentication is
+  required.
+- ``start_lte`` (``bool``): when ``True``, also auto-start on LTE-M connections
+  (default ``False``).
 
 .. code:: python
 
@@ -484,38 +483,24 @@ Features
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Feature
-      - Blocks
-   - 
-
-      - ``fcota``
-      - All file-content OTA: file list/get/put/delete, remote command
-         execution, BLE sensor updates — and also **network configuration
-         updates** and **release deployments** (FCOTA, RELEASE_DEPLOY and
-         DEVICE_NETWORK_DEPLOY messages)
-   - 
-
-      - ``fota``
-      - Firmware OTA triggers
-   - 
-
-      - ``ctrl``
-      - Remote CTRL commands: connect/disconnect/switch network, network status
-         queries, device reset
-   - 
-
-      - ``read_field``
-      - Remote field-read requests
-   - 
-
-      - ``user``
-      - USER messages and any inbound message type without a dedicated handler
-   - 
-
-      - ``uart_repl``
-      - The UART0 REPL/console (see below)
+   * - Feature
+     - Blocks
+   * - ``fcota``
+     - All file-content OTA: file list/get/put/delete, remote command
+       execution, BLE sensor updates — and also **network configuration
+       updates** and **release deployments** (FCOTA, RELEASE_DEPLOY and
+       DEVICE_NETWORK_DEPLOY messages)
+   * - ``fota``
+     - Firmware OTA triggers
+   * - ``ctrl``
+     - Remote CTRL commands: connect/disconnect/switch network, network status
+       queries, device reset
+   * - ``read_field``
+     - Remote field-read requests
+   * - ``user``
+     - USER messages and any inbound message type without a dedicated handler
+   * - ``uart_repl``
+     - The UART0 REPL/console (see below)
 
 Where the platform expects a response, the device answers with a failure so the
 operation doesn't just time out: FOTA reports a failed status with
@@ -531,9 +516,9 @@ Kconfig
 Every feature has two build-time parameters under
 ``SDK → Network → Ctrl Client → Security policy``:
 
--  ``SDK_CTRL_CLIENT_SEC_<FEATURE>_DEFAULT`` — enabled by default? (default: y)
--  ``SDK_CTRL_CLIENT_SEC_<FEATURE>_RUNTIME`` — runtime configurable? (default:
-   y)
+- ``SDK_CTRL_CLIENT_SEC_<FEATURE>_DEFAULT`` — enabled by default? (default: y)
+- ``SDK_CTRL_CLIENT_SEC_<FEATURE>_RUNTIME`` — runtime configurable? (default:
+  y)
 
 A feature with ``_RUNTIME=n`` is locked at its ``_DEFAULT`` value: it does not
 appear in ``ctrl.security()`` and cannot be changed at runtime. When **no**
@@ -559,17 +544,17 @@ Query or change the security policy. Mirrors the ``ctrl.dbg()`` call styles:
    ctrl.security({'fota': False,        # bulk update, returns the updated dict
                   'read_field': False})
 
--  ``True`` means the feature is **enabled** (messages processed normally).
--  Message-feature changes apply **immediately** — no reconnect needed.
--  ``save=False`` makes the change RAM-only: it reverts on reset (or on the
-   next set). Useful to briefly enable a feature from trusted user code, e.g.
-   inside a callback. Not valid for ``uart_repl``, which is a boot-time flag.
--  Setting (or single-getting) a locked feature raises ``OSError EPERM``;
-   unknown feature names raise ``ValueError``. Unknown keys in a bulk dict are
-   ignored (``ctrl.dbg()`` convention).
--  Works before ``ctrl.init()``.
--  Persistent values are stored in NVS (outside ``ctrl_config.json``), so the
-   platform cannot re-enable features through a network config deployment.
+- ``True`` means the feature is **enabled** (messages processed normally).
+- Message-feature changes apply **immediately** — no reconnect needed.
+- ``save=False`` makes the change RAM-only: it reverts on reset (or on the next
+  set). Useful to briefly enable a feature from trusted user code, e.g. inside
+  a callback. Not valid for ``uart_repl``, which is a boot-time flag.
+- Setting (or single-getting) a locked feature raises ``OSError EPERM``;
+  unknown feature names raise ``ValueError``. Unknown keys in a bulk dict are
+  ignored (``ctrl.dbg()`` convention).
+- Works before ``ctrl.init()``.
+- Persistent values are stored in NVS (outside ``ctrl_config.json``), so the
+  platform cannot re-enable features through a network config deployment.
 
 Disabling the UART REPL
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -657,28 +642,18 @@ disconnected, and what to do once it's full. Default: 10 slots,
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Constant
-      - Behavior when the queue is full
-   - 
-
-      - ``ctrl.MQ_IGNORE``
-      - Drop the new message, keep the queue as-is (default).
-   - 
-
-      - ``ctrl.MQ_OLDEST``
-      - Replace the oldest message; prefers a queued message with the same pin
-         over the true oldest, if one exists.
-   - 
-
-      - ``ctrl.MQ_NEWEST``
-      - Replace the newest message; prefers a queued message with the same pin
-         over the true newest, if one exists.
-   - 
-
-      - ``ctrl.MQ_PURGE``
-      - Drop every queued message, then enqueue the new one.
+   * - Constant
+     - Behavior when the queue is full
+   * - ``ctrl.MQ_IGNORE``
+     - Drop the new message, keep the queue as-is (default).
+   * - ``ctrl.MQ_OLDEST``
+     - Replace the oldest message; prefers a queued message with the same pin
+       over the true oldest, if one exists.
+   * - ``ctrl.MQ_NEWEST``
+     - Replace the newest message; prefers a queued message with the same pin
+       over the true newest, if one exists.
+   * - ``ctrl.MQ_PURGE``
+     - Drop every queued message, then enqueue the new one.
 
 Omitting ``on_full`` on a resize call keeps whatever policy is already in
 effect.
@@ -761,38 +736,22 @@ legacy implementation. The available component names are:
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Component Name
-      - Meaning
-   - 
-
-      - ``library``
-      - protocol packing / unpacking
-   - 
-
-      - ``protocol``
-      - message protocol helpers
-   - 
-
-      - ``connection``
-      - transport and MQTT connection
-   - 
-
-      - ``config``
-      - config load / save logic
-   - 
-
-      - ``sensors``
-      - sensor integration
-   - 
-
-      - ``main``
-      - core module state
-   - 
-
-      - ``mpy``
-      - MicroPython wrapper / module glue
+   * - Component Name
+     - Meaning
+   * - ``library``
+     - protocol packing / unpacking
+   * - ``protocol``
+     - message protocol helpers
+   * - ``connection``
+     - transport and MQTT connection
+   * - ``config``
+     - config load / save logic
+   * - ``sensors``
+     - sensor integration
+   * - ``main``
+     - core module state
+   * - ``mpy``
+     - MicroPython wrapper / module glue
 
 Enabling Debug Output
 ~~~~~~~~~~~~~~~~~~~~~
@@ -816,28 +775,23 @@ Removed Commands and Compatibility Notes
 The new CTRL client binding replaces several older entry points. The most
 relevant changes are listed below:
 
--  ``ctrl.start(autoconnect=True)`` is **deprecated** — it still works
-   (accepted positionally or as a keyword, same as the old ``Ctrl.start()``)
-   and calls ``ctrl.init(autoconnect=...)`` internally, but prints a
-   deprecation warning. Use ``ctrl.init()`` directly instead.
--  ``ctrl.enable_lte()`` no longer exists. Configure the network through the
-   activation token / configuration and use ``ctrl.connect_lte()``.
--  ``ctrl.enable_wifi()`` no longer exists. Configure the network through the
-   activation token / configuration and use ``ctrl.connect_wifi()``.
--  ``ctrl.connect_lora()`` no longer exists. Use ``ctrl.connect_lora_otaa()``
-   or ``ctrl.connect_lora_abp()``.
--  ``ctrl.reconnect()`` is **deprecated** — it still works and calls
-   ``ctrl.reload()`` internally, but prints a deprecation warning. Use
-   ``ctrl.reload()`` directly instead.
--  ``ctrl.print_cfg_msg()`` is a **no-op compatibility stub** — the old
-   ``cfg_msg`` config field has no equivalent anymore, so this now just prints
-   "This function is no longer supported." The current configuration status is
-   handled through ``ctrl.init()``, ``ctrl.get_config()``, and
-   ``ctrl.print_config()``.
--  ``from ctrl import Ctrl; ctrl = Ctrl(config, activation, autoconnect, user_callback)``
-   still works as a **deprecated** compatibility shim — it prints a deprecation
-   warning, then behaves like ``ctrl.init()`` and returns the ``ctrl`` module
-   itself (so ``ctrl.*`` calls keep working on the resulting object). Use
-   ``ctrl.init()`` directly instead.
--  ``ctrl.ztp()`` still exists, but its behavior is now tied to the current
-   NVS-backed ZTP flags and is documented above.
+- ``ctrl.start(autoconnect=True)`` is **deprecated** — it still works (accepted
+  positionally or as a keyword, same as the old ``Ctrl.start()``) and calls
+  ``ctrl.init(autoconnect=...)`` internally, but prints a deprecation warning.
+  Use ``ctrl.init()`` directly instead.
+- ``ctrl.enable_lte()`` no longer exists. Configure the network through the
+  activation token / configuration and use ``ctrl.connect_lte()``.
+- ``ctrl.enable_wifi()`` no longer exists. Configure the network through the
+  activation token / configuration and use ``ctrl.connect_wifi()``.
+- ``ctrl.connect_lora()`` no longer exists. Use ``ctrl.connect_lora_otaa()`` or
+  ``ctrl.connect_lora_abp()``.
+- ``ctrl.reconnect()`` is **deprecated** — it still works and calls
+  ``ctrl.reload()`` internally, but prints a deprecation warning. Use
+  ``ctrl.reload()`` directly instead.
+- ``from ctrl import Ctrl; ctrl = Ctrl(config, activation, autoconnect, user_callback)``
+  still works as a **deprecated** compatibility shim — it prints a deprecation
+  warning, then behaves like ``ctrl.init()`` and returns the ``ctrl`` module
+  itself (so ``ctrl.*`` calls keep working on the resulting object). Use
+  ``ctrl.init()`` directly instead.
+- ``ctrl.ztp()`` still exists, but its behavior is now tied to the current
+  NVS-backed ZTP flags and is documented above.

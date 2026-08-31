@@ -7,26 +7,26 @@ firmware updates on ESP32 devices.
 Features
 --------
 
--  ✅ **Simple one-line upgrade**: ``fuota.upgrade(url)`` handles everything
--  ✅ **Non-blocking mode**: Background OTA with status monitoring
--  ✅ **Blocking mode**: Traditional synchronous operation
--  ✅ **HTTPS support**: Built-in certificate bundle for secure downloads
--  ✅ **Automatic partition management**: Selects next available OTA partition
--  ✅ **Validation**: Verifies firmware image before flashing
--  ✅ **Low memory usage**: Runs in C, no 64KB Python thread stack needed
--  ✅ **Progress tracking**: Real-time status and progress monitoring
--  ✅ **Percentage logging**: 1% increment progress updates
--  ✅ **Network detection**: Automatic WiFi/LTE connectivity check
--  ✅ **Automatic validation**: Validates new firmware on first boot
--  ✅ **Soft reset safe**: Cleanly cancels OTA on Ctrl+D
--  ✅ **Resume on network drops**: HTTP ``Range`` resume across TCP/TLS
-   disconnects (ideal for NB-IoT / LTE-M / flaky Wi-Fi)
--  ✅ **Exponential backoff retries**: Bounded retries with configurable
-   backoff so the radio / NAT gets time to recover
--  ✅ **Artifact identity check**: ``ETag`` / ``Last-Modified`` / total-size
-   validated on every resume; server-side rebuilds force a clean restart
--  ✅ **Optional chunk cap**: Reconnect every N bytes to sidestep carrier NAT /
-   PSM timeouts even when data is flowing
+- ✅ **Simple one-line upgrade**: ``fuota.upgrade(url)`` handles everything
+- ✅ **Non-blocking mode**: Background OTA with status monitoring
+- ✅ **Blocking mode**: Traditional synchronous operation
+- ✅ **HTTPS support**: Built-in certificate bundle for secure downloads
+- ✅ **Automatic partition management**: Selects next available OTA partition
+- ✅ **Validation**: Verifies firmware image before flashing
+- ✅ **Low memory usage**: Runs in C, no 64KB Python thread stack needed
+- ✅ **Progress tracking**: Real-time status and progress monitoring
+- ✅ **Percentage logging**: 1% increment progress updates
+- ✅ **Network detection**: Automatic WiFi/LTE connectivity check
+- ✅ **Automatic validation**: Validates new firmware on first boot
+- ✅ **Soft reset safe**: Cleanly cancels OTA on Ctrl+D
+- ✅ **Resume on network drops**: HTTP ``Range`` resume across TCP/TLS
+  disconnects (ideal for NB-IoT / LTE-M / flaky Wi-Fi)
+- ✅ **Exponential backoff retries**: Bounded retries with configurable backoff
+  so the radio / NAT gets time to recover
+- ✅ **Artifact identity check**: ``ETag`` / ``Last-Modified`` / total-size
+  validated on every resume; server-side rebuilds force a clean restart
+- ✅ **Optional chunk cap**: Reconnect every N bytes to sidestep carrier NAT /
+  PSM timeouts even when data is flowing
 
 .. _resume-behaviour-nb-iot--lte-m:
 
@@ -62,12 +62,12 @@ API Reference
 
 **Parameters:**
 
--  ``url`` (str, required): HTTPS/HTTP URL to firmware binary
--  ``opts`` (dict, optional): Tunables. See *Options* below.
+- ``url`` (str, required): HTTPS/HTTP URL to firmware binary
+- ``opts`` (dict, optional): Tunables. See *Options* below.
 
 **Returns:**
 
--  ``True`` on success, ``False`` on failure
+- ``True`` on success, ``False`` on failure
 
 **Blocks until complete** - REPL will be frozen during download and
 installation.
@@ -98,17 +98,17 @@ background.
 
 **Parameters:**
 
--  ``url`` (str, required): HTTPS/HTTP URL to firmware binary
--  ``opts`` (dict, optional): Tunables. See *Options* below.
+- ``url`` (str, required): HTTPS/HTTP URL to firmware binary
+- ``opts`` (dict, optional): Tunables. See *Options* below.
 
 **Returns:**
 
--  ``None`` - Returns immediately, use ``fuota.status()`` to monitor progress
+- ``None`` - Returns immediately, use ``fuota.status()`` to monitor progress
 
 **Raises:**
 
--  ``OSError``: If OTA already in progress, network error, or failed to create
-   task
+- ``OSError``: If OTA already in progress, network error, or failed to create
+  task
 
 **Example:**
 
@@ -154,45 +154,31 @@ All keys are optional; defaults are shown in parentheses.
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Key
-      - Default
-      - Description
-   - 
-
-      - ``max_retries``
-      - 30
-      - Total HTTP attempts, including the first.
-   - 
-
-      - ``backoff_initial_ms``
-      - 2000
-      - Delay before the first retry. Doubled on each subsequent failure,
-         capped by ``backoff_max_ms``.
-   - 
-
-      - ``backoff_max_ms``
-      - 60000
-      - Upper bound on the exponential backoff delay.
-   - 
-
-      - ``timeout_ms``
-      - 180000
-      - Per-HTTP-request timeout (read / connect).
-   - 
-
-      - ``rx_buffer_size``
-      - 4096
-      - Receive buffer + OTA write block size (clamped to 512–16384).
-   - 
-
-      - ``max_chunk_bytes``
-      - 131072
-      - Caps how much data is pulled per HTTP connection (default 128 KB); the
-         next ``Range`` request resumes from where it left off. Useful to
-         defeat carrier NAT / PSM idle timeouts on long downloads. Pass ``0``
-         for unlimited (single connection for the whole download).
+   * - Key
+     - Default
+     - Description
+   * - ``max_retries``
+     - 30
+     - Total HTTP attempts, including the first.
+   * - ``backoff_initial_ms``
+     - 2000
+     - Delay before the first retry. Doubled on each subsequent failure, capped
+       by ``backoff_max_ms``.
+   * - ``backoff_max_ms``
+     - 60000
+     - Upper bound on the exponential backoff delay.
+   * - ``timeout_ms``
+     - 180000
+     - Per-HTTP-request timeout (read / connect).
+   * - ``rx_buffer_size``
+     - 4096
+     - Receive buffer + OTA write block size (clamped to 512–16384).
+   * - ``max_chunk_bytes``
+     - 131072
+     - Caps how much data is pulled per HTTP connection (default 128 KB); the
+       next ``Range`` request resumes from where it left off. Useful to defeat
+       carrier NAT / PSM idle timeouts on long downloads. Pass ``0`` for
+       unlimited (single connection for the whole download).
 
 --------------
 
@@ -205,15 +191,15 @@ Returns current OTA operation status (for non-blocking mode).
 
 **Returns:** Dictionary with keys:
 
--  ``state`` (str): ``'idle'``, ``'running'``, ``'success'``, ``'failed'``, or
-   ``'aborted'``
--  ``bytes_written`` (int): Bytes downloaded so far
--  ``attempts`` (int): Number of HTTP attempts used so far (1 on the first try)
--  ``resume_offset`` (int): Offset of the most recent HTTP attempt
--  ``total_size`` (int, optional): Total firmware size (if known)
--  ``percent`` (int, optional): 0-100 progress (if ``total_size`` is known)
--  ``error_code`` (int, optional): ESP-IDF error code (on failure)
--  ``err_msg`` (str, optional): Error description (on failure)
+- ``state`` (str): ``'idle'``, ``'running'``, ``'success'``, ``'failed'``, or
+  ``'aborted'``
+- ``bytes_written`` (int): Bytes downloaded so far
+- ``attempts`` (int): Number of HTTP attempts used so far (1 on the first try)
+- ``resume_offset`` (int): Offset of the most recent HTTP attempt
+- ``total_size`` (int, optional): Total firmware size (if known)
+- ``percent`` (int, optional): 0-100 progress (if ``total_size`` is known)
+- ``error_code`` (int, optional): ESP-IDF error code (on failure)
+- ``err_msg`` (str, optional): Error description (on failure)
 
 **Example:**
 
@@ -243,7 +229,7 @@ returns.
 
 **Raises:**
 
--  ``OSError``: If no OTA upgrade is in progress
+- ``OSError``: If no OTA upgrade is in progress
 
 **Example:**
 
@@ -283,9 +269,9 @@ for programmatic access).
 
 **Returns:** Named tuple with fields:
 
--  ``next_update_partition`` (str): Partition for next OTA
--  ``running_partition`` (str): Currently running partition
--  ``boot_partition`` (str): Partition system booted from
+- ``next_update_partition`` (str): Partition for next OTA
+- ``running_partition`` (str): Currently running partition
+- ``boot_partition`` (str): Partition system booted from
 
 **Example:**
 
@@ -339,7 +325,7 @@ Writes firmware data chunk.
 
 **Parameters:**
 
--  ``data`` (bytes): Firmware data chunk
+- ``data`` (bytes): Firmware data chunk
 
 .. _fuotafinish:
 
@@ -499,10 +485,10 @@ Memory Usage
 The new ``fuota.upgrade()`` function is implemented in C and uses the ESP-IDF's
 optimized HTTPS OTA stack:
 
--  **No Python thread needed**: Runs directly in main thread
--  **No 64KB stack allocation**: Uses default C stack
--  **Efficient streaming**: Downloads and flashes in chunks
--  **PSRAM available**: All 8MB PSRAM remains free for other uses
+- **No Python thread needed**: Runs directly in main thread
+- **No 64KB stack allocation**: Uses default C stack
+- **Efficient streaming**: Downloads and flashes in chunks
+- **PSRAM available**: All 8MB PSRAM remains free for other uses
 
 Old vs New Approach
 ~~~~~~~~~~~~~~~~~~~
@@ -513,9 +499,9 @@ Old vs New Approach
 
    _thread.start_new_thread(download_thread, ())  # 64KB internal RAM!
 
--  Required 64KB thread stack in internal RAM
--  Used Python HTTP libraries (slower, more memory)
--  Complex error handling
+- Required 64KB thread stack in internal RAM
+- Used Python HTTP libraries (slower, more memory)
+- Complex error handling
 
 **New (C implementation):**
 
@@ -523,25 +509,25 @@ Old vs New Approach
 
    fuota.upgrade(url)  # No extra stack needed
 
--  Uses default C stack
--  ESP-IDF optimized HTTP/TLS stack
--  Automatic error handling
+- Uses default C stack
+- ESP-IDF optimized HTTP/TLS stack
+- Automatic error handling
 
 Network Requirements
 --------------------
 
--  Active WiFi or LTE connection
--  DNS resolution for HTTPS URLs
--  Sufficient bandwidth for firmware download
--  Stable connection (30s - several minutes depending on size)
+- Active WiFi or LTE connection
+- DNS resolution for HTTPS URLs
+- Sufficient bandwidth for firmware download
+- Stable connection (30s - several minutes depending on size)
 
 Security
 --------
 
--  **HTTPS recommended**: Use certificate bundle or custom cert
--  **Firmware validation**: Automatic integrity checking
--  **Rollback protection**: Mark firmware valid after testing
--  **Partition isolation**: Failed upgrades don't affect running firmware
+- **HTTPS recommended**: Use certificate bundle or custom cert
+- **Firmware validation**: Automatic integrity checking
+- **Rollback protection**: Mark firmware valid after testing
+- **Partition isolation**: Failed upgrades don't affect running firmware
 
 Troubleshooting
 ---------------
@@ -549,58 +535,58 @@ Troubleshooting
 "OTA upgrade already in progress"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  An OTA operation is already running
--  Wait for it to complete or call ``fuota.abort_upgrade()``
+- An OTA operation is already running
+- Wait for it to complete or call ``fuota.abort_upgrade()``
 
 "Network not connected - please connect to WiFi or LTE first"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  No active network connection detected
--  Connect to WiFi or LTE before starting OTA
--  Verify IP address is assigned
+- No active network connection detected
+- Connect to WiFi or LTE before starting OTA
+- Verify IP address is assigned
 
 "ESP HTTPS OTA Begin failed"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  Invalid URL or unreachable server
--  Check URL is correct and server is running
--  Test URL in browser first
+- Invalid URL or unreachable server
+- Check URL is correct and server is running
+- Test URL in browser first
 
 "Image validation failed, image is corrupted"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  Downloaded firmware is corrupted or incomplete
--  Check network stability during download
--  Verify firmware binary is valid for your hardware
+- Downloaded firmware is corrupted or incomplete
+- Check network stability during download
+- Verify firmware binary is valid for your hardware
 
 "Unable to read remote firmware descriptor"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  Server returned invalid firmware image
--  Ensure URL points to actual firmware binary (not HTML page)
--  Check firmware is built for ESP32-S3
+- Server returned invalid firmware image
+- Ensure URL points to actual firmware binary (not HTML page)
+- Check firmware is built for ESP32-S3
 
 Slow Downloads
 ~~~~~~~~~~~~~~
 
--  Increase the ``rx_buffer_size`` option (default 4096, clamped 512–16384)
--  Trade-off: Larger buffers = faster download but slower flash writes
+- Increase the ``rx_buffer_size`` option (default 4096, clamped 512–16384)
+- Trade-off: Larger buffers = faster download but slower flash writes
 
 REPL Hangs During Blocking Mode
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  Fixed in current version with ``is_background_task`` flag
--  Ensure you're using latest firmware
--  Use non-blocking mode if issues persist
+- Fixed in current version with ``is_background_task`` flag
+- Ensure you're using latest firmware
+- Use non-blocking mode if issues persist
 
 Partition Shows Wrong Subtype After Downgrade
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  Flashing new firmware updates partition table
--  Subtype changes from ``6`` (IDF v4) to ``131/0x83`` (IDF v5)
--  This is normal - indicates which firmware version is active
--  **Important**: Downgrading from IDF v5 to IDF v4 requires ``--erase-flash``
-   due to LittleFS version incompatibility
+- Flashing new firmware updates partition table
+- Subtype changes from ``6`` (IDF v4) to ``131/0x83`` (IDF v5)
+- This is normal - indicates which firmware version is active
+- **Important**: Downgrading from IDF v5 to IDF v4 requires ``--erase-flash``
+  due to LittleFS version incompatibility
 
 Implementation Details
 ----------------------
@@ -608,27 +594,27 @@ Implementation Details
 Architecture
 ~~~~~~~~~~~~
 
--  **C-based implementation**: Uses ESP-IDF ``esp_https_ota`` API
--  **Two distinct APIs**:
+- **C-based implementation**: Uses ESP-IDF ``esp_https_ota`` API
+- **Two distinct APIs**:
 
-   -  ``fuota.upgrade(url)``: **Blocking** - runs in calling thread, returns
-      after completion
-   -  ``fuota.start_upgrade(url)``: **Non-blocking** - runs in FreeRTOS task
-      (priority 5, 8KB stack)
+  - ``fuota.upgrade(url)``: **Blocking** - runs in calling thread, returns
+    after completion
+  - ``fuota.start_upgrade(url)``: **Non-blocking** - runs in FreeRTOS task
+    (priority 5, 8KB stack)
 
--  **Automatic partition selection**: Toggles between ota_0/ota_1
--  **Built-in certificate bundle**: Support for common CA certificates
--  **Configurable HTTP timeout**: Default 180 seconds (``timeout_ms``)
--  **Efficient streaming**: 4KB HTTP receive/flash-write buffer by default
-   (``rx_buffer_size``, configurable 512B–16KB)
+- **Automatic partition selection**: Toggles between ota_0/ota_1
+- **Built-in certificate bundle**: Support for common CA certificates
+- **Configurable HTTP timeout**: Default 180 seconds (``timeout_ms``)
+- **Efficient streaming**: 4KB HTTP receive/flash-write buffer by default
+  (``rx_buffer_size``, configurable 512B–16KB)
 
 Progress Logging
 ~~~~~~~~~~~~~~~~
 
--  **Percentage-based**: Logs every 1% when total size known
--  **Byte-based**: Logs every write when size unknown
--  **Event-driven**: Uses ESP-IDF OTA event system
--  **Debug output**: Comprehensive firmware metadata logging
+- **Percentage-based**: Logs every 1% when total size known
+- **Byte-based**: Logs every write when size unknown
+- **Event-driven**: Uses ESP-IDF OTA event system
+- **Debug output**: Comprehensive firmware metadata logging
 
 Network Detection
 ~~~~~~~~~~~~~~~~~
@@ -644,49 +630,49 @@ Automatic Validation
 
 New firmware is automatically validated on first boot:
 
--  Checks if running from OTA partition
--  Detects pending validation state
--  Calls ``esp_ota_mark_app_valid_cancel_rollback()`` automatically
--  No manual ``fuota.valid()`` call needed (unless you want extra validation)
+- Checks if running from OTA partition
+- Detects pending validation state
+- Calls ``esp_ota_mark_app_valid_cancel_rollback()`` automatically
+- No manual ``fuota.valid()`` call needed (unless you want extra validation)
 
 Soft Reset Safety
 ~~~~~~~~~~~~~~~~~
 
 When you press Ctrl+D (soft reset):
 
--  Automatically cancels any running OTA operation
--  Cleans up background task
--  Prevents orphaned OTA tasks
--  Safe to restart Python environment during OTA
+- Automatically cancels any running OTA operation
+- Cleans up background task
+- Prevents orphaned OTA tasks
+- Safe to restart Python environment during OTA
 
 Task Priority
 ~~~~~~~~~~~~~
 
 Background OTA task runs at priority 5 to:
 
--  Avoid preemption during flash writes
--  Ensure stable flash operations
--  Allow REPL to remain responsive
--  Priority higher than MicroPython main task (priority 1)
+- Avoid preemption during flash writes
+- Ensure stable flash operations
+- Allow REPL to remain responsive
+- Priority higher than MicroPython main task (priority 1)
 
 Future Enhancements
 -------------------
 
--  ☒ Non-blocking mode with status monitoring
--  ☒ Progress tracking with percentage updates
--  ☒ Automatic firmware validation on boot
--  ☒ Soft reset safety (clean OTA cancellation)
--  ☒ Network connectivity detection
--  ☒ Resume interrupted downloads (HTTP ``Range`` resume, see "Resume
-   Behaviour" above)
--  ☒ Configurable HTTP buffer size via API (``rx_buffer_size`` option)
--  ☐ Delta/differential updates
--  ☐ Custom progress callbacks
--  ☐ Multi-stage bootloader support
+- ☒ Non-blocking mode with status monitoring
+- ☒ Progress tracking with percentage updates
+- ☒ Automatic firmware validation on boot
+- ☒ Soft reset safety (clean OTA cancellation)
+- ☒ Network connectivity detection
+- ☒ Resume interrupted downloads (HTTP ``Range`` resume, see "Resume Behaviour"
+  above)
+- ☒ Configurable HTTP buffer size via API (``rx_buffer_size`` option)
+- ☐ Delta/differential updates
+- ☐ Custom progress callbacks
+- ☐ Multi-stage bootloader support
 
 See Also
 --------
 
--  Example: ``/examples/fuota/ota_example.py``
--  ESP-IDF OTA docs:
-   https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html
+- Example: ``/examples/fuota/ota_example.py``
+- ESP-IDF OTA docs:
+  https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html

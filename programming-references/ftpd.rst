@@ -4,10 +4,10 @@ FTP Server
 Contents
 --------
 
--  Introduction
--  Using with CTRL (recommended)
--  Standalone ``ftpd`` module
--  C API
+- Introduction
+- Using with CTRL (recommended)
+- Standalone ``ftpd`` module
+- C API
 
 Introduction
 ------------
@@ -72,50 +72,36 @@ Full signature. All keyword arguments are optional.
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Argument
-      - Type
-      - Default
-      - Description
-   - 
-
-      - ``enable``
-      - ``bool``
-      - —
-      - ``True`` to start, ``False`` to stop
-   - 
-
-      - ``save_persistent``
-      - ``bool``
-      - ``False``
-      - Persist the config so the server auto-starts on the next qualifying
-         connect
-   - 
-
-      - ``username``
-      - ``str``
-      - ``None``
-      - FTP login username; ``None`` leaves the current value unchanged
-   - 
-
-      - ``password``
-      - ``str``
-      - ``None``
-      - FTP login password; ``None`` leaves the current value unchanged
-   - 
-
-      - ``root_path``
-      - ``str``
-      - ``None``
-      - VFS path to expose as the FTP root (e.g. ``'/flash'``); ``None`` uses
-         the default
-   - 
-
-      - ``start_lte``
-      - ``bool``
-      - ``False``
-      - Also auto-start on LTE-M connections (default: WiFi only)
+   * - Argument
+     - Type
+     - Default
+     - Description
+   * - ``enable``
+     - ``bool``
+     - —
+     - ``True`` to start, ``False`` to stop
+   * - ``save_persistent``
+     - ``bool``
+     - ``False``
+     - Persist the config so the server auto-starts on the next qualifying
+       connect
+   * - ``username``
+     - ``str``
+     - ``None``
+     - FTP login username; ``None`` leaves the current value unchanged
+   * - ``password``
+     - ``str``
+     - ``None``
+     - FTP login password; ``None`` leaves the current value unchanged
+   * - ``root_path``
+     - ``str``
+     - ``None``
+     - VFS path to expose as the FTP root (e.g. ``'/flash'``); ``None`` uses
+       the default
+   * - ``start_lte``
+     - ``bool``
+     - ``False``
+     - Also auto-start on LTE-M connections (default: WiFi only)
 
 .. code:: python
 
@@ -148,9 +134,9 @@ Import it to start the server independently of the CTRL connection state.
 
 Start the FTP server.
 
--  ``username`` — required login username (string).
--  ``password`` — required login password (string).
--  ``path`` — optional VFS root path (default ``'/flash'``).
+- ``username`` — required login username (string).
+- ``password`` — required login password (string).
+- ``path`` — optional VFS root path (default ``'/flash'``).
 
 .. code:: python
 
@@ -197,36 +183,26 @@ The low-level C API is declared in ``inc/sg_ftpd.h``.
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Field
-      - Type
-      - Default
-      - Description
-   - 
-
-      - ``port``
-      - ``uint16_t``
-      - ``21``
-      - TCP listen port
-   - 
-
-      - ``username``
-      - ``const char *``
-      - ``"anonymous"``
-      - Required login username
-   - 
-
-      - ``password``
-      - ``const char *``
-      - any
-      - Required login password; ``NULL`` = accept any password
-   - 
-
-      - ``base_path``
-      - ``const char *``
-      - ``"/flash"``
-      - VFS path exposed as FTP root
+   * - Field
+     - Type
+     - Default
+     - Description
+   * - ``port``
+     - ``uint16_t``
+     - ``21``
+     - TCP listen port
+   * - ``username``
+     - ``const char *``
+     - ``"anonymous"``
+     - Required login username
+   * - ``password``
+     - ``const char *``
+     - any
+     - Required login password; ``NULL`` = accept any password
+   * - ``base_path``
+     - ``const char *``
+     - ``"/flash"``
+     - VFS path exposed as FTP root
 
 Pass ``NULL`` for ``cfg`` to use all defaults.
 

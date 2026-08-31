@@ -7,99 +7,53 @@ Available LoRa WAN APIs Summary
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - API Call
-      - Brief description
-   - 
-
-      - ``lora.stats()``
-      - displays the current stats of lora WAN
-   - 
-
-      - ``lora.wan_params()``
-      - set the lora WAN regional parameters
-   - 
-
-      - ``lora.commission()``
-      - set the LoRa-WAN commissioning parameters
-   - 
-
-      - ``lora.join()``
-      - start performing join procedure
-   - 
-
-      - ``lora.send()``
-      - transmit a LoRa-WAN packet
-   - 
-
-      - ``lora.recv()``
-      - receive a LoRa-WAN packet
-   - 
-
-      - ``lora.port_open()``
-      - open a lora-wan port to be able to tx/rx over it
-   - 
-
-      - ``lora.port_close()``
-      - close a lora-wan port, tx/rx on it will be discarded
-   - 
-
-      - ``lora.callback()``
-      - set a user level callback to listen to specifc events
-   - 
-
-      - ``lora.duty_get()``
-      - get the current duty-cycle in milliseconds
-   - 
-
-      - ``lora.duty_set()``
-      - set the the duty-cycle to a specific value
-   - 
-
-      - ``lora.duty_start()``
-      - start duty-cycle operation
-   - 
-
-      - ``lora.duty_stop()``
-      - stop duty-cycle operation
-   - 
-
-      - ``lora.enable_rx_listening()``
-      - perform class-a cycle to fetch pending DL msg
-   - 
-
-      - ``lora.disable_rx_listening()``
-      - if no pending UL msg, discard class-a cycle
-   - 
-
-      - ``lora.mode(adr=)``
-      - enable or disable Adaptive Data Rate (ADR)
-   - 
-
-      - ``lora.datarate()``
-      - get or set LoRaWAN data rate index (DR) when ADR is disabled
-   - 
-
-      - ``lora.tx_airtime()``
-      - get last TX time-on-air in milliseconds
-   - 
-
-      - ``lora.last_rx_at()``
-      - get timestamp (ms since boot) of last network reception
-   - 
-
-      - ``lora.add_channel()``
-      - add or replace a LoRaWAN channel (dynamic channel plan regions)
-   - 
-
-      - ``lora.remove_channel()``
-      - remove a LoRaWAN channel (dynamic channel plan regions)
-   - 
-
-      - ``lora.channel_mask()``
-      - get or set the active channel mask (all regions, required for
-         US915/AU915/CN470)
+   * - API Call
+     - Brief description
+   * - ``lora.stats()``
+     - displays the current stats of lora WAN
+   * - ``lora.wan_params()``
+     - set the lora WAN regional parameters
+   * - ``lora.commission()``
+     - set the LoRa-WAN commissioning parameters
+   * - ``lora.join()``
+     - start performing join procedure
+   * - ``lora.send()``
+     - transmit a LoRa-WAN packet
+   * - ``lora.recv()``
+     - receive a LoRa-WAN packet
+   * - ``lora.port_open()``
+     - open a lora-wan port to be able to tx/rx over it
+   * - ``lora.port_close()``
+     - close a lora-wan port, tx/rx on it will be discarded
+   * - ``lora.callback()``
+     - set a user level callback to listen to specifc events
+   * - ``lora.duty_get()``
+     - get the current duty-cycle in milliseconds
+   * - ``lora.duty_set()``
+     - set the the duty-cycle to a specific value
+   * - ``lora.duty_start()``
+     - start duty-cycle operation
+   * - ``lora.duty_stop()``
+     - stop duty-cycle operation
+   * - ``lora.enable_rx_listening()``
+     - perform class-a cycle to fetch pending DL msg
+   * - ``lora.disable_rx_listening()``
+     - if no pending UL msg, discard class-a cycle
+   * - ``lora.mode(adr=)``
+     - enable or disable Adaptive Data Rate (ADR)
+   * - ``lora.datarate()``
+     - get or set LoRaWAN data rate index (DR) when ADR is disabled
+   * - ``lora.tx_airtime()``
+     - get last TX time-on-air in milliseconds
+   * - ``lora.last_rx_at()``
+     - get timestamp (ms since boot) of last network reception
+   * - ``lora.add_channel()``
+     - add or replace a LoRaWAN channel (dynamic channel plan regions)
+   * - ``lora.remove_channel()``
+     - remove a LoRaWAN channel (dynamic channel plan regions)
+   * - ``lora.channel_mask()``
+     - get or set the active channel mask (all regions, required for
+       US915/AU915/CN470)
 
 LoRa WAN Stats
 ~~~~~~~~~~~~~~
@@ -152,33 +106,67 @@ the commissioning will be ignored.
 
 the end-device commissioning credentials are as follows:
 
--  ``version=<version>`` to specify the end-device LoRa standard. It takes one
-   of the following:
+- ``version=<version>`` to specify the end-device LoRa standard. It takes one
+  of the following:
 
-   -  ``version=lora._version.VERSION_1_0_x`` LoRa version 1.0.x
-   -  ``version=lora._version.VERSION_1_1_x`` LoRa version 1.1.x
+  - ``version=lora._version.VERSION_1_0_x`` LoRa version 1.0.x
+  - ``version=lora._version.VERSION_1_1_x`` LoRa version 1.1.x
 
--  ``type=lora._commission.OTAA`` Device will be commissioned using OTAA
-   procedure and the device shall perform the Join procedure before tx/rx with
-   the network in this activation method, the following keys shall be provided
-   along with:
+- ``type=lora._commission.OTAA`` Device will be commissioned using OTAA
+  procedure and the device shall perform the Join procedure before tx/rx with
+  the network in this activation method, the following keys shall be provided
+  along with:
 
-   -  ``DevEUI`` The device EUI
-   -  ``JoinEUI`` The Join EUI
-   -  ``AppKey`` The AppKey
-   -  ``NwkKey`` The NwkKey if version 1.1.x
+  - ``DevEUI`` The device EUI. Optional -- see *Built-in DevEUI* below
+  - ``JoinEUI`` The Join EUI
+  - ``AppKey`` The AppKey
+  - ``NwkKey`` The NwkKey if version 1.1.x
 
--  ``type=lora._commission.ABP`` The device will not perform the join procedure
-   and it will send directly an UL message. The following parameters shall be
-   provided:
+- ``type=lora._commission.ABP`` The device will not perform the join procedure
+  and it will send directly an UL message. The following parameters shall be
+  provided:
 
-   -  ``DevEUI`` The device EUI
-   -  ``DevAddr`` The device network address
-   -  ``AppSKey`` The application security key
-   -  ``NwkSKey`` The network security key
+  - ``DevEUI`` The device EUI. Optional -- see *Built-in DevEUI* below
+  - ``DevAddr`` The device network address
+  - ``AppSKey`` The application security key
+  - ``NwkSKey`` The network security key
 
--  ``verify=True`` To check the provided parameters are same as the current
-   commissioned parameters or not without doing any commissioning processing.
+- ``verify=True`` To check the provided parameters are same as the current
+  commissioned parameters or not without doing any commissioning processing.
+
+Built-in DevEUI
+^^^^^^^^^^^^^^^
+
+SG boards are manufactured with their LoRa MAC burned into an efuse, and that
+is the identity the device is registered under on the network server. Omitting
+``DevEUI``, or passing ``None``, uses it:
+
+.. code:: python
+
+   lora.commission(
+       type    = lora._commission.OTAA,
+       version = lora._version.VERSION_1_0_X,
+       # DevEUI omitted -- the board's own MAC is used
+       JoinEUI = ubinascii.unhexlify('0000000000000000'),
+       AppKey  = ubinascii.unhexlify('00000000000000000000000000000000'))
+
+The device has to be registered on the network server before it can join, so
+read the value first and enter it there:
+
+.. code:: python
+
+   import efuse_if
+   print(efuse_if.lora_mac().hex())
+
+The same MAC is reported by ``lora.stats()`` once the stack is in LoRaWAN mode.
+
+A board with no MAC programmed -- a bare ESP32-S3 rather than an SG module --
+raises ``OSError`` rather than commissioning with an all-zero EUI, which would
+simply never join. Pass an explicit ``DevEUI`` on such a board.
+
+This applies to ABP in the same way: ``DevEUI`` may be left out of an
+``lora._commission.ABP`` call too, since the identity is independent of the
+activation method.
 
 .. note::
 
@@ -274,55 +262,41 @@ start tx/rx operation, the user shall open a port first using the
 
 To plan an UL message. It takes the following parameters:
 
--  ``message`` the message buffer to be sent, can be a normal string or byte
-   array
--  optional arguments:
+- ``message`` the message buffer to be sent, can be a normal string or byte
+  array
+- optional arguments:
 
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - parameter-name
-      - value-type
-      - default-value
-      - desc
-   - 
-
-      - ``confirm``
-      - bool
-      - False
-      - To receive an ack from network server upon its reception
-   - 
-
-      - ``port``
-      - int
-      - 1
-      - on which lora-wan port to send this message
-   - 
-
-      - ``retries``
-      - int
-      - 0
-      - number of retried until the UL tx succeeded
-   - 
-
-      - ``timeout``
-      - int
-      - ``no-timeout``
-      - time-out in ms to perform the full UL operation
-   - 
-
-      - ``sync``
-      - int
-      - False
-      - block until timeout or operation success/failure
-   - 
-
-      - ``id``
-      - int
-      - 0
-      - user defined message id to be returned in the callback
+   * - parameter-name
+     - value-type
+     - default-value
+     - desc
+   * - ``confirm``
+     - bool
+     - False
+     - To receive an ack from network server upon its reception
+   * - ``port``
+     - int
+     - 1
+     - on which lora-wan port to send this message
+   * - ``retries``
+     - int
+     - 0
+     - number of retried until the UL tx succeeded
+   * - ``timeout``
+     - int
+     - ``no-timeout``
+     - time-out in ms to perform the full UL operation
+   * - ``sync``
+     - int
+     - False
+     - block until timeout or operation success/failure
+   * - ``id``
+     - int
+     - 0
+     - user defined message id to be returned in the callback
 
 Example:
 
@@ -387,10 +361,10 @@ Callbacks ``lora.callback()``
 
 It can set a user lever callback and it takes the following parameters:
 
--  'handler' a callbeack function to be called.
--  'trigger' an OR combination of the required events that can trigger to this
-   callback.
--  'port' a special port of the incoming messages events (default ``any``)
+- 'handler' a callbeack function to be called.
+- 'trigger' an OR combination of the required events that can trigger to this
+  callback.
+- 'port' a special port of the incoming messages events (default ``any``)
 
 Example:
 
@@ -490,8 +464,8 @@ Data Rate — ``lora.datarate([dr])``
 
 Gets or sets the current LoRaWAN data rate index (``DR``).
 
--  With no argument, returns the current data rate index as ``int``.
--  With ``dr`` provided, sets the data rate index.
+- With no argument, returns the current data rate index as ``int``.
+- With ``dr`` provided, sets the data rate index.
 
 ``dr`` valid range depends on the active region and LoRaWAN version/profile.
 Use values allowed by your network server/region plan.
@@ -555,10 +529,10 @@ network.
 
 The timestamp is updated on:
 
--  Any application-layer downlink (port 1–223)
--  Any MAC-only downlink (port 0 / network commands)
--  An uplink ACK (``AckReceived``) returned by the network server in response
-   to a confirmed uplink
+- Any application-layer downlink (port 1–223)
+- Any MAC-only downlink (port 0 / network commands)
+- An uplink ACK (``AckReceived``) returned by the network server in response to
+  a confirmed uplink
 
 The returned value is ``0`` until the first downlink (or ACK) has been received
 in the current session.
@@ -602,31 +576,21 @@ Keyword arguments (all required):
 .. list-table::
    :header-rows: 1
 
-   - 
-
-      - Parameter
-      - Type
-      - Description
-   - 
-
-      - ``index``
-      - int
-      - Channel index to add/replace (region-dependent range)
-   - 
-
-      - ``frequency``
-      - int
-      - Centre frequency in Hz (e.g. ``868100000``)
-   - 
-
-      - ``dr_min``
-      - int
-      - Minimum data rate index (0–7, region-dependent)
-   - 
-
-      - ``dr_max``
-      - int
-      - Maximum data rate index (0–7, region-dependent)
+   * - Parameter
+     - Type
+     - Description
+   * - ``index``
+     - int
+     - Channel index to add/replace (region-dependent range)
+   * - ``frequency``
+     - int
+     - Centre frequency in Hz (e.g. ``868100000``)
+   * - ``dr_min``
+     - int
+     - Minimum data rate index (0–7, region-dependent)
+   * - ``dr_max``
+     - int
+     - Maximum data rate index (0–7, region-dependent)
 
 Raises ``OSError`` if the MAC rejects the request (e.g. region does not support
 dynamic channel plans).
@@ -690,149 +654,107 @@ mask. The mask is also written to the *default* mask so it survives a re-join.
    .. list-table::
       :header-rows: 1
 
-      - 
-
-         - Word
-         - 125 kHz channels
-         - Mask bits
-         - Sub-bands covered
-         - 500 kHz ch
-      - 
-
-         - ``mask[0]``
-         - ch 0–7
-         - bits 0–7 (``0x00FF``)
-         - sub-band 1
-         - —
-      - 
-
-         - ``mask[0]``
-         - ch 8–15
-         - bits 8–15 (``0xFF00``)
-         - sub-band 2
-         - —
-      - 
-
-         - ``mask[1]``
-         - ch 16–23
-         - bits 0–7 (``0x00FF``)
-         - sub-band 3
-         - —
-      - 
-
-         - ``mask[1]``
-         - ch 24–31
-         - bits 8–15 (``0xFF00``)
-         - sub-band 4
-         - —
-      - 
-
-         - ``mask[2]``
-         - ch 32–39
-         - bits 0–7 (``0x00FF``)
-         - sub-band 5
-         - —
-      - 
-
-         - ``mask[2]``
-         - ch 40–47
-         - bits 8–15 (``0xFF00``)
-         - sub-band 6
-         - —
-      - 
-
-         - ``mask[3]``
-         - ch 48–55
-         - bits 0–7 (``0x00FF``)
-         - sub-band 7
-         - —
-      - 
-
-         - ``mask[3]``
-         - ch 56–63
-         - bits 8–15 (``0xFF00``)
-         - sub-band 8
-         - —
-      - 
-
-         - ``mask[4]``
-         - —
-         - bits 0–7
-         - —
-         - ch 64–71 (one per sub-band)
-      - 
-
-         - ``mask[5]``
-         - —
-         - —
-         - —
-         - (unused in US915)
+      * - Word
+        - 125 kHz channels
+        - Mask bits
+        - Sub-bands covered
+        - 500 kHz ch
+      * - ``mask[0]``
+        - ch 0–7
+        - bits 0–7 (``0x00FF``)
+        - sub-band 1
+        - —
+      * - ``mask[0]``
+        - ch 8–15
+        - bits 8–15 (``0xFF00``)
+        - sub-band 2
+        - —
+      * - ``mask[1]``
+        - ch 16–23
+        - bits 0–7 (``0x00FF``)
+        - sub-band 3
+        - —
+      * - ``mask[1]``
+        - ch 24–31
+        - bits 8–15 (``0xFF00``)
+        - sub-band 4
+        - —
+      * - ``mask[2]``
+        - ch 32–39
+        - bits 0–7 (``0x00FF``)
+        - sub-band 5
+        - —
+      * - ``mask[2]``
+        - ch 40–47
+        - bits 8–15 (``0xFF00``)
+        - sub-band 6
+        - —
+      * - ``mask[3]``
+        - ch 48–55
+        - bits 0–7 (``0x00FF``)
+        - sub-band 7
+        - —
+      * - ``mask[3]``
+        - ch 56–63
+        - bits 8–15 (``0xFF00``)
+        - sub-band 8
+        - —
+      * - ``mask[4]``
+        - —
+        - bits 0–7
+        - —
+        - ch 64–71 (one per sub-band)
+      * - ``mask[5]``
+        - —
+        - —
+        - —
+        - (unused in US915)
 
    **US915 channel → frequency reference**
 
    .. list-table::
       :header-rows: 1
 
-      - 
-
-         - Channel
-         - Frequency
-         - Sub-band
-         - Mask word/bits
-      - 
-
-         - 0–7
-         - 902.3 + 0.2×n MHz
-         - 1
-         - ``mask[0]`` bits 0–7
-      - 
-
-         - 8–15
-         - 903.9 + 0.2×n MHz
-         - 2
-         - ``mask[0]`` bits 8–15
-      - 
-
-         - 16–23
-         - 905.5 + 0.2×n MHz
-         - 3
-         - ``mask[1]`` bits 0–7
-      - 
-
-         - 24–31
-         - 907.1 + 0.2×n MHz
-         - 4
-         - ``mask[1]`` bits 8–15
-      - 
-
-         - 32–39
-         - 908.7 + 0.2×n MHz
-         - 5
-         - ``mask[2]`` bits 0–7
-      - 
-
-         - 40–47
-         - 910.3 + 0.2×n MHz
-         - 6
-         - ``mask[2]`` bits 8–15
-      - 
-
-         - 48–55
-         - 911.9 + 0.2×n MHz
-         - 7
-         - ``mask[3]`` bits 0–7
-      - 
-
-         - 56–63
-         - 913.5 + 0.2×n MHz
-         - 8
-         - ``mask[3]`` bits 8–15
-      - 
-
-         - 64–71
-         - 903.0 + 1.6×n MHz
-         - (500 kHz)
-         - ``mask[4]`` bits 0–7
+      * - Channel
+        - Frequency
+        - Sub-band
+        - Mask word/bits
+      * - 0–7
+        - 902.3 + 0.2×n MHz
+        - 1
+        - ``mask[0]`` bits 0–7
+      * - 8–15
+        - 903.9 + 0.2×n MHz
+        - 2
+        - ``mask[0]`` bits 8–15
+      * - 16–23
+        - 905.5 + 0.2×n MHz
+        - 3
+        - ``mask[1]`` bits 0–7
+      * - 24–31
+        - 907.1 + 0.2×n MHz
+        - 4
+        - ``mask[1]`` bits 8–15
+      * - 32–39
+        - 908.7 + 0.2×n MHz
+        - 5
+        - ``mask[2]`` bits 0–7
+      * - 40–47
+        - 910.3 + 0.2×n MHz
+        - 6
+        - ``mask[2]`` bits 8–15
+      * - 48–55
+        - 911.9 + 0.2×n MHz
+        - 7
+        - ``mask[3]`` bits 0–7
+      * - 56–63
+        - 913.5 + 0.2×n MHz
+        - 8
+        - ``mask[3]`` bits 8–15
+      * - 64–71
+        - 903.0 + 1.6×n MHz
+        - (500 kHz)
+        - ``mask[4]`` bits 0–7
 
    **⚠️ US915 minimum-channels constraint**: the LoRaMac-node US915 region
    implementation rejects any mask where **exactly 1** of the 64 125 kHz

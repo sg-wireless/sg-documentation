@@ -4,8 +4,8 @@ CAN API Documentation
 Contents
 --------
 
--  Functions
--  Example
+- Functions
+- Example
 
 This document describes the CAN API functions
 
@@ -19,16 +19,15 @@ Functions
 
 Initializes the CAN interface with the specified parameters.
 
--  **Parameters**:
+- **Parameters**:
 
-   -  ``RxPin`` (default: 2): Receive pin number.
-   -  ``TxPin`` (default: 1): Transmit pin number.
-   -  ``Baud`` (default: 250000): Baud
-      rate.(25000,50000,100000,125000,250000,500000,800000,1000000).
-   -  ``Mode`` (default: 0): CAN mode (e.g., 0-NORMAL, 1-NO
-      ACK，2-LISTEN_ONLY).
+  - ``RxPin`` (default: 2): Receive pin number.
+  - ``TxPin`` (default: 1): Transmit pin number.
+  - ``Baud`` (default: 250000): Baud
+    rate.(25000,50000,100000,125000,250000,500000,800000,1000000).
+  - ``Mode`` (default: 0): CAN mode (e.g., 0-NORMAL, 1-NO ACK，2-LISTEN_ONLY).
 
--  **Usage**: python can.init(RxPin, TxPin, Baud, Mode)
+- **Usage**: python can.init(RxPin, TxPin, Baud, Mode)
 
 .. _candeinit:
 
@@ -37,7 +36,7 @@ Initializes the CAN interface with the specified parameters.
 
 Deinitializes the CAN interface.
 
--  **Usage**: python can.deinit()
+- **Usage**: python can.deinit()
 
 .. _cansend:
 
@@ -46,13 +45,13 @@ Deinitializes the CAN interface.
 
 Sends a CAN message.
 
--  **Parameters**:
+- **Parameters**:
 
-   -  ``flags``: Message flags.
-   -  ``id``: Message identifier.
-   -  ``dat``: Data to send (string or bytes).
+  - ``flags``: Message flags.
+  - ``id``: Message identifier.
+  - ``dat``: Data to send (string or bytes).
 
--  **Usage**: python can.send(flags, id, dat)
+- **Usage**: python can.send(flags, id, dat)
 
 .. _canfilter:
 
@@ -61,12 +60,12 @@ Sends a CAN message.
 
 Sets a CAN filter.
 
--  **Parameters**:
+- **Parameters**:
 
-   -  ``dat``: Filter data (string or bytes).
-   -  ``single_filter``: Boolean indicating if a single filter is used.
+  - ``dat``: Filter data (string or bytes).
+  - ``single_filter``: Boolean indicating if a single filter is used.
 
--  **Usage**: python can.filter(dat, single_filter)
+- **Usage**: python can.filter(dat, single_filter)
 
 .. _canany:
 
@@ -75,9 +74,9 @@ Sets a CAN filter.
 
 Checks if any CAN messages are available.
 
--  **Returns**: Integer indicating the presence of messages.
+- **Returns**: Integer indicating the presence of messages.
 
--  **Usage**: python can.any()
+- **Usage**: python can.any()
 
 .. _canrecv:
 
@@ -86,9 +85,9 @@ Checks if any CAN messages are available.
 
 Receives a CAN message.
 
--  **Returns**: Bytes representing the received message.
+- **Returns**: Bytes representing the received message.
 
--  **Usage**: python can.recv()
+- **Usage**: python can.recv()
 
 Example
 -------

@@ -4,25 +4,25 @@ LoRa API Documentation
 Contents
 --------
 
--  Initialization
--  LoRa Modes
--  LoRa Test Stub
--  `LoRa Events and Callback <lora-callback.md>`__
--  `LoRa RAW APIs <lora-raw.md>`__
--  `LoRa WAN APIs <lora-wan.md>`__
--  `LoRa Certification Mode <lora-lctt.md>`__
--  Examples
+- Initialization
+- LoRa Modes
+- LoRa Test Stub
+- `LoRa Events and Callback <lora-callback.md>`__
+- `LoRa RAW APIs <lora-raw.md>`__
+- `LoRa WAN APIs <lora-wan.md>`__
+- `LoRa Certification Mode <lora-lctt.md>`__
+- Examples
 
-   -  Example - LoRa-WAN End-Device Commissioning:
+  - Example - LoRa-WAN End-Device Commissioning:
 
-      -  `OTAA - LoRaWAN Specs
-         v1.0.x <../tst/mpy/lorawan_commission/commission_otaa_v1_0_x.py>`__
-      -  `OTAA - LoRaWAN Specs
-         v1.1.x <../tst/mpy/lorawan_commission/commission_otaa_v1_1_x.py>`__
-      -  `ABP - LoRaWAN Specs
-         v1.0.x <../tst/mpy/lorawan_commission/commission_abp_v1_0_x.py>`__
-      -  `ABP - LoRaWAN Specs
-         v1.1.x <../tst/mpy/lorawan_commission/commission_abp_v1_1_x.py>`__
+    - `OTAA - LoRaWAN Specs
+      v1.0.x <../tst/mpy/lorawan_commission/commission_otaa_v1_0_x.py>`__
+    - `OTAA - LoRaWAN Specs
+      v1.1.x <../tst/mpy/lorawan_commission/commission_otaa_v1_1_x.py>`__
+    - `ABP - LoRaWAN Specs
+      v1.0.x <../tst/mpy/lorawan_commission/commission_abp_v1_0_x.py>`__
+    - `ABP - LoRaWAN Specs
+      v1.1.x <../tst/mpy/lorawan_commission/commission_abp_v1_1_x.py>`__
 
 Initialization
 --------------
