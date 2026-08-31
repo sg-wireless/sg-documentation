@@ -29,6 +29,7 @@ import argparse
 import difflib
 import os
 import re
+import shutil
 import sys
 
 import pypandoc
@@ -57,11 +58,38 @@ SOURCE_MAP = {
     "sys-inspect":    "src/platforms/F1/comps/sys-inspect-if/docs/sys_inspect.md",
     "safeboot":       "src/platforms/F1/bootloader_components/boot-if/docs/safeboot.md",
     "firmware-development": "QuickStart.md",
+    "arduino-ide":       "docs/ArduinoIDE.md",
+    "arduino-packaging": "tools/arduino/README.md",
 }
 
 # Module targets that do not belong to programming-references/
 TARGET_MAP = {
     "firmware-development": "firmware-development.rst",
+    "arduino-ide":       "arduino/ide.rst",
+    "arduino-packaging": "arduino/packaging.rst",
+}
+
+# Image/asset files to copy alongside a module (src rel to sg-sdk -> dest rel to
+# sg-docs). pandoc leaves image paths untouched, so the destination must match
+# the 'img/...' paths used inside the source Markdown.
+ASSET_MAP = {
+    "arduino-ide": [
+        ("docs/img/board_url.png",       "arduino/img/board_url.png"),
+        ("docs/img/package_install.png", "arduino/img/package_install.png"),
+        ("docs/img/board_select.png",    "arduino/img/board_select.png"),
+        ("docs/img/example_select.png",  "arduino/img/example_select.png"),
+        ("docs/img/ctrl_token.png",      "arduino/img/ctrl_token.png"),
+    ],
+}
+
+# Cross-document Markdown link targets -> Sphinx :doc: paths. The SDK Markdown
+# links to sibling files by relative path; in the docs those become :doc:
+# references to the generated pages instead.
+LINK_MAP = {
+    "docs/ArduinoIDE.md":         "/arduino/ide",
+    "../QuickStart.md":           "/firmware-development",
+    "../tools/arduino/README.md": "/arduino/packaging",
+    "tools/arduino/README.md":    "/arduino/packaging",
 }
 
 # ── Markdown → RST converter (pandoc-based) ────────────────────────────────
@@ -107,14 +135,47 @@ def _postprocess_rst(text):
     return "\n".join(out)
 
 
+def _protect_links(text):
+    """Replace known cross-doc Markdown links with placeholders (pre-pandoc).
+
+    Returns (text, mapping) where mapping is placeholder -> final :doc: role.
+    Rewriting on the Markdown rather than the converted RST avoids pandoc's line
+    wrapping splitting a link label across lines (which a regex would then miss
+    or over-match).
+    """
+    links = {}
+    counter = [0]
+    for href, docpath in LINK_MAP.items():
+        pattern = re.compile(r"\[([^\]\n]+)\]\(" + re.escape(href) + r"\)")
+
+        def repl(m, docpath=docpath):
+            label = m.group(1).strip().strip("`").strip()
+            token = f"XDOCLINK{counter[0]}X"
+            links[token] = ":doc:`" + label + " <" + docpath + ">`"
+            counter[0] += 1
+            return token
+
+        text = pattern.sub(repl, text)
+    return text, links
+
+
+def _restore_links(text, links):
+    """Swap link placeholders back for their :doc: roles (post-pandoc)."""
+    for token, role in links.items():
+        text = text.replace(token, role)
+    return text
+
+
 def md_to_rst(md_text):
     """Convert Markdown text to reStructuredText using pandoc."""
     md_text = _preprocess_md(md_text)
+    md_text, links = _protect_links(md_text)
     rst = pypandoc.convert_text(
         md_text, "rst", format="gfm",
         extra_args=["--list-tables", "--wrap=auto", "--columns=79"],
     )
     rst = _postprocess_rst(rst)
+    rst = _restore_links(rst, links)
     # Clean up excessive blank lines
     rst = re.sub(r"\n{3,}", "\n\n", rst)
     return rst.strip() + "\n"
@@ -122,6 +183,14 @@ def md_to_rst(md_text):
 
 # ── Main sync logic ────────────────────────────────────────────────────────
 
+def _copy_assets(module, sdk_path, docs_path):
+    """Copy a module's declared image/asset files into sg-docs."""
+    for src_rel, dest_rel in ASSET_MAP.get(module, []):
+        src = os.path.join(sdk_path, src_rel)
+        dest = os.path.join(docs_path, dest_rel)
+        if os.path.isfile(src):
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            shutil.copyfile(src, dest)
 
 def sync_module(module, sdk_path, docs_path, dry_run=False, show_diff=False):
     """Sync a single module from sg-sdk MD to sg-docs RST.
@@ -157,8 +226,8 @@ def sync_module(module, sdk_path, docs_path, dry_run=False, show_diff=False):
         diff = difflib.unified_diff(
             old_rst.splitlines(keepends=True),
             new_rst.splitlines(keepends=True),
-            fromfile=f"programming-references/{module}.rst (current)",
-            tofile=f"programming-references/{module}.rst (from sdk)",
+            fromfile=f"{target_rel} (current)",
+            tofile=f"{target_rel} (from sdk)",
             lineterm="",
         )
         diff_text = "\n".join(diff)
@@ -167,8 +236,10 @@ def sync_module(module, sdk_path, docs_path, dry_run=False, show_diff=False):
             print()
 
     if not dry_run:
+        os.makedirs(os.path.dirname(rst_path), exist_ok=True)
         with open(rst_path, "w") as f:
             f.write(new_rst)
+        _copy_assets(module, sdk_path, docs_path)
         return True, f"  SYNC {module}: updated {target_rel}"
     else:
         return True, f"  WOULD {module}: {target_rel} needs update"

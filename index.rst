@@ -102,8 +102,9 @@
    Getting Started <getting-started/index>
    Hardware <hardware/index>
    Software <software/index>
-   Programming References <programming-references/index>
+   MicroPython API Reference <programming-references/index>
    MicroPython Libraries <micropython/index>
+   Arduino <arduino/index>
    Tutorials & Examples <tutorials/index>
    Firmware Development <firmware-development>
    Contact <contact>

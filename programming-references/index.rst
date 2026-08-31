@@ -1,4 +1,4 @@
-Programming References
+MicroPython API Reference
 =========================
 
 This section documents the MicroPython modules available on the SG Wireless F1

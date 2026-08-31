@@ -17,14 +17,16 @@ Important for SG SDK:
   for this workflow.
 - ``fw_builder.sh`` handles the SDK-managed ESP-IDF checkout/setup during the
   build flow.
+- Install toml package ``sudo apt install python3-toml`` or
+  ``pip install -U toml``
 
 Windows note:
 
 - Use WSL2 with Ubuntu, then follow the Linux instructions.
 - For VS Code, use the Remote - WSL extension so all builds run inside WSL2.
 - To flash your device in WSL2, a tool like
-  (wsl-usb-manager)[https://github.com/nickbeth/wsl-usb-manager] or
-  (wsl-usb-gui)[https://gitlab.com/alelec/wsl-usb-gui] is useful.
+  `wsl-usb-manager <https://github.com/nickbeth/wsl-usb-manager>`__ or
+  `wsl-usb-gui <https://gitlab.com/alelec/wsl-usb-gui>`__ is useful.
 
 .. _2-clone-the-repository:
 
@@ -133,3 +135,50 @@ Activation token notes:
 
 See `examples/ctrl_client_c/README.md <examples/ctrl_client_c/README.md>`__ for
 a complete token conversion snippet and full example details.
+
+.. _7-build-and-flash-an-arduino-example:
+
+7) Build and flash an Arduino example
+-------------------------------------
+
+The ``arduino`` variant builds any sketch under ``examples/arduino/`` directly
+through the SDK — the quickest way to iterate without going through the Arduino
+Board Manager. To install the pre-built package in the Arduino IDE (no SDK
+checkout needed), see the :doc:`Arduino IDE guide </arduino/ide>` instead.
+
+.. code:: bash
+
+   # compile only
+   ./fw_builder.sh --board SGW3501-F1-StarterKit --variant arduino \
+       --project-dir examples/arduino/SGW_Ctrl build
+
+   # compile, flash and open the serial monitor
+   ./fw_builder.sh --board SGW3501-F1-StarterKit --variant arduino \
+       --project-dir examples/arduino/SGW_Ctrl --port /dev/ttyUSB0 --flash monitor
+
+Add ``--erase`` to wipe the flash first, and ``--clean`` to force a full
+rebuild (needed when you change board or feature flags, since ESP-IDF keeps a
+per-directory ``sdkconfig``). The sketch is compiled against the SDK sources
+directly, so a change to a component is picked up immediately.
+
+.. _8-build-an-arduino-board-manager-package:
+
+8) Build an Arduino board-manager package
+-----------------------------------------
+
+``release`` produces the full package for every board in
+```tools/arduino/boards.toml`` <tools/arduino/boards.toml>`__; ``package``
+ships a single board. See the :doc:`Arduino packaging reference </arduino/packaging>` for board selection, versioning and
+hosting locally.
+
+.. code:: bash
+
+   # full release package (takes no --board)
+   ./fw_builder.sh --variant arduino release
+
+   # single-board package
+   ./fw_builder.sh --board SGW3201-F1L-OEM --variant arduino package
+
+Output lands in ``build/arduino/``. The version comes from the git tag and must
+match ``src/comps/fw-version/fw_version.h``. MicroPython, Arduino and native-C
+applications share the same SDK version.
